@@ -2150,27 +2150,29 @@ if("serviceWorker" in navigator){
 initLock();
 
 </script>
-
 <script>
-/* Chargeur auto-reparant : repare la ponctuation transformee par iOS avant execution */
 (function(){
-  var el = document.getElementById(String.fromCharCode(103,109,97,111,115,114,99));
+  var el = document.getElementById("gmaosrc");
   if(!el){ return; }
   var t = el.textContent;
-  var sq = String.fromCharCode(39);
-  var dq = String.fromCharCode(34);
-  t = t.replace(new RegExp(String.fromCharCode(91,8216,8217,700,180,96,93),String.fromCharCode(103)), sq);
-  t = t.replace(new RegExp(String.fromCharCode(91,8220,8221,171,187,93),String.fromCharCode(103)), dq);
-  t = t.replace(new RegExp(String.fromCharCode(91,8211,8212,93),String.fromCharCode(103)), String.fromCharCode(45,45));
-  t = t.replace(new RegExp(String.fromCharCode(8230),String.fromCharCode(103)), String.fromCharCode(46,46,46));
-  try{ (0,eval)(t); }catch(e){
-    var d = document.createElement(String.fromCharCode(100,105,118));
-    d.style.cssText = String.fromCharCode(112,111,115,105,116,105,111,110,58,102,105,120,101,100,59,116,111,112,58,48,59,108,101,102,116,58,48,59,114,105,103,104,116,58,48,59,98,97,99,107,103,114,111,117,110,100,58,35,99,48,51,48,51,48,59,99,111,108,111,114,58,35,102,102,102,59,112,97,100,100,105,110,103,58,49,54,112,120,59,122,45,105,110,100,101,120,58,57,57,57,57,57,59,102,111,110,116,45,115,105,122,101,58,49,51,112,120,59);
-    d.textContent = String.fromCharCode(69,82,82,69,85,82,32,58,32) + e.message;
+  t = t.replace(/&lt;/g, String.fromCharCode(60));
+  t = t.replace(/&gt;/g, String.fromCharCode(62));
+  t = t.replace(/&quot;/g, String.fromCharCode(34));
+  t = t.replace(/&amp;/g, String.fromCharCode(38));
+  t = t.replace(/[\u2018\u2019\u02BC\u00B4`]/g, String.fromCharCode(39));
+  t = t.replace(/[\u201C\u201D\u00AB\u00BB]/g, String.fromCharCode(34));
+  t = t.replace(/[\u2013\u2014]/g, "--");
+  t = t.replace(/\u2026/g, "...");
+  try{ (0,eval)(t); }
+  catch(e){
+    var d = document.createElement("div");
+    d.style.cssText = "position:fixed;top:0;left:0;right:0;background:#c03030;color:#fff;padding:16px;z-index:99999;font-size:13px;";
+    d.textContent = "ERREUR : " + e.message;
     document.body.appendChild(d);
   }
 })();
 </script>
+
 
 </body>
 </html>
