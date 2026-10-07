@@ -1,5 +1,5 @@
 // Service Worker - GMAO Drilling (fichier unique)
-var CACHE_NAME = "gmao-solo-v1";
+var CACHE_NAME = "gmao-solo-v2";
 
 var CORE = [
   "./",
@@ -50,7 +50,16 @@ self.addEventListener("fetch", function(event) {
   if (req.mode === "navigate") {
     event.respondWith(
       caches.match(req, {ignoreSearch:true}).then(function(cached){
-        if (cached) return cached;
+        if (cached) {
+          // mise a jour silencieuse en arriere-plan (prochaine ouverture = derniere version)
+          fetch(req).then(function(fresh){
+            if (fresh && fresh.status === 200) {
+              var copy = fresh.clone();
+              caches.open(CACHE_NAME).then(function(c){ c.put("./index.html", copy).catch(function(){}); });
+            }
+          }).catch(function(){});
+          return cached;
+        }
         return fetch(req).then(function(resp){
           if (resp && resp.status === 200) {
             var copy = resp.clone();
