@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 2 AUTO-REPARANTE (dictee vocale) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 3 (sans dictee) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -145,22 +145,6 @@ input[type="time"],input[type="date"]{color-scheme:dark;}
         <div class="field"><label>Shift</label><select id="d-shift"><option>Day</option><option>Night</option></select></div>
         <div class="field"><label>Daily Service Leading Hand</label><input type="text" id="d-lead" placeholder="ex: Nom Prenom"></div>
         <div class="field"><label>Pit Maint Forman</label><input type="text" id="d-forman" placeholder="ex: Nom Prenom"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">&#127908; Dictee vocale</div></div>
-      <div class="card-body">
-        <div class="field">
-          <textarea id="d-voice" rows="2" placeholder="ex: DR222 de 8h a 9h daily service"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost btn-sm" id="d-voice-btn" style="flex:1;margin:0;" onclick="startDailyDictation()">&#127908; Dicter</button>
-          <button class="btn btn-green btn-sm" style="flex:1;margin:0;" onclick="applyDailyVoice()">Remplir</button>
-        </div>
-        <div style="font-size:11.5px;color:var(--text3);margin-top:8px;line-height:1.5;">
-          Touche le champ puis le <b>micro du clavier</b> (il marche hors-reseau), ou le bouton Dicter.
-          Dis la machine, les heures et le type. Plusieurs machines a la suite sont acceptees.
-        </div>
       </div>
     </div>
     <div class="card">
@@ -358,7 +342,6 @@ function initLock(){
 }
 
 var WA_NUMBER = "221779515790";
-var V_BASE_RIGS = ["Machine 1","Machine 2","Machine 3","Machine 4","Machine 5","Machine 6","Machine 7","Machine 8","Machine 9","Machine 10","Machine 11","Machine 12","Machine 13","Machine 14"];
 var RIGS = ["Machine 1","Machine 2","Machine 3","Machine 4","Machine 5","Machine 6","Machine 7","Machine 8","Machine 9","Machine 10","Machine 11","Machine 12","Machine 13","Machine 14"];
 var OIL_RIGS = ["Machine 1","Machine 2","Machine 3","Machine 4","Machine 5","Machine 6","Machine 7","Machine 8","Machine 9","Machine 10","Machine 11","Machine 12","Machine 13","Machine 14","Machine 15"];
 var OIL_FLUIDS = ["15w40","T 320","Om 46-220","Oil 68","Coolant","COR 54 68","Om-54 320"];
@@ -2160,199 +2143,10 @@ if("serviceWorker" in navigator){
   });
 }
 
-/* =================== DICTEE : phrase parlee -&gt; lignes Daily =================== */
-var VNUM={"zero":0,"minuit":0,"midi":12,"un":1,"une":1,"deux":2,"trois":3,"quatre":4,"cinq":5,"six":6,
-"sept":7,"huit":8,"neuf":9,"dix":10,"onze":11,"douze":12,"treize":13,"quatorze":14,"quinze":15,"seize":16,
-"dix-sept":17,"dix sept":17,"dix-huit":18,"dix huit":18,"dix-neuf":19,"dix neuf":19,"vingt":20,
-"vingt et un":21,"vingt-et-un":21,"vingt deux":22,"vingt-deux":22,"vingt trois":23,"vingt-trois":23,
-"vingt quatre":24,"vingt-quatre":24};
-var VMIN={"demie":30,"demi":30,"quart":15,"quinze":15,"trente":30,"quarante cinq":45,"quarante-cinq":45,
-"cinq":5,"dix":10,"vingt":20,"cinquante":50,"pile":0,"zero":0};
-var VSTOP={"de":1,"du":1,"des":1,"le":1,"la":1,"les":1,"et":1,"en":1,"au":1,"aux":1,"par":1,"sur":1,
-"vers":1,"a":1,"to":1,"from":1,"et ":1,"puis":1,"pour":1,"avec":1,"h":1,"pm":1,"am":1};
-
-function vNorm(s){
-  s=String(s||"").toLowerCase();
-  s=s.replace(/[àâä]/g,"a").replace(/[éèêë]/g,"e")
-     .replace(/[îï]/g,"i").replace(/[ôö]/g,"o").replace(/[ûüù]/g,"u")
-     .replace(/[–—]/g,"-").replace(/[‘’]/g,"'");
-  s=s.replace(/\s+/g," ").trim();
-  return s;
-}
-function v2(n){ n=parseInt(n,10); return (n&lt;10?"0":"")+n; }
-
-/* "huit heures trente" -&gt; "08:30" (avant lecture des chiffres) */
-function vWordsToTimes(s){
-  var words=[]; for(var k in VNUM) words.push(k);
-  words.sort(function(a,b){ return b.length-a.length; });
-  var mins=[]; for(var m in VMIN) mins.push(m);
-  mins.sort(function(a,b){ return b.length-a.length; });
-  var hourAlt=words.join("|").replace(/ /g,"\\s");
-  var minAlt=mins.join("|").replace(/ /g,"\\s");
-  var re=new RegExp("\\b("+hourAlt+")\\s+heures?(?:\\s+(?:et\\s+)?("+minAlt+"))?","g");
-  return s.replace(re,function(all,hw,mw){
-    var h=VNUM[hw.replace(/\s+/g," ")];
-    if(h===undefined) return all;
-    var mi=mw?VMIN[mw.replace(/\s+/g," ")]:0;
-    if(mi===undefined) mi=0;
-    return v2(h)+":"+v2(mi);
-  });
-}
-
-/* reconnait les machines : "dr222", "dr 222", "machine 3", "st-210" */
-function vFindMachines(s){
-  var out=[];
-  var re1=/\b(?:machine|engin)\s*(?:n(?:o|um(?:ero)?)?\s*)?(\d{1,3})\b/g;
-  var m;
-  while((m=re1.exec(s))!==null){ out.push({i:m.index,len:m[0].length,label:"Machine "+parseInt(m[1],10)}); }
-  var re2=/\b([a-z]{2,4})\s*-?\s*(\d{2,4})\b(?!\s*[h:])/g;
-  while((m=re2.exec(s))!==null){
-    if(VSTOP[m[1]]) continue;
-    if(m[1]==="machine"||m[1]==="engin") continue;
-    var dup=false;
-    for(var d=0;d&lt;out.length;d++){ if(m.index&gt;=out[d].i &amp;&amp; m.index&lt;out[d].i+out[d].len) dup=true; }
-    if(dup) continue;
-    out.push({i:m.index,len:m[0].length,label:m[1].toUpperCase()+m[2]});
-  }
-  out.sort(function(a,b){ return a.i-b.i; });
-  return out;
-}
-
-function vFindTimes(seg){
-  var times=[];
-  var re=/\b(\d{1,2})\s*(?:h|:|\.)\s*(\d{2})?\b/g, m;
-  while((m=re.exec(seg))!==null){
-    var h=parseInt(m[1],10); if(h&gt;24) continue;
-    var mi=m[2]?parseInt(m[2],10):0; if(mi&gt;59) continue;
-    times.push({t:v2(h%24)+":"+v2(mi),i:m.index,len:m[0].length});
-  }
-  if(times.length&lt;2){
-    var re2=/\b(\d{1,2})\s*(?:a|-|jusqu'?a)\s*(\d{1,2})\b/g, m2;
-    while((m2=re2.exec(seg))!==null){
-      var a=parseInt(m2[1],10), b=parseInt(m2[2],10);
-      if(a&lt;=24&amp;&amp;b&lt;=24){ times=[{t:v2(a%24)+":00",i:m2.index,len:1},{t:v2(b%24)+":00",i:m2.index+1,len:1}]; break; }
-    }
-  }
-  return times;
-}
-
-function vFindType(seg){
-  if(/opportunit/.test(seg)) return "Opportunity Time";
-  if(/\bpm\b|preventi/.test(seg)) return "PM";
-  if(/daily|journalier|\bservice\b/.test(seg)) return "Daily Service";
-  return "";
-}
-
-function parseDailySpeech(raw){
-  var s=vWordsToTimes(vNorm(raw));
-  var machines=vFindMachines(s);
-  var rows=[];
-  if(!machines.length) return rows;
-  for(var i=0;i&lt;machines.length;i++){
-    var start=machines[i].i+machines[i].len;
-    var end=(i+1&lt;machines.length)?machines[i+1].i:s.length;
-    var seg=s.substring(start,end);
-    var times=vFindTimes(seg);
-    var clean=seg;
-    for(var t=times.length-1;t&gt;=0;t--){ clean=clean.substring(0,times[t].i)+" "+clean.substring(times[t].i+times[t].len); }
-    rows.push({rig:machines[i].label, begin:times[0]?times[0].t:"", end:times[1]?times[1].t:"", type:vFindType(clean)});
-  }
-  return rows;
-}
-
-
-/* ===== DICTEE : machines personnalisees retenues ===== */
-function vSaveRigs(){
-  try{
-    var extra=[];
-    for(var i=0;i&lt;RIGS.length;i++){ if(V_BASE_RIGS.indexOf(RIGS[i])&lt;0) extra.push(RIGS[i]); }
-    localStorage.setItem("gmao_rigs_extra", JSON.stringify(extra));
-  }catch(e){}
-}
-function vLoadRigs(){
-  try{
-    var extra=JSON.parse(localStorage.getItem("gmao_rigs_extra")||"[]");
-    if(Object.prototype.toString.call(extra)!=="[object Array]") return;
-    for(var i=0;i&lt;extra.length;i++){
-      if(typeof extra[i]==="string" &amp;&amp; RIGS.indexOf(extra[i])&lt;0){ RIGS.push(extra[i]); }
-    }
-  }catch(e){}
-}
-function vEnsureRig(label){
-  if(!label) return;
-  for(var i=0;i&lt;RIGS.length;i++){ if(RIGS[i].toLowerCase()===label.toLowerCase()) return RIGS[i]; }
-  RIGS.push(label);
-  vSaveRigs();
-  return label;
-}
-
-/* ===== DICTEE : micro du navigateur (si disponible et avec reseau) ===== */
-var vRec=null;
-function startDailyDictation(){
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  var box=document.getElementById("d-voice");
-  var btn=document.getElementById("d-voice-btn");
-  if(!SR){
-    toast("Micro du navigateur indisponible - utilise le micro du clavier");
-    if(box) box.focus();
-    return;
-  }
-  if(vRec){ try{ vRec.stop(); }catch(e){} vRec=null; if(btn) btn.textContent="🎤 Dicter"; return; }
-  try{
-    vRec=new SR();
-    vRec.lang="fr-FR";
-    vRec.interimResults=false;
-    vRec.continuous=false;
-    vRec.onresult=function(ev){
-      var txt="";
-      for(var i=0;i&lt;ev.results.length;i++){ txt+=ev.results[i][0].transcript+" "; }
-      if(box){ box.value=(box.value?box.value+" ":"")+txt.trim(); }
-    };
-    vRec.onerror=function(){ toast("Dictee impossible - utilise le micro du clavier"); if(box) box.focus(); };
-    vRec.onend=function(){ vRec=null; if(btn) btn.textContent="🎤 Dicter"; };
-    vRec.start();
-    if(btn) btn.textContent="⏹ Arreter";
-    toast("Parle maintenant...");
-  }catch(e){
-    vRec=null;
-    toast("Dictee impossible - utilise le micro du clavier");
-    if(box) box.focus();
-  }
-}
-
-/* ===== DICTEE : remplir les lignes Daily a partir du texte ===== */
-function applyDailyVoice(){
-  var box=document.getElementById("d-voice");
-  var raw=box?box.value:"";
-  if(!raw||!raw.trim()){ toast("Dicte ou ecris d abord ta phrase"); if(box) box.focus(); return; }
-  var rows=parseDailySpeech(raw);
-  if(!rows.length){
-    toast("Aucune machine reconnue - ex: DR222 de 8h a 9h daily service");
-    return;
-  }
-  // retire une carte vide existante pour ne pas laisser de ligne blanche
-  var list=document.getElementById("daily-list");
-  if(list){
-    for(var c=list.children.length-1;c&gt;=0;c--){
-      var sel=list.children[c].querySelector(".d-rig");
-      if(sel &amp;&amp; !sel.value) list.children[c].remove();
-    }
-  }
-  for(var i=0;i&lt;rows.length;i++){
-    vEnsureRig(rows[i].rig);
-    addDaily(rows[i]);
-  }
-  if(box) box.value="";
-  try{ saveDraft(); }catch(e){}
-  toast(rows.length+" machine(s) ajoutee(s) - verifie puis genere");
-}
-
-
 /* =================== SERVICE WORKER (hors-ligne) =================== */
 if("serviceWorker" in navigator){
   window.addEventListener("load",function(){ navigator.serviceWorker.register("./service-worker.js").catch(function(){}); });
 }
-try{ vLoadRigs(); }catch(e){}
 initLock();
 
 </script>
