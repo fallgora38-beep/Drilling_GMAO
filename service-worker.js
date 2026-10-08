@@ -1,6 +1,6 @@
-// Service Worker - GMAO Drilling (fichier unique) - v3
+// Service Worker - GMAO Drilling (fichier unique) - v4
 // Objectif : l app s ouvre et genere ses PDF sans aucun reseau.
-var CACHE_NAME = "gmao-solo-v3";
+var CACHE_NAME = "gmao-solo-v4";
 
 // Indispensables : sans eux l app ne s ouvre pas hors-ligne
 var CORE = [
@@ -10,6 +10,7 @@ var CORE = [
 ];
 // Importants mais non bloquants : si l un manque, le reste du hors-ligne marche quand meme
 var OPTIONAL = [
+  "./jspdf_umd_min.js",
   "./jspdf.umd.min.js",
   "./icon-192.png",
   "./icon-512.png"
