@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 5 (actions courantes + hors-ligne) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 6 (envoi groupe des PDF) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -281,10 +281,10 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
       <div id="offline-status" style="font-size:13px;line-height:1.6;">Verification...</div>
     </div>
     <div class="wa-box">
-      <div class="wa-box-t">Partager les rapports (un par un)</div>
-      <div style="font-size:11.5px;color:var(--text3);margin-bottom:10px;">Appuie sur un rapport pour l envoyer sur WhatsApp. Envoie-les un par un, a ton rythme. Seuls les rapports remplis apparaissent ici.</div>
+      <div class="wa-box-t">Envoyer les rapports</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-bottom:10px;">Coche les rapports puis touche Envoyer : WhatsApp recoit tous les PDF d un coup. Les rapports des dernieres 24 h sont coches d office. Le bouton Seul envoie un rapport a part.</div>
       <div id="send-list"></div>
-      <button class="btn btn-amber" onclick="downloadAllPDF()" style="margin-top:6px;">Telecharger tous les PDF (secours)</button>
+      <button class="btn btn-amber" onclick="downloadAllPDF()" style="margin-top:6px;">Telecharger les PDF coches (secours)</button>
     </div>
     <div class="wa-box" style="background:rgba(56,182,255,0.06);border-color:rgba(56,182,255,0.2);">
       <div class="wa-box-t" style="color:var(--blue);">Sauvegarde des donnees</div>
@@ -320,7 +320,7 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
 </div>
 
 
-<script src="./jspdf.umd.min.js"></script>
+<script src="./jspdf_umd_min.js"></script>
 
 <script type="text/plain" id="gmaosrc">
 /* ======== DECLARATIONS PLACEES EN TETE : elles doivent exister AVANT le demarrage ======== */
@@ -355,10 +355,11 @@ function pushReport(entry){
   for(var i=0;i&lt;DB.length;i++){
     if(DB[i] &amp;&amp; DB[i].key &amp;&amp; DB[i].key===entry.key){
       entry.ts=DB[i].ts||entry.ts;
+      entry.updated=Date.now();
       DB[i]=entry; replaced=true; break;
     }
   }
-  if(!replaced) DB.push(entry);
+  if(!replaced){ entry.updated=Date.now(); DB.push(entry); }
   saveDB();
   return replaced;
 }
@@ -498,14 +499,21 @@ function actApply(v,pick){
 
 
 /* =================== HORS-LIGNE : etat, librairie PDF, stockage =================== */
-// Si la librairie PDF locale n a pas ete trouvee, on tente la version internet (secours)
+// Librairie PDF : la page charge ./jspdf_umd_min.js ; si absent, on essaie l autre nom
+// (l iPhone renomme parfois les points en tirets bas), puis internet en dernier recours.
 (function(){
   if(window.jspdf&amp;&amp;window.jspdf.jsPDF) return;
-  try{
+  var list=["./jspdf.umd.min.js","https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"], k=0;
+  function next(){
+    if(window.jspdf&amp;&amp;window.jspdf.jsPDF) return;
+    if(k&gt;=list.length) return;
     var s=document.createElement("script");
-    s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+    s.src=list[k++];
+    s.onload=function(){ if(!(window.jspdf&amp;&amp;window.jspdf.jsPDF)) next(); };
+    s.onerror=next;
     document.head.appendChild(s);
-  }catch(e){}
+  }
+  try{ next(); }catch(e){}
 })();
 // Le stockage est-il autorise ? (bloque si Safari &gt; Bloquer tous les cookies)
 var STORAGE_OK=(function(){
@@ -535,12 +543,168 @@ function checkOffline(){
   }
   Promise.all([
     caches.match("./index.html",{ignoreSearch:true}),
+    caches.match("./jspdf_umd_min.js",{ignoreSearch:true}),
     caches.match("./jspdf.umd.min.js",{ignoreSearch:true})
   ]).then(function(r){
+    r=[r[0], r[1]||r[2]];
     if(r[0]&amp;&amp;r[1]) el.innerHTML="&lt;span style='color:#22c97a;'&gt;&amp;#9989; Pret pour le hors-ligne : rapports et PDF.&lt;/span&gt;"+tip;
     else if(r[0]) el.innerHTML="&lt;span style='color:#f0a832;'&gt;&amp;#9888; Rapports OK hors-ligne, mais pas encore les PDF.&lt;/span&gt;&lt;br&gt;Ouvre l application une fois avec du reseau et attends 10 secondes."+tip;
     else el.innerHTML="&lt;span style='color:#f0a832;'&gt;&amp;#9888; Pas encore pret pour le hors-ligne.&lt;/span&gt;&lt;br&gt;Ouvre l application avec du reseau, attends 10 secondes, puis reviens ici."+tip;
   }).catch(function(){ el.textContent="Etat hors-ligne inconnu."; });
+}
+
+
+/* =================== ENVOI GROUPE DES RAPPORTS (tous les PDF d un coup) =================== */
+var SEND_TYPES=[
+  {type:"Panne", label:"Rapport de panne", file:"Rapport_Panne"},
+  {type:"Daily", label:"Daily Service",    file:"Daily_Service"},
+  {type:"MDS",   label:"MDS Compliance",   file:"MDS_Compliance"},
+  {type:"Oil",   label:"Rapport huile",    file:"Oil_Report"}
+];
+var SEND_HOUR=3600000;
+
+function entryWhen(e){ return (e&amp;&amp;(e.updated||e.ts))||0; }
+function entryRef(e){
+  if(!e) return "";
+  if(e.ref) return e.ref;
+  if(e.meta&amp;&amp;e.meta.ref) return e.meta.ref;
+  var st=(e.type==="Oil"&amp;&amp;e.meta&amp;&amp;e.meta.st&amp;&amp;e.meta.st!=="-")?e.meta.st:"";
+  return reportRef(e.type,e.date,e.shift,st);
+}
+function agoTxt(when){
+  var m=Math.round((Date.now()-when)/60000);
+  if(m&lt;1) return "a l instant";
+  if(m&lt;60) return "il y a "+m+" min";
+  var h=Math.round(m/60);
+  if(h&lt;24) return "il y a "+h+" h";
+  var d=Math.round(h/24);
+  return "il y a "+d+" jour"+(d&gt;1?"s":"");
+}
+// Le rapport le plus recent de chaque type, lu dans les rapports ENREGISTRES
+// (et pas seulement ceux generes depuis la derniere ouverture de l app).
+// Moins de 24 h : coche d office. 24 a 72 h : affiche mais decoche. Plus vieux : masque.
+function sendItems(){
+  var out=[], now=Date.now();
+  for(var t=0;t&lt;SEND_TYPES.length;t++){
+    var st=SEND_TYPES[t], best=null;
+    for(var i=0;i&lt;DB.length;i++){
+      var e=DB[i];
+      if(!e||e.type!==st.type) continue;
+      if(!best||entryWhen(e)&gt;entryWhen(best)) best=e;
+    }
+    if(!best) continue;
+    var age=now-entryWhen(best);
+    if(age&gt;72*SEND_HOUR) continue;
+    var ref=entryRef(best);
+    out.push({st:st, e:best, ref:ref, when:entryWhen(best), checked:age&lt;=24*SEND_HOUR, fname:st.file+"_"+ref+".pdf"});
+  }
+  return out;
+}
+// Fabrique le PDF d un rapport enregistre (sans toucher a ce qui est a l ecran)
+function buildFromEntry(type,e){
+  var saved, doc;
+  if(type==="Panne"){ saved=lastPanne; lastPanne={rows:e.rows,meta:e.meta}; try{ doc=buildPannePDF(); } finally{ lastPanne=saved; } }
+  else if(type==="Daily"){ saved=lastDaily; lastDaily={rows:e.rows,meta:e.meta}; try{ doc=buildDailyPDF(); } finally{ lastDaily=saved; } }
+  else if(type==="MDS"){ saved=lastMDS; lastMDS={data:e.data,meta:e.meta}; try{ doc=buildMDSPDF(); } finally{ lastMDS=saved; } }
+  else if(type==="Oil"){ saved=lastOil; lastOil={rows:e.rows,meta:e.meta}; try{ doc=buildOilPDF(); } finally{ lastOil=saved; } }
+  return doc;
+}
+function itemFile(it){
+  var blob=buildFromEntry(it.st.type,it.e).output("blob");
+  return new File([blob],it.fname,{type:"application/pdf"});
+}
+function checkedItems(){
+  var items=sendItems(), boxes=document.querySelectorAll(".send-chk"), on={}, out=[];
+  for(var i=0;i&lt;boxes.length;i++){ if(boxes[i].checked) on[boxes[i].getAttribute("data-type")]=1; }
+  for(var j=0;j&lt;items.length;j++){ if(on[items[j].st.type]) out.push(items[j]); }
+  return out;
+}
+function downloadFiles(files){
+  for(var i=0;i&lt;files.length;i++){
+    (function(f,delay){ setTimeout(function(){ downloadBlob(f,f.name); },delay); })(files[i],i*700);
+  }
+}
+function pdfReady(){
+  if(getJsPDF()) return true;
+  toast("La librairie PDF se charge, reessaie dans 2 secondes");
+  return false;
+}
+// TOUS les rapports coches, en UN SEUL partage (WhatsApp recoit tous les PDF d un coup)
+function shareAllReports(){
+  if(!pdfReady()) return;
+  var items=checkedItems();
+  if(!items.length){ toast("Coche au moins un rapport"); return; }
+  var files=[];
+  try{ for(var i=0;i&lt;items.length;i++) files.push(itemFile(items[i])); }
+  catch(err){ toast("Erreur PDF : "+(err&amp;&amp;err.message?err.message:err)); return; }
+  if(navigator.canShare&amp;&amp;navigator.canShare({files:files})){
+    navigator.share({files:files}).then(function(){
+      toast(files.length+" PDF partages");
+    }).catch(function(e){
+      if(e&amp;&amp;e.name==="AbortError") return;
+      downloadFiles(files); toast("Partage impossible - PDF telecharges");
+    });
+  } else if(files.length&gt;1&amp;&amp;navigator.canShare&amp;&amp;navigator.canShare({files:[files[0]]})){
+    toast("Ce telephone n envoie qu un fichier a la fois : utilise les boutons Seul");
+  } else {
+    downloadFiles(files); toast(files.length+" PDF telecharges");
+  }
+}
+// Un seul rapport (secours)
+function shareOneType(type){
+  if(!pdfReady()) return;
+  var items=sendItems(), it=null;
+  for(var i=0;i&lt;items.length;i++){ if(items[i].st.type===type) it=items[i]; }
+  if(!it){ toast("Rapport introuvable"); return; }
+  var file;
+  try{ file=itemFile(it); }catch(err){ toast("Erreur PDF : "+(err&amp;&amp;err.message?err.message:err)); return; }
+  if(navigator.canShare&amp;&amp;navigator.canShare({files:[file]})){
+    navigator.share({files:[file]}).catch(function(e){
+      if(e&amp;&amp;e.name==="AbortError") return;
+      downloadBlob(file,file.name); toast("Partage impossible - PDF telecharge");
+    });
+  } else { downloadBlob(file,file.name); toast("PDF telecharge"); }
+}
+// Secours : telecharge les PDF coches
+function downloadAllPDF(){
+  if(!pdfReady()) return;
+  var items=checkedItems();
+  if(!items.length){ toast("Coche au moins un rapport"); return; }
+  var files=[];
+  try{ for(var i=0;i&lt;items.length;i++) files.push(itemFile(items[i])); }
+  catch(err){ toast("Erreur PDF : "+(err&amp;&amp;err.message?err.message:err)); return; }
+  downloadFiles(files);
+  toast(files.length+" PDF telecharges");
+}
+function updateSendBtn(){
+  var b=document.getElementById("send-all-btn");
+  if(!b) return;
+  var n=document.querySelectorAll(".send-chk:checked").length;
+  b.textContent=n?("Envoyer "+(n&gt;1?"les "+n+" PDF":"le PDF")):"Coche un rapport";
+  b.style.opacity=n?"1":"0.45";
+}
+function renderSendList(){
+  var box=document.getElementById("send-list");
+  if(!box) return;
+  var items=sendItems();
+  if(!items.length){
+    box.innerHTML='&lt;div style="text-align:center;color:var(--text3);padding:14px;font-size:13px;"&gt;Aucun rapport recent. Genere un rapport Panne, Daily, MDS ou Huile : il apparaitra ici.&lt;/div&gt;';
+    return;
+  }
+  var h="";
+  for(var i=0;i&lt;items.length;i++){
+    var it=items[i];
+    h+='&lt;div class="send-row" style="display:flex;gap:10px;align-items:center;padding:10px 10px 10px 12px;border:1px solid var(--border2);border-radius:11px;margin-bottom:8px;background:var(--surface2);"&gt;'+
+       '&lt;label style="display:flex;gap:11px;align-items:center;flex:1;min-width:0;cursor:pointer;"&gt;'+
+       '&lt;input type="checkbox" class="send-chk" data-type="'+it.st.type+'"'+(it.checked?' checked':'')+' onchange="updateSendBtn()" style="width:22px;height:22px;flex:0 0 auto;accent-color:#25D366;"&gt;'+
+       '&lt;span style="min-width:0;"&gt;&lt;span style="display:block;font-weight:700;font-size:14.5px;"&gt;'+it.st.label+'&lt;/span&gt;'+
+       '&lt;span style="display:block;font-size:11.5px;color:var(--text3);"&gt;'+it.ref+' &amp;middot; '+agoTxt(it.when)+'&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;'+
+       '&lt;button type="button" onclick="shareOneType(\''+it.st.type+'\')" style="flex:0 0 auto;background:transparent;border:1px solid var(--wa);color:var(--wa);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;font-family:inherit;"&gt;Seul&lt;/button&gt;'+
+       '&lt;/div&gt;';
+  }
+  h+='&lt;button id="send-all-btn" class="btn btn-wa" style="margin-top:4px;" onclick="shareAllReports()"&gt;Envoyer&lt;/button&gt;';
+  box.innerHTML=h;
+  updateSendBtn();
 }
 
 /* ======== FIN DES DECLARATIONS EN TETE ======== */
@@ -1476,20 +1640,6 @@ function buildMergedPDF(){
 }
 function niceName(n){ return n.replace(/_/g," "); }
 // Affiche un bouton de partage par rapport genere (envoi un par un vers WhatsApp)
-function renderSendList(){
-  var box=document.getElementById("send-list");
-  if(!box) return;
-  var reports=collectAllReports();
-  if(!reports.length){
-    box.innerHTML='&lt;div style="text-align:center;color:var(--text3);padding:14px;font-size:13px;"&gt;Aucun rapport genere pour le moment. Remplis et genere un rapport (Panne, Daily, MDS, Huile, Work Order).&lt;/div&gt;';
-    return;
-  }
-  var h="";
-  for(var i=0;i&lt;reports.length;i++){
-    h+='&lt;button class="btn btn-wa" style="margin-bottom:8px;" onclick="shareOneReport('+i+')"&gt;Partager : '+niceName(reports[i].name)+'&lt;/button&gt;';
-  }
-  box.innerHTML=h;
-}
 // Partage UN rapport (declenche par l appui de l utilisateur -&gt; jamais d erreur WhatsApp)
 function shareOneReport(idx){
   var reports=collectAllReports();
@@ -1515,16 +1665,6 @@ function shareOneReport(idx){
   } else {
     downloadBlob(blob,fname); toast("PDF telecharge");
   }
-}
-function downloadAllPDF(){
-  var reports=collectAllReports();
-  if(!reports.length){ toast("Aucun rapport genere. Remplis-en au moins un."); return; }
-  for(var i=0;i&lt;reports.length;i++){
-    (function(rep,delay){
-      setTimeout(function(){ downloadBlob(rep.doc.output("blob"),rep.name+".pdf"); },delay);
-    })(reports[i],i*700);
-  }
-  toast(reports.length+" PDF telecharges");
 }
 
 // Partage le PDF (WhatsApp via menu natif) ou telecharge
