@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 6 (envoi groupe des PDF) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 7 (finitions terrain) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -46,7 +46,7 @@ input[type="time"],input[type="date"]{color-scheme:dark;}
 .btn-green{background:var(--green);color:#000;}
 .btn-amber{background:var(--amber);color:#000;}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
-.btn-sm{padding:8px 14px;font-size:13px;width:auto;display:inline-block;margin:0;}
+.btn-sm{padding:11px 16px;font-size:14px;width:auto;display:inline-block;margin:0;min-height:44px;}
 .btn-wa{background:var(--wa);color:#fff;}
 .btn-wa2{background:var(--wa2);color:#fff;}
 .btn-red{background:rgba(240,72,72,0.15);color:var(--red);}
@@ -54,7 +54,7 @@ input[type="time"],input[type="date"]{color-scheme:dark;}
 .mb-head{background:var(--surface3);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
 .mb-title{font-size:14px;font-weight:800;color:var(--green);}
 .mb-body{padding:12px 14px;}
-.rm{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:4px 8px;}
+.rm{background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:8px 12px;min-width:44px;min-height:44px;margin:-6px -8px -6px 0;}
 .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:12px;}
 .empty .ei{font-size:38px;margin-bottom:10px;}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);height:72px;display:grid;grid-template-columns:repeat(5,1fr);z-index:200;}
@@ -109,7 +109,7 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
     <div class="tb-name">MAINTENANCE</div>
     <div class="tb-sub" id="sub">Drilling GMAO</div>
   </div>
-  <button onclick="lockApp()" style="background:none;color:var(--amber);font-size:15px;font-weight:700;padding:8px 12px;border:1px solid var(--border2);border-radius:10px;white-space:nowrap;" title="Verrouiller">&#128274; Verrouiller</button>
+  <button onclick="lockApp()" style="background:none;color:var(--amber);font-size:15px;font-weight:700;padding:8px 12px;min-height:44px;border:1px solid var(--border2);border-radius:10px;white-space:nowrap;" title="Verrouiller">&#128274; Verrouiller</button>
 </div>
 
 <div class="main">
@@ -699,12 +699,73 @@ function renderSendList(){
        '&lt;input type="checkbox" class="send-chk" data-type="'+it.st.type+'"'+(it.checked?' checked':'')+' onchange="updateSendBtn()" style="width:22px;height:22px;flex:0 0 auto;accent-color:#25D366;"&gt;'+
        '&lt;span style="min-width:0;"&gt;&lt;span style="display:block;font-weight:700;font-size:14.5px;"&gt;'+it.st.label+'&lt;/span&gt;'+
        '&lt;span style="display:block;font-size:11.5px;color:var(--text3);"&gt;'+it.ref+' &amp;middot; '+agoTxt(it.when)+'&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;'+
-       '&lt;button type="button" onclick="shareOneType(\''+it.st.type+'\')" style="flex:0 0 auto;background:transparent;border:1px solid var(--wa);color:var(--wa);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;font-family:inherit;"&gt;Seul&lt;/button&gt;'+
+       '&lt;button type="button" onclick="shareOneType(\''+it.st.type+'\')" style="flex:0 0 auto;background:transparent;border:1px solid var(--wa);color:var(--wa);border-radius:8px;padding:7px 12px;min-height:44px;min-width:58px;font-size:13px;font-weight:700;font-family:inherit;"&gt;Seul&lt;/button&gt;'+
        '&lt;/div&gt;';
   }
   h+='&lt;button id="send-all-btn" class="btn btn-wa" style="margin-top:4px;" onclick="shareAllReports()"&gt;Envoyer&lt;/button&gt;';
   box.innerHTML=h;
   updateSendBtn();
+}
+
+
+/* =================== FINITIONS : suppression sure + shift unique =================== */
+// Une carte contient-elle une saisie ?
+function cardHasContent(card){
+  var els=card.querySelectorAll("input,select,textarea");
+  for(var i=0;i&lt;els.length;i++){
+    var e=els[i];
+    if(e.type==="checkbox"||e.type==="file"||e.type==="button") continue;
+    if(String(e.value||"").trim()) return true;
+  }
+  return !!card.querySelector(".tech-tag");
+}
+// Supprimer une carte : confirmation seulement si elle n est pas vide
+function removeCard(card){
+  if(cardHasContent(card) &amp;&amp; !confirm("Supprimer cette carte ? Ce qui est saisi dedans sera perdu.")) return;
+  card.remove();
+  try{ scheduleDraftSave(); }catch(e){}
+}
+// Un seul shift pour Panne, MDS et Huile (le Daily est toujours en Day, a part)
+var SHIFT_IDS=["p-shift","mds-shift","oil-shift"];
+// Shift d un rapport en cours (brouillon avec du contenu), sinon ""
+function draftShift(){
+  var d; try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}"); }catch(e){ return ""; }
+  if(!d||typeof d!=="object") return "";
+  var i;
+  if(d.panne&amp;&amp;d.pmeta&amp;&amp;d.pmeta.shift){ for(i=0;i&lt;d.panne.length;i++){ var p=d.panne[i]||{}; if(p.machine||p.start||p.end||p.failure||p.action||p.techs) return d.pmeta.shift; } }
+  if(d.mds&amp;&amp;d.mds.shift&amp;&amp;d.mds.vals){ for(i=0;i&lt;d.mds.vals.length;i++){ if(d.mds.vals[i]&amp;&amp;d.mds.vals[i].v) return d.mds.shift; } }
+  if(d.oil&amp;&amp;d.oil.shift&amp;&amp;d.oil.rows){ for(i=0;i&lt;d.oil.rows.length;i++){ if(d.oil.rows[i]&amp;&amp;d.oil.rows[i].rig) return d.oil.shift; } }
+  return "";
+}
+// 1) shift choisi il y a moins de 12 h  2) shift d un rapport en cours  3) l heure (06h-18h = Day)
+function guessShift(){
+  try{ if(PREFS.shift &amp;&amp; PREFS.shiftAt &amp;&amp; (Date.now()-PREFS.shiftAt)&lt;12*3600000) return PREFS.shift; }catch(e){}
+  var ds=""; try{ ds=draftShift(); }catch(e){}
+  if(ds==="Day"||ds==="Night") return ds;
+  var h=new Date().getHours();
+  return (h&gt;=6 &amp;&amp; h&lt;18)?"Day":"Night";
+}
+function setAllShifts(val,exceptId){
+  for(var i=0;i&lt;SHIFT_IDS.length;i++){
+    if(SHIFT_IDS[i]===exceptId) continue;
+    var s=document.getElementById(SHIFT_IDS[i]);
+    if(s &amp;&amp; s.value!==val) s.value=val;
+  }
+}
+function initShifts(){
+  sv("d-shift","Day"); // le Daily est toujours en Day
+  setAllShifts(guessShift(),null);
+  for(var i=0;i&lt;SHIFT_IDS.length;i++){
+    (function(id){
+      var s=document.getElementById(id);
+      if(!s) return;
+      s.addEventListener("change",function(){
+        try{ PREFS.shift=s.value; PREFS.shiftAt=Date.now(); localStorage.setItem("gmao_prefs",JSON.stringify(PREFS)); }catch(e){}
+        setAllShifts(s.value,id);
+        try{ scheduleDraftSave(); }catch(e){}
+      });
+    })(SHIFT_IDS[i]);
+  }
 }
 
 /* ======== FIN DES DECLARATIONS EN TETE ======== */
@@ -860,7 +921,7 @@ function restoreMDSDraft(){
   try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}"); }catch(e){ return; }
   if(!d||!d.mds) return;
   if(d.mds.date) sv("mds-date",d.mds.date);
-  sv("mds-shift",d.mds.shift); sv("mds-comment",d.mds.comment);
+  sv("mds-comment",d.mds.comment);
   var vals=d.mds.vals||[];
   var mn=document.querySelectorAll(".mds-num"), mo=document.querySelectorAll(".mds-ok");
   for(var i=0;i&lt;vals.length;i++){
@@ -877,7 +938,7 @@ function restoreOilDraft(){
   try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}"); }catch(e){ return; }
   if(!d||!d.oil) return;
   if(d.oil.date) sv("oil-date",d.oil.date);
-  sv("oil-st",d.oil.st); sv("oil-shift",d.oil.shift); sv("oil-comment",d.oil.comment);
+  sv("oil-st",d.oil.st); sv("oil-comment",d.oil.comment);
   var rows=d.oil.rows||[];
   var hasContent=false;
   for(var r0=0;r0&lt;rows.length;r0++){ if(rows[r0].rig) hasContent=true; }
@@ -939,7 +1000,7 @@ function restoreDrafts(){
       addPanne(p);
     }
     if(!hasContent){ document.getElementById("panne-list").innerHTML=""; pCount=0; addPanne(); }
-    if(d.pmeta){ sv("p-shift",d.pmeta.shift); if(d.pmeta.date) sv("p-date",d.pmeta.date); sv("p-lead",d.pmeta.lead); sv("p-sup",d.pmeta.sup); sv("p-site",d.pmeta.site); }
+    if(d.pmeta){ if(d.pmeta.date) sv("p-date",d.pmeta.date); sv("p-lead",d.pmeta.lead); sv("p-sup",d.pmeta.sup); sv("p-site",d.pmeta.site); }
   }
   // DAILY
   if(d.daily&amp;&amp;d.daily.length){
@@ -951,7 +1012,7 @@ function restoreDrafts(){
       addDaily(dd);
     }
     if(!hasD){ document.getElementById("daily-list").innerHTML=""; dCount=0; addDaily(); }
-    if(d.dmeta){ if(d.dmeta.date) sv("d-date",d.dmeta.date); sv("d-loc",d.dmeta.loc); sv("d-shift",d.dmeta.shift); sv("d-lead",d.dmeta.lead); sv("d-forman",d.dmeta.forman); sv("d-comment",d.dmeta.comment); }
+    if(d.dmeta){ if(d.dmeta.date) sv("d-date",d.dmeta.date); sv("d-loc",d.dmeta.loc); sv("d-lead",d.dmeta.lead); sv("d-forman",d.dmeta.forman); sv("d-comment",d.dmeta.comment); }
   }
 }
 
@@ -1035,7 +1096,7 @@ function addPanne(data){
   var head=document.createElement("div");
   head.className="mb-head";
   var t=document.createElement("div"); t.className="mb-title"; t.textContent="Panne "+id;
-  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.onclick=function(){ d.remove(); };
+  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.setAttribute("aria-label","Supprimer"); rm.onclick=function(){ removeCard(d); };
   head.appendChild(t); head.appendChild(rm);
   var body=document.createElement("div"); body.className="mb-body";
   body.appendChild(fieldMachine(data.machine,t));
@@ -1054,7 +1115,7 @@ function addPanne(data){
   var actOpen=false;
   var chipCss="display:block;width:100%;text-align:left;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:9px 11px;font-size:13px;margin-bottom:5px;font-family:inherit;";
   var pillCss="display:inline-block;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:16px;padding:8px 12px;font-size:13px;margin:0 6px 6px 0;font-family:inherit;";
-  var linkCss="background:none;border:none;color:var(--amber);font-size:13px;font-weight:600;padding:4px 0;font-family:inherit;";
+  var linkCss="background:none;border:none;color:var(--amber);font-size:14px;font-weight:600;padding:12px 0;min-height:44px;font-family:inherit;";
   function pickAction(txt){
     inAct.value=actApply(inAct.value,txt);
     actOpen=false;
@@ -1273,7 +1334,7 @@ function addDaily(data){
   d.className="mb-card";
   var head=document.createElement("div"); head.className="mb-head";
   var t=document.createElement("div"); t.className="mb-title"; t.textContent=data.rig||"Choisir machine";
-  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.onclick=function(){ d.remove(); };
+  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.setAttribute("aria-label","Supprimer"); rm.onclick=function(){ removeCard(d); };
   head.appendChild(t); head.appendChild(rm);
   var body=document.createElement("div"); body.className="mb-body";
   // machine select
@@ -1910,7 +1971,7 @@ function addOil(){
   var d=document.createElement("div"); d.className="mb-card";
   var head=document.createElement("div"); head.className="mb-head";
   var t=document.createElement("div"); t.className="mb-title"; t.textContent="Choisir machine";
-  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.onclick=function(){ d.remove(); };
+  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.setAttribute("aria-label","Supprimer"); rm.onclick=function(){ removeCard(d); };
   head.appendChild(t); head.appendChild(rm);
   var body=document.createElement("div"); body.className="mb-body";
   // machine select
@@ -2105,7 +2166,7 @@ function addWO(){
   var d=document.createElement("div"); d.className="mb-card";
   var head=document.createElement("div"); head.className="mb-head";
   var t=document.createElement("div"); t.className="mb-title"; t.textContent="Tache "+id;
-  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.onclick=function(){ d.remove(); };
+  var rm=document.createElement("button"); rm.className="rm"; rm.textContent="\u2715"; rm.setAttribute("aria-label","Supprimer"); rm.onclick=function(){ removeCard(d); };
   head.appendChild(t); head.appendChild(rm);
   var body=document.createElement("div"); body.className="mb-body";
   // machine
@@ -2739,6 +2800,7 @@ try{
 }catch(e){}
 // restaure les brouillons en cours (panne/daily non encore generes)
 try{ restoreDrafts(); }catch(e){}
+try{ initShifts(); }catch(e){}
 // sauvegarde auto du brouillon a chaque saisie dans les vues Panne et Daily
 try{
   ["v-panne","v-daily","v-mds","v-oil"].forEach(function(vid){
