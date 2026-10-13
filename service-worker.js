@@ -1,6 +1,6 @@
-// Service Worker - GMAO Drilling (fichier unique) - v4
+// Service Worker - GMAO Drilling (fichier unique) - v5 (VERSION 7)
 // Objectif : l app s ouvre et genere ses PDF sans aucun reseau.
-var CACHE_NAME = "gmao-solo-v4";
+var CACHE_NAME = "gmao-solo-v5";
 
 // Indispensables : sans eux l app ne s ouvre pas hors-ligne
 var CORE = [
@@ -56,6 +56,16 @@ function isPage(req) {
   return acc.indexOf("text/html") >= 0;
 }
 
+// La page de l app elle-meme ( "/" ou "/index.html" ) ? Seule elle peut remplacer l app en cache.
+// (avant : ouvrir manifest.json ou README dans Safari remplacait l app par ce fichier)
+function isAppPage(req) {
+  try {
+    var u = new URL(req.url), sc = new URL(self.registration.scope);
+    if (u.origin !== sc.origin) return false;
+    return u.pathname === sc.pathname || u.pathname === sc.pathname + "index.html";
+  } catch (e) { return false; }
+}
+
 // Page de secours : jamais d ecran vide
 function offlinePage() {
   return caches.open(CACHE_NAME).then(function(cache){
@@ -79,7 +89,18 @@ self.addEventListener("fetch", function(event) {
   var req = event.request;
   if (req.method !== "GET") return;
 
-  // 1) PAGE : cache d abord (ouverture instantanee, meme sans reseau),
+  // 0) AUTRE PAGE DU SITE ouverte dans le navigateur (manifest, README...) :
+  //    reseau d abord, et on ne touche jamais a l app en cache.
+  if (isPage(req) && !isAppPage(req)) {
+    event.respondWith(
+      fetch(req).catch(function(){
+        return caches.match(req, {ignoreSearch:true}).then(function(c){ return c ? clean(c) : offlinePage(); });
+      })
+    );
+    return;
+  }
+
+  // 1) PAGE DE L APP : cache d abord (ouverture instantanee, meme sans reseau),
   //    puis mise a jour silencieuse pour la prochaine ouverture.
   if (isPage(req)) {
     event.respondWith(
