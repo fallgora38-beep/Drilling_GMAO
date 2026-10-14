@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.2 (suivi downtime + correcteur + actions au passe) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.3 (suivi downtime + correcteur anglais) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -975,6 +975,8 @@ var TENSE_EN={clean:"cleaned",replace:"replaced",change:"changed",check:"checked
   add:"added",apply:"applied",torque:"torqued",measure:"measured",cut:"cut",put:"put",set:"set",bypass:"bypassed",unclog:"unclogged",free:"freed",straighten:"straightened",
   service:"serviced",purge:"purged",refix:"refixed",retape:"retaped",solder:"soldered",resolder:"resoldered",plug:"plugged",unplug:"unplugged",mount:"mounted",
   dismantle:"dismantled",assemble:"assembled",reassemble:"reassembled",troubleshoot:"troubleshot",diagnose:"diagnosed",program:"programmed",update:"updated",upgrade:"upgraded"};
+var TENSE_TRAIL={clean:1,replace:1,change:1,check:1,tighten:1,adjust:1,refill:1,wash:1,grease:1,repair:1,install:1,weld:1,test:1,inspect:1,drain:1,flush:1,calibrate:1,
+  bleed:1,swap:1,lubricate:1,rebuild:1,overhaul:1,isolate:1,remove:1,reconnect:1};   // "Oil change" -&gt; "Oil changed" (mais pas "Mast top", "Daily service")
 var TENSE_PART={up:1,out:1,off:1,back:1,down:1,on:1};          // top up -&gt; topped up, blow out -&gt; blown out
 var TENSE_FORMS=null;
 function tenseForms(){
@@ -1011,7 +1013,7 @@ function tenseFix(seg){
   }
   var out=null;
   // francais : "Remplacer le flexible" -&gt; "Flexible remplace"
-  if(TENSE_FR[low[0]]){
+  if(false&amp;&amp;TENSE_FR[low[0]]){   // remplace par la traduction en anglais
     var p=TENSE_FR[low[0]], rest=words.slice(1), art=rest.length?txtNorm(rest[0]):"";
     if(rest.length&amp;&amp;/^l['\u2019]/i.test(rest[0])){ rest[0]=rest[0].slice(2); art="le"; }
     else if(TENSE_ART[art]){ rest=rest.slice(1); }
@@ -1036,7 +1038,7 @@ function tenseFix(seg){
     out=tenseCap(o)+" "+parts.join(" and ");
   }
   // anglais : "ECM clean", "Bit change" -&gt; "ECM cleaned", "Bit changed"
-  else if(words.length&gt;1&amp;&amp;TENSE_EN[low[low.length-1]]&amp;&amp;TENSE_EN[low[low.length-1]]!==low[low.length-1]){
+  else if(words.length&gt;1&amp;&amp;TENSE_TRAIL[low[low.length-1]]&amp;&amp;TENSE_EN[low[low.length-1]]!==low[low.length-1]){
     words[words.length-1]=TENSE_EN[low[low.length-1]];
     out=tenseCap(words.join(" "));
   }
@@ -1073,15 +1075,24 @@ function spellSuggest(text,typing,mode){
   // pendant la frappe, le dernier mot n est peut-etre pas fini : on ne juge que l orthographe des mots finis
   if(typing){
     var m=src.match(/^(.*[^A-Za-z0-9\u00C0-\u00FF])?([A-Za-z0-9\u00C0-\u00FF]+)$/);
-    if(m){ var head=m[1]||""; if(!head.trim()) return null; var r0=spellSuggest(head,false,"");
+    if(m){ var head=m[1]||""; if(!head.trim()) return null; var r0=spellSuggest(head,false,"typing");
       return r0?{text:r0.text+m[2], words:r0.words, kind:"spell"}:null; }
   }
   spellBuild();
-  var parts=src.split(/(\s*[,;\/+]\s*)/), out=[], changed=false, unknown=[];
+  var parts=src.split(/(\s*[,;\/+]\s*)/), out=[], changed=false, unknown=[], anyFr=false;
   for(var i=0;i&lt;parts.length;i++){
     var seg=parts[i];
     if(i%2===1||!seg.trim()){ out.push(seg); continue; }
     var lead=seg.match(/^\s*/)[0], trail=seg.match(/\s*$/)[0];
+    // ecrit en francais -&gt; proposer l anglais (les rapports sont en anglais)
+    if(mode!=="typing"){
+      var frKey="~fr:"+txtNorm(seg);
+      if(!spellKeepLoad()[frKey]&amp;&amp;frDetect(seg)){
+        var tr=null; try{ tr=frTranslate(seg); }catch(e){ tr=null; }
+        if(tr&amp;&amp;txtNorm(tr)!==txtNorm(seg)){ out.push(tr); changed=true; anyFr=true; unknown.push(frKey); continue; }
+        out.push(seg); continue;          // francais que l app ne sait pas traduire : on n y touche pas
+      }
+    } else if(frDetect(seg)){ out.push(seg); continue; }
     var ph=spellPhraseFor(seg);
     if(ph&amp;&amp;txtNorm(ph)!==txtNorm(seg)){
       var segWords=spellWordsOf(seg); for(var u=0;u&lt;segWords.length;u++) if(!spellKnown(segWords[u])) unknown.push(segWords[u]);
@@ -1114,7 +1125,7 @@ function spellSuggest(text,typing,mode){
   if(!changed) return null;
   var res=out.join("");
   if(res===src) return null;
-  return {text:res, words:unknown.concat(tenseKeys), kind:spellOnly?"spell":"tense"};
+  return {text:res, words:unknown.concat(tenseKeys), kind:anyFr?"en":(spellOnly?"spell":"tense")};
 }
 // ajoute la suggestion sous un champ texte
 function spellAttach(inp,mode){
@@ -1128,7 +1139,7 @@ function spellAttach(inp,mode){
     var s=null; try{ s=spellSuggest(inp.value,typing===true,mode||""); }catch(e){ s=null; }
     var sig=s?s.text:"";
     if(box.getAttribute("data-sig")===sig) return;
-    var lbl=s&amp;&amp;s.kind==="tense"?"&amp;#9998; Action deja faite, au passe : ":"&amp;#9998; Tu voulais ecrire : ";
+    var lbl=s&amp;&amp;s.kind==="en"?"&amp;#9998; En anglais : ":(s&amp;&amp;s.kind==="tense"?"&amp;#9998; Action deja faite, au passe : ":"&amp;#9998; Tu voulais ecrire : ");
     // deja affichee : on met juste le texte a jour, les boutons restent en place sous le doigt
     if(s&amp;&amp;box.querySelector(".spell-ok")){ box.setAttribute("data-sig",sig); var tt=box.querySelector(".spell-t"); tt.innerHTML=lbl+"&lt;b&gt;&lt;/b&gt; ?"; tt.querySelector("b").textContent=s.text; return; }
     box.setAttribute("data-sig",sig);
@@ -1161,7 +1172,7 @@ function spellCheckFields(sel,actionSel){
   var els=document.querySelectorAll(sel), list=[];
   for(var i=0;i&lt;els.length;i++){ var md=(actionSel&amp;&amp;els[i].matches(actionSel))?"action":""; var s=null; try{ s=spellSuggest(els[i].value,false,md); }catch(e){} if(s) list.push({el:els[i],s:s}); }
   if(!list.length) return true;
-  var msg="A corriger avant le rapport (orthographe, actions au passe) :\n";
+  var msg="A corriger avant le rapport (anglais, orthographe, actions au passe) :\n";
   for(var j=0;j&lt;list.length&amp;&amp;j&lt;4;j++) msg+="- "+list[j].el.value+"  -&gt;  "+list[j].s.text+"\n";
   if(list.length&gt;4) msg+="(+"+(list.length-4)+" autre(s))\n";
   msg+="\nOK = corriger   /   Annuler = garder tel quel";
@@ -1169,6 +1180,156 @@ function spellCheckFields(sel,actionSel){
     for(var k=0;k&lt;list.length;k++){ list[k].el.value=list[k].s.text; try{ list[k].el.dispatchEvent(new Event("input",{bubbles:true})); }catch(e){} }
   }
   return true;
+}
+
+/* =================== FRANCAIS -&gt; ANGLAIS (les rapports sont en anglais) =================== */
+// Traduction par regles, limitee au vocabulaire de maintenance. Si un mot n est pas connu,
+// l app ne propose rien (mieux vaut rien qu une traduction fausse).
+var FR_MULTI=[
+  [/\bliquide de refroidissement\b/g,"coolant"],[/\btete de rotation\b/g,"rothead"],[/\bfaux contacts?\b/g,"loosecontact"],[/\bcourt circuits?\b/g,"shortcircuit"],
+  [/\bessuie glaces?\b/g,"wiper"],[/\bchaine d avance\b/g,"feedchain"],[/\ba plat\b/g,"flat"],[/\bdecharge(e|es|s)?\b/g,"flat"],
+  [/\bne (demarre|demarrent) (pas|plus)\b|\bne veut pas demarrer\b|\bpas de demarrage\b|\bnon demarrage\b/g,"nostart"],
+  [/\bne (marche|marchent|fonctionne|fonctionnent) (pas|plus)\b|\ben panne\b|\bhors service\b/g,"notworking"],
+  [/\ben surchauffe\b/g,"surchauffe"],[/\bfaire l appoint\b|\bfaire le plein\b|\b(re)?mise a niveau\b/g,"appoint"],
+  [/\b(remis|remise) en place\b/g,"refit"],[/\bmise en place\b/g,"install"],[/\bmise a jour\b/g,"updated"],
+  [/\b(en )?attente (de )?pieces?\b/g,"waitingparts"],[/\bau niveau (du|de la|des|de l|de)\b/g,"sur"],[/\bvidange moteur\b/g,"enginedrain"],
+  [/\bniveau (d huile )?(trop )?(bas|faible)\b/g,"niveaubas"]
+];
+var FR_ACT={replaced:"remplacer remplace remplacee remplaces remplacees remplacement",cleaned:"nettoyer nettoye nettoyee nettoyes nettoyees nettoyage",
+  changed:"changer change changee changes changees changement",tightened:"serrer serre serree serres serrage resserrer resserre resserree resserrage",
+  checked:"verifier verifie verifiee verification controler controle controlee",adjusted:"regler regle reglee reglage ajuster ajuste ajustee ajustement",
+  repaired:"reparer repare reparee reparation",greased:"graisser graisse graissage",bled:"purger purge purgee",
+  "topped up":"rajouter rajoute rajoutee rajout ajouter ajoute ajout appoint completer complete",welded:"souder soude soudee soudure",
+  washed:"laver lave lavee lavage",
+  "blown out":"souffler souffle soufflee soufflage",freed:"debloquer debloque debloquee deblocage",reconnected:"brancher branche branchee rebrancher rebranche rebranchee",
+  disconnected:"debrancher debranche debranchee",insulated:"isoler isole isolee",recharged:"recharger recharge rechargee",drained:"vidanger vidange vidangee",
+  secured:"fixer fixe fixee fixation",fitted:"monter monte montee montage",refitted:"remonter remonte remontee remontage refit",removed:"demonter demonte demontee demontage deposer depose",
+  installed:"installer installe installee installation install",tested:"tester teste testee",calibrated:"calibrer calibre calibree etalonner etalonne etalonnee etalonnage",
+  tensioned:"retendre retendu retendue tendre tendu tendue",reset:"reinitialiser reinitialise",updated:"updated"};
+var FR_STATE={leak:"fuite fuites",overheating:"surchauffe",burst:"eclate eclatee eclates",broken:"casse cassee casses cassees",cracked:"fissure fissuree",
+  worn:"use usee uses usees",loose:"desserre desserree desserres",stuck:"bloque bloquee bloques",jammed:"coince coincee",faulty:"defectueux defectueuse hs",
+  damaged:"endommage endommagee abime abimee",blocked:"encrasse encrassee bouche bouchee colmate colmatee",dirty:"sale sales",bent:"tordu tordue",cut:"coupe coupee",
+  burnt:"grille grillee brule brulee",flat:"flat","not working":"notworking","no start":"nostart",problem:"probleme problemes",noise:"bruit bruits",
+  alarm:"alarme alarmes",error:"erreur erreurs",fault:"defaut defauts",missing:"manque manquant manquante"};
+var FR_NOUN={flexible:"hose",flexibles:"hoses",durite:"hose",durites:"hoses",tuyau:"pipe",tuyaux:"pipes",raccord:"fitting",raccords:"fittings",joint:"seal",joints:"seals",
+  filtre:"filter",filtres:"filters",pompe:"pump",pompes:"pumps",moteur:"engine",compresseur:"compressor",huile:"oil",eau:"water",air:"air",gasoil:"fuel",gazole:"fuel",
+  carburant:"fuel",coolant:"coolant",refroidissement:"cooling",radiateur:"radiator",ventilateur:"fan",courroie:"belt",courroies:"belts",batterie:"battery",batteries:"batteries",
+  alternateur:"alternator",demarreur:"starter",capteur:"sensor",capteurs:"sensors",sonde:"sensor",cable:"cable",cables:"cables",fil:"wire",fils:"wires",faisceau:"harness",
+  fusible:"fuse",fusibles:"fuses",relais:"relay",interrupteur:"switch",contacteur:"contactor",connecteur:"connector",connecteurs:"connectors",prise:"plug",bobine:"coil",
+  bobines:"coils",vanne:"valve",vannes:"valves",valve:"valve",electrovanne:"solenoid valve",distributeur:"control valve",clapet:"check valve",verin:"cylinder",verins:"cylinders",
+  stabilisateur:"stabilizer",stabilisateurs:"stabilizers",chenille:"track",chenilles:"tracks",chaine:"chain",avance:"feed",feedchain:"feed chain",mat:"mast",tete:"head",
+  rothead:"rotation head",rotation:"rotation",tige:"rod",tiges:"rods",marteau:"hammer",taillant:"bit",taillants:"bits",cabine:"cabin",clim:"A/C",climatisation:"A/C",
+  ecran:"display",afficheur:"display",manette:"joystick",joystick:"joystick",frein:"brake",freins:"brakes",galet:"roller",galets:"rollers",tendeur:"tensioner",
+  barbotin:"sprocket",patin:"track shoe",patins:"track shoes",boulon:"bolt",boulons:"bolts",ecrou:"nut",ecrous:"nuts",vis:"screw",support:"bracket",supports:"brackets",
+  patte:"bracket",collier:"clamp",colliers:"clamps",bride:"flange",roulement:"bearing",roulements:"bearings",palier:"bearing",arbre:"shaft",axe:"pin",goupille:"pin",
+  reservoir:"tank",bouchon:"cap",jauge:"gauge",injecteur:"injector",injecteurs:"injectors",turbo:"turbo",echappement:"exhaust",admission:"intake",
+  depoussiereur:"dust collector",poussiere:"dust",lumiere:"light",lumieres:"lights",phare:"light",phares:"lights",klaxon:"horn",siege:"seat",porte:"door",vitre:"window",
+  wiper:"wiper",carrousel:"carousel",graisse:"grease",niveau:"level",pression:"pressure",temperature:"temperature",vibration:"vibration",vibrations:"vibrations",
+  code:"code",loosecontact:"loose contact",shortcircuit:"short circuit",contact:"contact",circuit:"circuit",masse:"ground",tension:"tension",translation:"tramming",
+  machine:"machine",foreuse:"drill",carter:"housing",couvercle:"cover",protection:"guard",tole:"plate",plaque:"plate",accumulateur:"accumulator",echangeur:"cooler",
+  refroidisseur:"cooler",thermostat:"thermostat",pneu:"tyre",roue:"wheel",bras:"arm",flasque:"cover",cadre:"frame",chassis:"frame",lampe:"lamp",gyrophare:"beacon",
+  camera:"camera",antenne:"antenna",ecm:"ECM",ecu:"ECU",can:"CAN",gps:"GPS"};
+var FR_ADJ={hydraulique:"hydraulic",hydrauliques:"hydraulic",electrique:"electrical",electriques:"electrical",principal:"main",principale:"main",avant:"front",
+  arriere:"rear",gauche:"left",droit:"right",droite:"right",superieur:"upper",superieure:"upper",inferieur:"lower",inferieure:"lower",neuf:"new",neuve:"new",
+  nouveau:"new",nouvelle:"new",ancien:"old",ancienne:"old",haute:"high",basse:"low",mecanique:"mechanical",pneumatique:"pneumatic"};
+var FR_DROP={le:1,la:1,les:1,l:1,un:1,une:1,ce:1,cette:1,ces:1,son:1,sa:1,ses:1};
+var FR_PREP={de:1,du:1,des:1,d:1,a:1,au:1,aux:1};
+var FR_LOC={sur:1,dans:1};
+// mots qui existent aussi en anglais : seuls, ils ne disent pas que le texte est en francais
+var FR_AMBIG={air:1,code:1,contact:1,circuit:1,turbo:1,temperature:1,vibration:1,vibrations:1,support:1,cable:1,cables:1,flexible:1,rotation:1,installation:1,
+  calibration:1,tension:1,valve:1,joystick:1,machine:1,camera:1,a:1,refit:1,install:1,updated:1,coolant:1,wiper:1,flat:1,ecm:1,ecu:1,can:1,gps:1,translation:1,
+  protection:1,thermostat:1,lampe:0,test:1,sale:1,cut:1,fixation:1,montage:1,lavage:0};
+var FR_MAP=null;
+function frMap(){
+  if(FR_MAP) return FR_MAP; FR_MAP={act:{},state:{}};
+  var k,i,a;
+  for(k in FR_ACT){ a=FR_ACT[k].split(" "); for(i=0;i&lt;a.length;i++) FR_MAP.act[a[i]]=k; }
+  for(k in FR_STATE){ a=FR_STATE[k].split(" "); for(i=0;i&lt;a.length;i++) FR_MAP.state[a[i]]=k; }
+  return FR_MAP;
+}
+function frNorm(seg){
+  var t=" "+txtNorm(seg)+" ";
+  for(var i=0;i&lt;FR_MULTI.length;i++) t=t.replace(FR_MULTI[i][0],FR_MULTI[i][1]);
+  return t.trim().split(" ").filter(function(x){ return x; });
+}
+// le texte est-il en francais ?
+function frDetect(seg){
+  var w=frNorm(seg), M=frMap(), fr=0;
+  for(var i=0;i&lt;w.length;i++){
+    var x=w[i];
+    if(FR_AMBIG[x]) continue;
+    if(FR_DROP[x]||FR_LOC[x]||(FR_PREP[x]&amp;&amp;x!=="a")||M.act[x]||M.state[x]||FR_NOUN[x]||FR_ADJ[x]||x==="niveaubas"||x==="waitingparts"||x==="enginedrain") fr++;
+  }
+  return fr&gt;0;
+}
+// mots francais d un groupe nominal -&gt; anglais ("capteur de pression" -&gt; "pressure sensor")
+function frNP(tokens,orig){
+  var chunks=[[]], adjs=[], bad=0, nouns=0;
+  for(var i=0;i&lt;tokens.length;i++){
+    var t=tokens[i];
+    if(FR_DROP[t]) continue;
+    if(FR_PREP[t]){ if(chunks[chunks.length-1].length) chunks.push([]); continue; }
+    if(FR_ADJ[t]){ adjs.push(FR_ADJ[t]); continue; }
+    if(FR_NOUN[t]){ chunks[chunks.length-1].push(FR_NOUN[t]); nouns++; continue; }
+    var o=orig[t]||t;
+    if(/\d/.test(o)||(o===o.toUpperCase()&amp;&amp;/[A-Z]/.test(o))){ chunks[chunks.length-1].push(o); nouns++; continue; }   // HP, DR227...
+    bad++;
+  }
+  var parts=[];
+  for(var c=chunks.length-1;c&gt;=0;c--){
+    var ch=chunks[c]; if(!ch.length) continue;
+    var head=ch[0], mods=ch.slice(1).reverse();
+    parts.push(mods.concat([head]).join(" "));
+  }
+  adjs.reverse();
+  var txt=adjs.concat(parts).join(" ");
+  return {text:txt, bad:bad, nouns:nouns};
+}
+function frTranslate(seg){
+  var lead=seg.match(/^\s*/)[0], trail=seg.match(/\s*$/)[0];
+  var w=frNorm(seg); if(!w.length) return null;
+  var orig={}, ow=String(seg).split(/[^A-Za-z0-9\u00C0-\u00FF]+/);
+  for(var q=0;q&lt;ow.length;q++){ if(ow[q]) orig[txtNorm(ow[q])]=ow[q]; }
+  if(w.length===1&amp;&amp;w[0]==="waitingparts") return lead+"Waiting parts"+trail;
+  var M=frMap(), act=null, state=null, rest=[], low=false, engDrain=false;
+  // "niveau ... bas" (ex: niveau d huile hydraulique bas) -&gt; "Low ... level"
+  if(w.indexOf("niveau")&gt;=0&amp;&amp;(w.indexOf("bas")&gt;=0||w.indexOf("faible")&gt;=0)){
+    low=true; w=w.filter(function(x){ return x!=="niveau"&amp;&amp;x!=="bas"&amp;&amp;x!=="faible"&amp;&amp;x!=="trop"; });
+  }
+  for(var i=0;i&lt;w.length;i++){
+    var x=w[i];
+    if(x==="enginedrain"){ engDrain=true; continue; }
+    if(x==="niveaubas"){ low=true; continue; }
+    if(x==="waitingparts"){ state="waiting"; continue; }
+    if(!act&amp;&amp;M.act[x]&amp;&amp;!(x==="graisse"&amp;&amp;i&gt;0)){ act=M.act[x]; continue; }
+    if(!state&amp;&amp;M.state[x]){ state=M.state[x]; continue; }
+    rest.push(x);
+  }
+  // lieu : "fuite sur le mat" -&gt; "leak on mast"
+  var li=-1; for(var j=0;j&lt;rest.length;j++){ if(FR_LOC[rest[j]]){ li=j; break; } }
+  var objT=li&gt;=0?rest.slice(0,li):rest, locT=li&gt;=0?rest.slice(li+1):[];
+  // "fuite hydraulique mat" : adjectif puis nom sans "de" -&gt; le nom est le lieu ("Hydraulic leak on mast")
+  if(state==="leak"&amp;&amp;li&lt;0&amp;&amp;objT.length&gt;=2&amp;&amp;FR_ADJ[objT[0]]){
+    var na=0; while(na&lt;objT.length&amp;&amp;FR_ADJ[objT[na]]) na++;
+    if(na&lt;objT.length&amp;&amp;FR_NOUN[objT[na]]){ locT=objT.slice(na); objT=objT.slice(0,na); }
+  }
+  var obj=frNP(objT,orig), loc=frNP(locT,orig);
+  if(obj.bad||loc.bad) return null;
+  // une action ou une phrase sans verbe doit porter sur un nom (sinon "Avant mise a jour" -&gt; "Front updated")
+  if(!state&amp;&amp;!low&amp;&amp;obj.text&amp;&amp;!obj.nouns) return null;
+  if(loc.text&amp;&amp;!loc.nouns) return null;
+  var o=obj.text, out="";
+  if(engDrain){ out="Engine oil changed"; }
+  else if(low){ if(!o) o="oil"; out="Low "+o+" level"; }
+  else if(act){ if(!o) return null; out=o+" "+act; }
+  else if(state==="waiting"){ out="Waiting parts"+(o?" ("+o+")":""); }
+  else if(state){ out=(o?o+" ":"")+state; if(!o&amp;&amp;!loc.text) return null; }
+  else { if(!obj.nouns) return null; out=o; }
+  if(loc.text) out+=" on "+loc.text;
+  out=out.replace(/\s+/g," ").trim();
+  if(!out) return null;
+  out=out.charAt(0).toUpperCase()+out.slice(1);
+  return lead+out+trail;
 }
 
 /* =================== LECTURE DES CAPTURES D ECRAN (OCR, sans reseau) ===================
@@ -2709,7 +2870,7 @@ function addPanne(data){
   function refreshSugg(){
     var av=String(inAct.value||"");
     var learned=[];
-    if(!av.trim()){ try{ learned=suggestActions(inFail.value,3); }catch(e){ learned=[]; } }
+    if(!av.trim()){ try{ learned=suggestActions(inFail.value,3); if(!learned.length){ var fx=spellSuggest(inFail.value,false,""); if(fx) learned=suggestActions(fx.text,3); } }catch(e){ learned=[]; } }
     var used=actUsed(av), filt=actFilter(av), pills=[], mode="toggle";
     if(filt){ pills=actMatches(filt,used,6); if(pills.length) mode="filter"; }
     if(mode==="toggle" &amp;&amp; actOpen){
