@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 7 (finitions terrain) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.2 (suivi downtime + correcteur + actions au passe) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -57,11 +57,48 @@ input[type="time"],input[type="date"]{color-scheme:dark;}
 .rm{background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:8px 12px;min-width:44px;min-height:44px;margin:-6px -8px -6px 0;}
 .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:12px;}
 .empty .ei{font-size:38px;margin-bottom:10px;}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);height:72px;display:grid;grid-template-columns:repeat(5,1fr);z-index:200;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);height:72px;display:grid;grid-template-columns:repeat(6,1fr);z-index:200;}
 .bn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;color:var(--text3);cursor:pointer;}
 .bn.active{color:var(--green);}
 .bn-ic{font-size:21px;}
 .bn-lb{font-size:9.5px;letter-spacing:0.2px;text-transform:uppercase;text-align:center;line-height:1.1;}
+/* ---- Suivi downtime ---- */
+.dchip{display:inline-block;background:transparent;border:1px solid var(--green);border-radius:20px;padding:10px 14px;font-size:13px;font-weight:700;min-height:44px;margin:2px 0 8px;font-family:inherit;text-align:left;max-width:100%;overflow-wrap:anywhere;}
+.dwarn{font-size:12px;color:var(--amber);background:rgba(240,168,50,0.08);border-radius:6px;padding:7px 9px;margin:0 0 8px;line-height:1.4;overflow-wrap:anywhere;}
+.dpick{background:var(--surface3);border:1px solid var(--border2);border-radius:10px;padding:12px;margin:6px 0 10px;}
+.dspan{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.dspan button{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);border-radius:8px;min-height:44px;font-size:13px;font-weight:700;font-family:inherit;}
+.dspan button.on{background:var(--green);border-color:var(--green);color:#000;}
+.dnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font-size:13.5px;font-weight:700;text-align:center;}
+.dnav button{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:8px;min-width:44px;min-height:44px;font-size:22px;font-family:inherit;flex:0 0 auto;}
+.dkpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.dkpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;min-width:0;}
+.dkpi-t{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.dkpi-v{font-size:22px;font-weight:800;}
+.dkpi-s{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.35;}
+.dtop{border:1px solid var(--border2);background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:10px;}
+.dtop-h{display:flex;align-items:center;gap:10px;}
+.dtop-n{width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.dtop-eq{font-weight:800;font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere;}
+.dtop-v{font-weight:800;font-size:16px;color:var(--red);white-space:nowrap;}
+.dtop-s{font-size:12px;color:var(--text2);margin:6px 0;line-height:1.4;}
+.dtag{display:inline-block;border:1px solid;border-radius:6px;padding:4px 8px;font-size:11.5px;font-weight:700;margin-bottom:6px;line-height:1.35;}
+.dline{font-size:13px;line-height:1.45;margin-top:3px;overflow-wrap:anywhere;}
+.dmy{font-size:12.5px;line-height:1.45;background:rgba(34,201,122,0.06);border:1px solid rgba(34,201,122,0.2);border-radius:8px;padding:8px;margin-top:8px;overflow-wrap:anywhere;}
+.drep{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dfleet{display:inline-flex;align-items:center;gap:2px;background:var(--surface2);border:1px solid var(--border2);border-radius:22px;padding:0 0 0 12px;margin:0 6px 8px 0;font-size:13px;font-weight:700;}
+.dfleet button{background:none;border:none;color:var(--red);min-width:44px;min-height:44px;font-size:15px;}
+.spell-box{background:rgba(240,168,50,0.08);border:1px solid rgba(240,168,50,0.35);border-radius:8px;padding:8px 10px;margin-top:2px;}
+.spell-t{font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.4;overflow-wrap:anywhere;}
+.spell-t b{color:var(--amber);}
+.spell-row{display:flex;gap:8px;flex-wrap:wrap;}
+.spell-ok{background:var(--amber);color:#000;border:none;border-radius:7px;padding:10px 16px;font-weight:700;font-size:14px;min-height:44px;font-family:inherit;}
+.spell-keep{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;font-size:13px;min-height:44px;font-family:inherit;}
+.dgrid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.dgrid2>.field{min-width:0;}
+#v-suivi .field input,#v-suivi .field select{min-width:0;max-width:100%;}
+#v-suivi details>summary{list-style:none;}
+#v-suivi details>summary::-webkit-details-marker{display:none;}
 .wa-box{background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.2);border-radius:10px;padding:14px;margin-bottom:14px;}
 .wa-box-t{font-size:13px;font-weight:700;color:var(--wa);margin-bottom:10px;}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:11px 20px;border-radius:8px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:9999;}
@@ -274,6 +311,24 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
     </div>
   </div>
 
+  <div class="view" id="v-suivi">
+    <div class="page-title">Suivi <span>downtime</span></div>
+    <div class="wa-box" style="background:rgba(56,182,255,0.06);border-color:rgba(56,182,255,0.2);">
+      <div class="wa-box-t" style="color:var(--blue);">Ajouter des rapports downtime</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-bottom:10px;line-height:1.5;">Captures d ecran ou fichiers Excel du rapport &laquo; Equipment Downtime Report &raquo;. Tu peux en choisir plusieurs d un coup. Tout reste dans ton telephone.</div>
+      <button class="btn btn-green" onclick="downPick('img')">&#128247; Captures d ecran</button>
+      <button class="btn btn-ghost" onclick="downPick('xlsx')">&#128196; Fichiers Excel</button>
+      <button class="btn btn-ghost" onclick="downManual()">&#9997; Saisir a la main</button>
+      <input type="file" id="down-img" accept="image/*" multiple style="display:none;" onchange="downImport(this,'img')">
+      <input type="file" id="down-xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple style="display:none;" onchange="downImport(this,'xlsx')">
+      <div id="down-status" style="font-size:12.5px;line-height:1.5;margin-top:4px;"></div>
+    </div>
+    <datalist id="down-fleet"></datalist>
+    <div id="down-verif"></div>
+    <div id="down-dash"></div>
+    <div id="down-manage"></div>
+  </div>
+
   <div class="view" id="v-info">
     <div class="page-title">Envoyer <span>les rapports</span></div>
     <div class="wa-box" style="background:rgba(34,201,122,0.05);border-color:rgba(34,201,122,0.25);">
@@ -310,6 +365,7 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
   <button class="bn" id="bn-daily" onclick="nav('daily')"><span class="bn-ic">&#128203;</span><span class="bn-lb">Daily</span></button>
   <button class="bn" id="bn-mds" onclick="nav('mds')"><span class="bn-ic">&#9989;</span><span class="bn-lb">MDS</span></button>
   <button class="bn" id="bn-oil" onclick="nav('oil')"><span class="bn-ic">&#128738;</span><span class="bn-lb">Huile</span></button>
+  <button class="bn" id="bn-suivi" onclick="nav('suivi')"><span class="bn-ic">&#128202;</span><span class="bn-lb">Suivi</span></button>
   <button class="bn" id="bn-info" onclick="nav('info')"><span class="bn-ic">&#128228;</span><span class="bn-lb">Envoyer</span></button>
 </div>
 
@@ -544,8 +600,11 @@ function checkOffline(){
   Promise.all([
     caches.match("./index.html",{ignoreSearch:true}),
     caches.match("./jspdf_umd_min.js",{ignoreSearch:true}),
-    caches.match("./jspdf.umd.min.js",{ignoreSearch:true})
+    caches.match("./jspdf.umd.min.js",{ignoreSearch:true}),
+    caches.match("./ocr_core.js",{ignoreSearch:true}),
+    caches.match("./ocr_eng.gz",{ignoreSearch:true})
   ]).then(function(r){
+    tip=((r[3]&amp;&amp;r[4])?"&lt;br&gt;&lt;span style='color:#22c97a;'&gt;&amp;#9989; Lecture des captures (Suivi) : prete sans reseau.&lt;/span&gt;":"&lt;br&gt;&lt;span style='color:#f0a832;'&gt;&amp;#9888; Lecture des captures (Suivi) : pas encore installee. Il faut les fichiers ocr_core.js et ocr_eng.gz sur GitHub.&lt;/span&gt;")+tip;
     r=[r[0], r[1]||r[2]];
     if(r[0]&amp;&amp;r[1]) el.innerHTML="&lt;span style='color:#22c97a;'&gt;&amp;#9989; Pret pour le hors-ligne : rapports et PDF.&lt;/span&gt;"+tip;
     else if(r[0]) el.innerHTML="&lt;span style='color:#f0a832;'&gt;&amp;#9888; Rapports OK hors-ligne, mais pas encore les PDF.&lt;/span&gt;&lt;br&gt;Ouvre l application une fois avec du reseau et attends 10 secondes."+tip;
@@ -762,11 +821,1529 @@ function initShifts(){
       s.addEventListener("change",function(){
         try{ PREFS.shift=s.value; PREFS.shiftAt=Date.now(); localStorage.setItem("gmao_prefs",JSON.stringify(PREFS)); }catch(e){}
         setAllShifts(s.value,id);
+        try{ for(var di=0;di&lt;DATE_IDS.length;di++) setAutoDate(DATE_IDS[di],false); }catch(e){}
         try{ scheduleDraftSave(); }catch(e){}
       });
     })(SHIFT_IDS[i]);
   }
 }
+
+
+/* =================== CORRECTEUR : suggere la bonne orthographe (pannes, actions) =================== */
+// L app ne corrige jamais toute seule : elle propose, le mecanicien choisit (Corriger / Garder).
+var SPELL_KEY="gmao_words";
+var SPELL_PHRASES=[
+  "Hose burst","Hydraulic hose burst","Hydraulic oil leak","Engine oil leak","Coolant leak","Fuel leak","Air leak","Radiator leak","Cylinder leak","Rotation head leak",
+  "Compressor overheating","Engine overheating","Hydraulic oil overheating","Engine no start","Engine shut down","Loose contact","Short circuit","Tramming problem",
+  "Low hydraulic oil level","Low coolant level","Low engine oil level","Stabilizer sensor fault","Feed chain broken","Battery flat","Alternator not charging",
+  "A/C not working","Water in fuel","Air filter blocked","Fuel filter blocked","Hydraulic filter blocked","Dust collector problem","Rod handler problem","Carousel problem",
+  "Joystick fault","Display not working","ECM fault","CAN bus error","Track tension low","Fan belt broken","Brake problem","Lights not working","Pump failure","Valve stuck",
+  "Sensor fault","Wiring damaged","Compressor noise","Hammer problem","Bit change",
+  "Loose contact","Short-circuit repaired","Bolts tightened","Hydraulic oil refilled","Compressor oil refilled","Rock oil refilled","Engine oil refilled","Coolant refilled",
+  "Stabilizer valve cleaned","Stabilizer sensor replaced","Coil replaced","Cooler washed","ECM cleaned","ECM connector cleaned","Hose replaced","Hose repaired","Fitting replaced","Seal replaced",
+  "O-ring replaced","Filter replaced","Fuse replaced","Relay replaced","Sensor replaced","Battery replaced","Battery charged","Cable repaired","Connector cleaned","Wiring repaired",
+  "Valve replaced","Valve cleaned","Pump replaced","Belt replaced","Track tension adjusted","System reset","Parameters reset","Calibration done","Leak fixed","Fault code cleared",
+  "Greasing done","Air filter cleaned","Radiator cleaned","Waiting parts"
+];
+var SPELL_WORDS=(
+ // anglais : maintenance foreuse
+ "clean cleaned cleaning replace replaced replacement repair repaired repairs check checked checking adjust adjusted adjustment tighten tightened tightening bolt bolts nut nuts "+
+ "refill refilled refilling top topped up change changed fit fitted install installed reset calibrate calibrated calibration weld welded welding wash washed washing grease greased "+
+ "greasing inspect inspected inspection test tested found faulty fault faults failure failed problem problems issue issues broken burst bursted leak leaking leaks leakage damaged damage "+
+ "worn cracked crack loose blocked stuck low high pressure temperature level overheating overheat overheated noise noisy vibration alarm error code codes warning start starting started "+
+ "working work works charging charge charged contact short circuit wire wires wiring cable cables harness connector connectors plug fuse fuses relay relays sensor sensors switch "+
+ "solenoid valve valves coil coils pump pumps motor motors engine engines compressor hose hoses pipe pipes fitting fittings seal seals oring gasket filter filters oil hydraulic "+
+ "hydraulics coolant water fuel diesel air radiator cooler fan belt belts battery batteries alternator starter ecm ecu display screen joystick cabin door light lights lamp horn "+
+ "track tracks tramming tram travel chain feed mast rotation rotary head rod rods bit bits hammer carousel handler stabilizer stabilizers jack jacks cylinder cylinders boom dust "+
+ "collector tank cap line lines return suction main pilot brake brakes tension roller rollers idler sprocket shoe pad centralizer guide bushing bearing shaft gear gearbox coupling "+
+ "flange clamp bracket mount cover guard panel controller module card board ground earth voltage current power supply signal communication can bus network software parameter "+
+ "parameters setting settings angle inclinometer camera auto lube lubrication waiting parts operator service daily preventive scheduled swap swapped removed refitted secured cut "+
+ "taped insulated connected disconnected bypass reconnected tie ties overhaul rebuild rebuilt drained bled bleed bleeding flushed flush primed prime level sight glass dipstick "+
+ "spring springs lever pedal steering wheel tyre tyres tire gauge meter hour hours shift day night rig drill drilling hole holes depth air pressure flow speed rpm idle throttle "+
+ "turbo injector injectors exhaust intake manifold head gasket thermostat crankcase oils fluid grease tube tubes nipple elbow tee union adapter reducer jic orfs bsp npt "+
+ "ring rings pin pins bush liner plate plates block hydraulique cleaned done fixed cleared cleared reset parts noise noisy smoke smoking hot cold wet dry dirty blocked clogged "+
+ "missing loose tight slack stretched bent twisted snapped torn chafed rubbed burnt burned melted corroded rusty seized jammed slipping sticking intermittent random "+
+ "operator damage accident collision rock rocks bench pit ramp road "+
+ // orthographe britannique et mots francais du terrain
+ "centraliser centralisers stabiliser stabilisers tyre tyres colour "+
+ "plat plate vide plein pleine perte puissance bruit bruits chauffe chaud froid arret arrete arreter marche coupe coupure alarme voyant allume eteint faible fort lent "+
+ "rapide jeu desserrage fissure fendu tordu plie usure encrasse encrasse bouche colmate sale propre lavage souffle soufflage purge purger vidange complement rajout "+
+ "rajoute mis remis remise retire demonte remonte monte pose depose repose reglage regle resserre serre fixe fixation support patte collier bride vis ecrou "+
+ "rondelle goupille axe roulement palier arbre engrenage pignon galet tendeur barbotin patin sabot carter couvercle reservoir bouchon jauge sonde "+
+ "electrovanne distributeur limiteur clapet accumulateur echangeur refroidisseur ventilo moteur thermique demarrer demarre ralenti regime "+
+ "sortie entree aspiration refoulement retour pilotage commande manette console afficheur alarme message erreur programme parametre parametres "+
+ "outil outils equipe equipes mecanicien mecaniciens electricien technicien chef quart jour nuit matin soir semaine "+
+ // abreviations d atelier
+ "hyd hydr mech maint ops comp eng elec temp press psi rpm ecm ecu can pto dth oem fwd rev assy approx qty req pcs bar kpa max min std aux cyl mtr sol conn harn lube hrs "+
+ "defect defects defective detect detected replace renew renewed modify modified adjust align aligned realign check rechecked tested monitor monitoring observe observed "+
+ // anglais : mots courants
+ "the and for with from into onto off out not was were has have had been due after before during while then still again also both left right front rear back side "+
+ "bottom upper lower inner outer new old all any some one two three four five more less very too only same other another each every this that these those there here "+
+ "when where why how what which who will would can could should must may might need needs needed use used using make made get got put set see seen show shows showing "+
+ "open opened close closed closing run running ran stop stopped stopping keep kept give given take taken come came going gone move moved moving turn turned turning hold held "+
+ "full empty half small big large long little much many few first last next part piece unit units system systems area place way time times minute minutes "+
+ "please note ok okay yes completed complete pending awaiting order ordered store stores supplier "+
+ // francais
+ "fuite fuites huile huiles flexible flexibles eclate eclatement remplace remplacement remplacer nettoye nettoyage nettoyer serrage serre serrer boulon boulons capteur capteurs "+
+ "moteur moteurs compresseur pression temperature surchauffe demarrage demarre demarrer batterie batteries cable cables faisceau contact court circuit verin verins pompe pompes "+
+ "vanne vannes bobine bobines filtre filtres radiateur refroidissement gasoil carburant chenille chenilles chaine tete rotation tige tiges marteau taillant cabine clim ecran "+
+ "reglage regle etalonnage controle controler verifie verification change repare reparation soudure soude graissage graisse niveau bas haut appoint fait faite mise jour avant "+
+ "apres panne pannes probleme defaut defectueux casse cassee use usee bloque bloquee coince desserre fuyant mat avec sans pour par sur sous dans des les une est pas plus "+
+ "tres trop entre vers chez lors pendant depuis encore deja aussi tout tous toute toutes non oui machine machines piece pieces attente operateur service entretien "+
+ "hydraulique electrique mecanique principal principale gauche droite avant arriere haut bas petit grand nouveau nouvelle ancien changement installation installe "+
+ "debranche branche rebranche isole isolation fil fils prise relais fusible interrupteur joint joints raccord raccords tuyau tuyaux durite eau air gaz poussiere "+
+ "depoussiereur stabilisateur stabilisateurs verin courroie ventilateur alternateur demarreur injecteur injecteurs turbo frein freins lumiere lumieres phare phares"
+).split(" ");
+// fautes frequentes deja connues (francophones qui ecrivent en anglais)
+var SPELL_FIX={clin:"clean",cline:"clean",klin:"clean",kleen:"clean",clen:"clean",bast:"burst",bust:"burst",burs:"burst",berst:"burst",brust:"burst",
+  liek:"leak",leek:"leak",lik:"leak",lek:"leak",leks:"leaks",hoz:"hose",hos:"hose",ouse:"hose",presure:"pressure",preshure:"pressure",prechure:"pressure",
+  hydrolic:"hydraulic",hidraulic:"hydraulic",hydraulik:"hydraulic",compresor:"compressor",compressur:"compressor",injectour:"injector",tigthen:"tighten",
+  tigthened:"tightened",remplaced:"replaced",replased:"replaced",riplaced:"replaced",chek:"check",cheked:"checked",sensur:"sensor",senser:"sensor",
+  batery:"battery",baterie:"battery",fiter:"filter",coolent:"coolant",kulant:"coolant",engin:"engine",enjin:"engine",motore:"motor",
+  overhiting:"overheating",overheting:"overheating",trammin:"tramming",traming:"tramming",staibilizer:"stabilizer",lose:"loose",
+  louse:"loose",contac:"contact",shorcircuit:"short-circuit",repear:"repair",repeared:"repaired",reparied:"repaired",cleanned:"cleaned",clined:"cleaned"};
+var SPELL={dict:null, phon:null, sig:"", keep:null, phrases:null};
+function spellKeepLoad(){ if(SPELL.keep) return SPELL.keep; SPELL.keep={}; try{ var k=JSON.parse(localStorage.getItem(SPELL_KEY)||"[]"); for(var i=0;i&lt;k.length;i++) SPELL.keep[k[i]]=1; }catch(e){} return SPELL.keep; }
+function spellKeep(words){
+  var k=spellKeepLoad(); for(var i=0;i&lt;words.length;i++) k[String(words[i]).toLowerCase()]=1;
+  try{ localStorage.setItem(SPELL_KEY,JSON.stringify(Object.keys(k))); }catch(e){}
+  SPELL.sig="";
+}
+// cle phonetique simple (anglais prononce a la francaise) : clean = clin = "kln", burst = bast = "bst"
+function spellPhon(w){
+  w=String(w||"").toLowerCase().replace(/[^a-z]/g,"");
+  if(!w) return "";
+  w=w.replace(/ph/g,"f").replace(/gh/g,"").replace(/ck/g,"k").replace(/sh|ch/g,"s").replace(/q/g,"k").replace(/c(?=[eiy])/g,"s").replace(/c/g,"k")
+     .replace(/x/g,"ks").replace(/z/g,"s").replace(/y/g,"i").replace(/w/g,"");
+  w=w.replace(/([aeiou])r(?![aeiou])/g,"$1");
+  if(!w) return "";
+  var f=w.charAt(0), rest=w.slice(1).replace(/[aeiou]/g,"");
+  return (f+rest).replace(/(.)\1+/g,"$1");
+}
+function spellWordsOf(t){ return txtNorm(t).split(" ").filter(function(x){ return x; }); }
+function spellBuild(){
+  var keep=spellKeepLoad(), hist=[];
+  try{ hist=hist.concat(SUGG.failure||[],SUGG.action||[]); }catch(e){}
+  var sig=hist.length+"|"+Object.keys(keep).length;
+  if(SPELL.dict&amp;&amp;SPELL.sig===sig) return;
+  var dict={}, i, j, w;
+  for(i=0;i&lt;SPELL_WORDS.length;i++){ w=SPELL_WORDS[i]; if(w) dict[w]=3; }
+  SPELL.phrases=[];
+  for(i=0;i&lt;SPELL_PHRASES.length;i++){
+    var ws=spellWordsOf(SPELL_PHRASES[i]); for(j=0;j&lt;ws.length;j++) dict[ws[j]]=3;
+    SPELL.phrases.push({text:SPELL_PHRASES[i], words:ws});
+  }
+  for(w in keep) dict[w]=3;
+  // verbes d action (toutes les formes) : connus, pour ne pas les "corriger"
+  try{ var TF=tenseForms(); for(w in TF){ dict[w]=3; dict[TF[w]]=3; } for(w in TENSE_FR) dict[w]=3; }catch(e){}
+  for(w in SPELL_FIX) if(!dict[w]) dict[w]=-1;                 // faute connue
+  SPELL.dict=dict; SPELL.phon={};
+  for(w in dict) if(dict[w]&gt;0) SPELL.phon[w]=spellPhon(w);
+  // mots de l historique : utiles comme suggestions, sauf s ils ressemblent a une faute d un mot de base
+  for(i=0;i&lt;hist.length;i++){
+    var hw=spellWordsOf(hist[i]);
+    for(j=0;j&lt;hw.length;j++){ w=hw[j]; if(dict[w]||w.length&lt;3||/\d/.test(w)) continue; if(!spellCandidate(w)){ dict[w]=1; SPELL.phon[w]=spellPhon(w); } }
+  }
+  SPELL.sig=sig;
+}
+function spellKnown(w){ var d=SPELL.dict[w]; return d!==undefined&amp;&amp;d&gt;0; }
+// meilleur mot connu pour un mot inconnu (ou null)
+function spellCandidate(w){
+  if(SPELL_FIX[w]) return SPELL_FIX[w];
+  var pw=spellPhon(w), best=null, bs=99;
+  if(pw.length&lt;2) return null;
+  for(var d in SPELL.phon){
+    var pd0=SPELL.phon[d];
+    if(d.length&lt;3||Math.abs(d.length-w.length)&gt;3||pd0.charAt(0)!==pw.charAt(0)) continue;
+    var L=lev(w,d,3), pd=lev(pw,pd0,2);
+    var ok=(L&lt;=1&amp;&amp;w.length&gt;=4)||(L&lt;=2&amp;&amp;w.length&gt;=6)||(pd===0&amp;&amp;pd0.length&gt;=2&amp;&amp;L&lt;=3&amp;&amp;w.length&gt;=4)||(pd&lt;=1&amp;&amp;L&lt;=2&amp;&amp;w.length&gt;=5);
+    if(!ok) continue;
+    var sc=L+pd*0.8-(SPELL.dict[d]&gt;=3?0.3:0);
+    if(sc&lt;bs){ bs=sc; best=d; }
+  }
+  return best;
+}
+
+/* ----- actions au passe (une action du rapport est deja faite) ----- */
+// verbe -&gt; participe passe (anglais). Les formes "replacing", "replaces" sont reconnues aussi.
+var TENSE_EN={clean:"cleaned",replace:"replaced",change:"changed",check:"checked",tighten:"tightened",retighten:"retightened",adjust:"adjusted",readjust:"readjusted",
+  refill:"refilled",fill:"filled",top:"topped",wash:"washed",grease:"greased",repair:"repaired",install:"installed",reinstall:"reinstalled",weld:"welded",test:"tested",
+  inspect:"inspected",bleed:"bled",drain:"drained",flush:"flushed",prime:"primed",calibrate:"calibrated",recalibrate:"recalibrated",align:"aligned",swap:"swapped",
+  secure:"secured",tie:"tied",tape:"taped",connect:"connected",reconnect:"reconnected",disconnect:"disconnected",insulate:"insulated",lubricate:"lubricated",
+  charge:"charged",recharge:"recharged",unblock:"unblocked",release:"released",rebuild:"rebuilt",overhaul:"overhauled",modify:"modified",renew:"renewed",
+  reroute:"rerouted",refit:"refitted",fit:"fitted",fix:"fixed",clear:"cleared",blow:"blown",remove:"removed",reset:"reset",restart:"restarted",isolate:"isolated",
+  add:"added",apply:"applied",torque:"torqued",measure:"measured",cut:"cut",put:"put",set:"set",bypass:"bypassed",unclog:"unclogged",free:"freed",straighten:"straightened",
+  service:"serviced",purge:"purged",refix:"refixed",retape:"retaped",solder:"soldered",resolder:"resoldered",plug:"plugged",unplug:"unplugged",mount:"mounted",
+  dismantle:"dismantled",assemble:"assembled",reassemble:"reassembled",troubleshoot:"troubleshot",diagnose:"diagnosed",program:"programmed",update:"updated",upgrade:"upgraded"};
+var TENSE_PART={up:1,out:1,off:1,back:1,down:1,on:1};          // top up -&gt; topped up, blow out -&gt; blown out
+var TENSE_FORMS=null;
+function tenseForms(){
+  if(TENSE_FORMS) return TENSE_FORMS; TENSE_FORMS={};
+  for(var v in TENSE_EN){
+    var p=TENSE_EN[v], ing;
+    if(/[^aeiou]e$/.test(v)) ing=v.slice(0,-1)+"ing";
+    else if(/^(top|swap|plug|unplug|cut|put|set|fit|refit|unclog|program)$/.test(v)) ing=v+v.slice(-1)+"ing";
+    else ing=v+"ing";
+    TENSE_FORMS[v]=p; TENSE_FORMS[ing]=p; TENSE_FORMS[/(s|sh|ch|x)$/.test(v)?v+"es":v+"s"]=p;
+  }
+  return TENSE_FORMS;
+}
+// verbes francais a l infinitif -&gt; participe passe
+var TENSE_FR={remplacer:"remplac\u00e9",nettoyer:"nettoy\u00e9",changer:"chang\u00e9",serrer:"serr\u00e9",resserrer:"resserr\u00e9",verifier:"v\u00e9rifi\u00e9",regler:"r\u00e9gl\u00e9",
+  reparer:"r\u00e9par\u00e9",graisser:"graiss\u00e9",purger:"purg\u00e9",rajouter:"rajout\u00e9",ajouter:"ajout\u00e9",souder:"soud\u00e9",controler:"contr\u00f4l\u00e9",laver:"lav\u00e9",
+  souffler:"souffl\u00e9",debloquer:"d\u00e9bloqu\u00e9",brancher:"branch\u00e9",rebrancher:"rebranch\u00e9",isoler:"isol\u00e9",recharger:"recharg\u00e9",vidanger:"vidang\u00e9",
+  fixer:"fix\u00e9",monter:"mont\u00e9",remonter:"remont\u00e9",demonter:"d\u00e9mont\u00e9",installer:"install\u00e9",tester:"test\u00e9",calibrer:"calibr\u00e9",etalonner:"\u00e9talonn\u00e9",
+  ajuster:"ajust\u00e9",retendre:"retendu",tendre:"tendu",remettre:"remis",mettre:"mis",refaire:"refait",faire:"fait"};
+var TENSE_ART={the:1,a:1,an:1,le:1,la:1,les:1,un:1,une:1,du:1,des:1};
+function tenseCap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):s; }
+// une action (segment) -&gt; meme action au passe, ou null si deja au passe / rien a changer
+function tenseFix(seg){
+  var lead=seg.match(/^\s*/)[0], trail=seg.match(/\s*$/)[0], core=seg.trim();
+  var words=core.split(/\s+/); if(!words.length) return null;
+  var F=tenseForms(), low=words.map(function(w){ return txtNorm(w); });
+  // deja au passe ? (un participe dans la phrase) -&gt; on ne touche pas
+  for(var i=0;i&lt;low.length;i++){
+    var lw=low[i];
+    if(lw==="done"||lw==="ok"||lw==="fait"||lw==="faite"||lw==="faits") return null;
+    for(var v in TENSE_EN){ if(TENSE_EN[v]===lw&amp;&amp;TENSE_EN[v]!==v) return null; }
+    if(/[a-z]{3,}ed$/.test(lw)&amp;&amp;!F[lw]) return null;
+    if(/^(remplace|nettoye|change|serre|resserre|verifie|regle|repare|graisse|purge|rajoute|ajoute|soude|controle|lave|souffle|debloque|branche|rebranche|isole|recharge|vidange|fixe|monte|remonte|demonte|installe|teste|calibre|etalonne|ajuste)(e|es|s)?$/.test(lw)&amp;&amp;/[\u00e9]/.test(words[i])) return null;
+  }
+  var out=null;
+  // francais : "Remplacer le flexible" -&gt; "Flexible remplace"
+  if(TENSE_FR[low[0]]){
+    var p=TENSE_FR[low[0]], rest=words.slice(1), art=rest.length?txtNorm(rest[0]):"";
+    if(rest.length&amp;&amp;/^l['\u2019]/i.test(rest[0])){ rest[0]=rest[0].slice(2); art="le"; }
+    else if(TENSE_ART[art]){ rest=rest.slice(1); }
+    else if(art==="de"&amp;&amp;rest.length&gt;1&amp;&amp;txtNorm(rest[1])==="la"){ rest=rest.slice(2); art="la"; }
+    if(art==="la"||art==="une") p+="e"; else if(art==="les"||art==="des") p+="s";
+    if(!rest.length) return null;
+    out=tenseCap(rest.join(" "))+" "+p;
+  }
+  // anglais : "Check and tighten all bolts" -&gt; "All bolts checked and tightened"
+  else if(F[low[0]]&amp;&amp;words.length&gt;1){
+    var parts=[F[low[0]]], k=1;
+    if(k&lt;low.length&amp;&amp;TENSE_PART[low[k]]){ parts[0]+=" "+low[k]; k++; }
+    while(k+1&lt;low.length&amp;&amp;(low[k]==="and"||words[k]==="&amp;"||words[k]==="+")&amp;&amp;F[low[k+1]]){
+      var pp=F[low[k+1]]; k+=2;
+      if(k&lt;low.length&amp;&amp;TENSE_PART[low[k]]){ pp+=" "+low[k]; k++; }
+      parts.push(pp);
+    }
+    var obj=words.slice(k);
+    if(obj.length&amp;&amp;TENSE_ART[txtNorm(obj[0])]) obj=obj.slice(1);
+    if(!obj.length) return null;
+    var o=obj.join(" ");
+    out=tenseCap(o)+" "+parts.join(" and ");
+  }
+  // anglais : "ECM clean", "Bit change" -&gt; "ECM cleaned", "Bit changed"
+  else if(words.length&gt;1&amp;&amp;TENSE_EN[low[low.length-1]]&amp;&amp;TENSE_EN[low[low.length-1]]!==low[low.length-1]){
+    words[words.length-1]=TENSE_EN[low[low.length-1]];
+    out=tenseCap(words.join(" "));
+  }
+  if(!out||out===core) return null;
+  return lead+out+trail;
+}
+
+function spellCase(orig,rep){
+  if(orig===orig.toUpperCase()&amp;&amp;orig.length&gt;1) return rep.toUpperCase();
+  if(orig.charAt(0)===orig.charAt(0).toUpperCase()&amp;&amp;orig.charAt(0)!==orig.charAt(0).toLowerCase()) return rep.charAt(0).toUpperCase()+rep.slice(1);
+  return rep;
+}
+// une phrase connue tres proche (ex: "hose bass" -&gt; "Hose burst")
+function spellPhraseFor(seg){
+  var ws=spellWordsOf(seg); if(!ws.length) return null;
+  var best=null, bc=99;
+  for(var i=0;i&lt;SPELL.phrases.length;i++){
+    var P=SPELL.phrases[i]; if(P.words.length!==ws.length) continue;
+    var cost=0, exact=0;
+    for(var j=0;j&lt;ws.length&amp;&amp;cost&lt;99;j++){
+      var a=ws[j], b=P.words[j];
+      if(a===b){ exact++; continue; }
+      if(spellKnown(a)){ cost=99; break; }
+      var L=lev(a,b,3), pd=lev(spellPhon(a),spellPhon(b),2);
+      if(SPELL_FIX[a]===b||L&lt;=1||pd===0||(pd&lt;=1&amp;&amp;L&lt;=3)) cost+=1; else cost=99;
+    }
+    if(cost&gt;0&amp;&amp;cost&lt;99&amp;&amp;(exact&gt;=1||ws.length===1)&amp;&amp;cost&lt;=Math.ceil(ws.length/2)&amp;&amp;cost&lt;bc){ bc=cost; best=P.text; }
+  }
+  return best;
+}
+// texte tape -&gt; suggestion {text, words:[mots inconnus]} ou null
+function spellSuggest(text,typing,mode){
+  var src=String(text||""); if(!src.trim()) return null;
+  // pendant la frappe, le dernier mot n est peut-etre pas fini : on ne juge que l orthographe des mots finis
+  if(typing){
+    var m=src.match(/^(.*[^A-Za-z0-9\u00C0-\u00FF])?([A-Za-z0-9\u00C0-\u00FF]+)$/);
+    if(m){ var head=m[1]||""; if(!head.trim()) return null; var r0=spellSuggest(head,false,"");
+      return r0?{text:r0.text+m[2], words:r0.words, kind:"spell"}:null; }
+  }
+  spellBuild();
+  var parts=src.split(/(\s*[,;\/+]\s*)/), out=[], changed=false, unknown=[];
+  for(var i=0;i&lt;parts.length;i++){
+    var seg=parts[i];
+    if(i%2===1||!seg.trim()){ out.push(seg); continue; }
+    var lead=seg.match(/^\s*/)[0], trail=seg.match(/\s*$/)[0];
+    var ph=spellPhraseFor(seg);
+    if(ph&amp;&amp;txtNorm(ph)!==txtNorm(seg)){
+      var segWords=spellWordsOf(seg); for(var u=0;u&lt;segWords.length;u++) if(!spellKnown(segWords[u])) unknown.push(segWords[u]);
+      out.push(lead+ph+trail); changed=true; continue;
+    }
+    var fixed=seg.replace(/[A-Za-z\u00C0-\u00FF0-9]+/g,function(word){
+      var lw=txtNorm(word).replace(/\s/g,"");
+      if(lw.length&lt;3||/\d/.test(word)) return word;
+      if(word===word.toUpperCase()&amp;&amp;(word.length&lt;=3||!/[AEIOUY]/.test(word))) return word;   // sigles : ECM, ECU, CAN, HYD...
+      if(spellKnown(lw)) return word;
+      var c=spellCandidate(lw);
+      if(!c||c===lw) return word;
+      unknown.push(lw); changed=true;
+      return spellCase(word,c);
+    });
+    out.push(fixed);
+  }
+  var spellOnly=changed;
+  // champ Action : les actions sont deja faites -&gt; verbes au passe
+  var tenseKeys=[];
+  if(mode==="action"){
+    var keep=spellKeepLoad();
+    for(var q=0;q&lt;out.length;q+=2){
+      if(!out[q]||!out[q].trim()) continue;
+      var key="~"+txtNorm(out[q]); if(keep[key]) continue;
+      var tf=null; try{ tf=tenseFix(out[q]); }catch(e){ tf=null; }
+      if(tf){ out[q]=tf; changed=true; tenseKeys.push(key); }
+    }
+  }
+  if(!changed) return null;
+  var res=out.join("");
+  if(res===src) return null;
+  return {text:res, words:unknown.concat(tenseKeys), kind:spellOnly?"spell":"tense"};
+}
+// ajoute la suggestion sous un champ texte
+function spellAttach(inp,mode){
+  if(!inp||inp.getAttribute("data-spell")) return;
+  inp.setAttribute("data-spell","1");
+  inp.setAttribute("autocorrect","off"); inp.setAttribute("spellcheck","false");
+  var box=document.createElement("div"); box.className="spell-box"; box.style.display="none";
+  if(inp.nextSibling) inp.parentNode.insertBefore(box,inp.nextSibling); else inp.parentNode.appendChild(box);
+  var timer=null;
+  function render(typing){
+    var s=null; try{ s=spellSuggest(inp.value,typing===true,mode||""); }catch(e){ s=null; }
+    var sig=s?s.text:"";
+    if(box.getAttribute("data-sig")===sig) return;
+    var lbl=s&amp;&amp;s.kind==="tense"?"&amp;#9998; Action deja faite, au passe : ":"&amp;#9998; Tu voulais ecrire : ";
+    // deja affichee : on met juste le texte a jour, les boutons restent en place sous le doigt
+    if(s&amp;&amp;box.querySelector(".spell-ok")){ box.setAttribute("data-sig",sig); var tt=box.querySelector(".spell-t"); tt.innerHTML=lbl+"&lt;b&gt;&lt;/b&gt; ?"; tt.querySelector("b").textContent=s.text; return; }
+    box.setAttribute("data-sig",sig);
+    box.innerHTML="";
+    if(!s){ box.style.display="none"; return; }
+    var t=document.createElement("div"); t.className="spell-t";
+    t.innerHTML=lbl+"&lt;b&gt;&lt;/b&gt; ?";
+    t.querySelector("b").textContent=s.text;
+    var ok=document.createElement("button"); ok.type="button"; ok.className="spell-ok"; ok.textContent="Corriger";
+    var keep=document.createElement("button"); keep.type="button"; keep.className="spell-keep"; keep.textContent="Garder mon texte";
+    ok.onclick=function(){
+      var now=null; try{ now=spellSuggest(inp.value,false,mode||""); }catch(e){}     // toujours sur le texte actuel du champ
+      if(now) inp.value=now.text;
+      box.setAttribute("data-sig",""); box.style.display="none"; box.innerHTML="";
+      try{ inp.dispatchEvent(new Event("input",{bubbles:true})); inp.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){} };
+    keep.onclick=function(){
+      var now=null; try{ now=spellSuggest(inp.value,false,mode||""); }catch(e){}
+      spellKeep(now?now.words:s.words); box.setAttribute("data-sig",""); box.style.display="none"; box.innerHTML=""; };
+    var row=document.createElement("div"); row.className="spell-row"; row.appendChild(ok); row.appendChild(keep);
+    box.appendChild(t); box.appendChild(row); box.style.display="block";
+  }
+  inp.addEventListener("input",function(){ clearTimeout(timer); timer=setTimeout(function(){ render(true); },700); });
+  // en quittant le champ : petit delai, pour ne pas deplacer le bouton que le doigt est en train de toucher
+  inp.addEventListener("blur",function(){ clearTimeout(timer); timer=setTimeout(render,350); });
+  inp.addEventListener("change",function(){ clearTimeout(timer); timer=setTimeout(render,350); });
+  if(inp.value) render();
+}
+// avant de generer : propose de corriger les mots encore suspects
+function spellCheckFields(sel,actionSel){
+  var els=document.querySelectorAll(sel), list=[];
+  for(var i=0;i&lt;els.length;i++){ var md=(actionSel&amp;&amp;els[i].matches(actionSel))?"action":""; var s=null; try{ s=spellSuggest(els[i].value,false,md); }catch(e){} if(s) list.push({el:els[i],s:s}); }
+  if(!list.length) return true;
+  var msg="A corriger avant le rapport (orthographe, actions au passe) :\n";
+  for(var j=0;j&lt;list.length&amp;&amp;j&lt;4;j++) msg+="- "+list[j].el.value+"  -&gt;  "+list[j].s.text+"\n";
+  if(list.length&gt;4) msg+="(+"+(list.length-4)+" autre(s))\n";
+  msg+="\nOK = corriger   /   Annuler = garder tel quel";
+  if(confirm(msg)){
+    for(var k=0;k&lt;list.length;k++){ list[k].el.value=list[k].s.text; try{ list[k].el.dispatchEvent(new Event("input",{bubbles:true})); }catch(e){} }
+  }
+  return true;
+}
+
+/* =================== LECTURE DES CAPTURES D ECRAN (OCR, sans reseau) ===================
+   Moteur : Tesseract (licence Apache 2.0), fichiers locaux ocr_core.js + ocr_eng.gz
+   Tout se passe dans le telephone : l image n est envoyee nulle part. */
+var OCR_CORE_FILES=["./ocr_core.js","./ocr-core.js"];
+var OCR_LANG_FILES=["./ocr_eng.gz","./ocr_eng.bin"];
+var OCR={worker:null, ready:null, seq:0, jobs:{}};
+var OCR_WORKER_SRC=[
+"var M=null,api=null;",
+"function post(o){ self.postMessage(o); }",
+"self.onmessage=function(e){",
+"  var d=e.data;",
+"  if(d.cmd==='init'){",
+"    try{ importScripts(d.core); }catch(err){ post({id:d.id,err:'core: '+err.message}); return; }",
+"    TesseractCore({ TesseractProgress:function(p){ post({type:'progress',p:p}); } }).then(function(m){",
+"      M=m;",
+"      try{",
+"        M.FS.writeFile('./eng.traineddata', new Uint8Array(d.lang));",
+"        api=new M.TessBaseAPI();",
+"        var st=api.Init(null,'eng',1,undefined);",
+"        if(st===-1){ post({id:d.id,err:'init'}); return; }",
+"        api.SetVariable('tessedit_pageseg_mode','4');",
+"        api.SetVariable('preserve_interword_spaces','1');",
+"        post({id:d.id,ok:true});",
+"      }catch(err){ post({id:d.id,err:String(err&amp;&amp;err.message||err)}); }",
+"    },function(err){ post({id:d.id,err:String(err&amp;&amp;err.message||err)}); });",
+"    return;",
+"  }",
+"  if(d.cmd==='read'){",
+"    try{",
+"      api.SetVariable('tessedit_pageseg_mode',String(d.psm||4));",
+"      M.FS.writeFile('/input', new Uint8Array(d.img));",
+"      if(api.SetImageFile(1,0)===1) throw new Error('image');",
+"      api.Recognize(null);",
+"      var text=api.GetUTF8Text();",
+"      var tsv=api.GetTSVText();",
+"      post({id:d.id,ok:true,text:text,tsv:tsv});",
+"    }catch(err){ post({id:d.id,err:String(err&amp;&amp;err.message||err)}); }",
+"  }",
+"};"
+].join("\n");
+
+function ocrFetchFirst(list,binary){
+  var i=0;
+  function next(){
+    if(i&gt;=list.length) return Promise.reject(new Error("fichier absent"));
+    var url=list[i++];
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error(r.status);
+      return binary?r.arrayBuffer():r.text();
+    }).then(function(v){
+      if(binary&amp;&amp;(!v||v.byteLength&lt;1000)) throw new Error("vide");
+      if(!binary&amp;&amp;(!v||v.length&lt;1000)) throw new Error("vide");
+      return {data:v,url:url};
+    }).catch(function(){ return next(); });
+  }
+  return next();
+}
+function ocrGunzip(buf){
+  var u=new Uint8Array(buf);
+  if(!(u[0]===0x1f&amp;&amp;u[1]===0x8b)) return Promise.resolve(buf); // deja decompresse
+  if(typeof DecompressionStream==="undefined") return Promise.reject(new Error("iOS trop ancien (mettre a jour l iPhone)"));
+  var ds=new DecompressionStream("gzip");
+  var stream=new Blob([u]).stream().pipeThrough(ds);
+  return new Response(stream).arrayBuffer();
+}
+function ocrSend(msg,transfer){
+  return new Promise(function(resolve,reject){
+    var id=++OCR.seq; msg.id=id;
+    OCR.jobs[id]={resolve:resolve,reject:reject};
+    OCR.worker.postMessage(msg,transfer||[]);
+  });
+}
+// Prepare le moteur (une seule fois par ouverture de l app)
+function ocrInit(onStep){
+  if(OCR.ready) return OCR.ready;
+  OCR.ready=Promise.all([ocrFetchFirst(OCR_CORE_FILES,false),ocrFetchFirst(OCR_LANG_FILES,true)]).then(function(r){
+    if(onStep) onStep("Preparation de la lecture...");
+    return ocrGunzip(r[1].data).then(function(lang){
+      var coreUrl=URL.createObjectURL(new Blob([r[0].data],{type:"text/javascript"}));
+      var wUrl=URL.createObjectURL(new Blob([OCR_WORKER_SRC],{type:"text/javascript"}));
+      OCR.worker=new Worker(wUrl);
+      OCR.worker.onmessage=function(e){
+        var d=e.data;
+        if(d.type==="progress"){ if(OCR.onProgress) OCR.onProgress(d.p); return; }
+        var j=OCR.jobs[d.id]; if(!j) return; delete OCR.jobs[d.id];
+        if(d.err) j.reject(new Error(d.err)); else j.resolve(d);
+      };
+      OCR.worker.onerror=function(ev){
+        for(var k in OCR.jobs){ OCR.jobs[k].reject(new Error("worker")); }
+        OCR.jobs={};
+      };
+      return ocrSend({cmd:"init",core:coreUrl,lang:lang},[lang]);
+    });
+  }).catch(function(err){ OCR.ready=null; if(OCR.worker){ try{OCR.worker.terminate();}catch(e){} OCR.worker=null; } throw err; });
+  return OCR.ready;
+}
+// Image -&gt; PNG propre (gris, contraste, taille adaptee) pour une meilleure lecture
+function ocrPrepareImage(file){
+  return new Promise(function(resolve,reject){
+    var url=URL.createObjectURL(file);
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var w=img.naturalWidth, h=img.naturalHeight;
+        var scale=1;
+        if(w&lt;1000) scale=Math.min(3,1400/w);
+        if(w*scale&gt;2600) scale=2600/w;
+        var cw=Math.round(w*scale), ch=Math.round(h*scale);
+        var c=document.createElement("canvas"); c.width=cw; c.height=ch;
+        var g=c.getContext("2d");
+        g.fillStyle="#fff"; g.fillRect(0,0,cw,ch);
+        g.drawImage(img,0,0,cw,ch);
+        var id=g.getImageData(0,0,cw,ch), p=id.data;
+        // niveaux de gris + inversion des zones sombres (mode sombre / barre noire)
+        var sum=0;
+        for(var i=0;i&lt;p.length;i+=4){ var y=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2]; p[i]=p[i+1]=p[i+2]=y; sum+=y; }
+        var mean=sum/(p.length/4);
+        if(mean&lt;110){ for(var k=0;k&lt;p.length;k+=4){ p[k]=p[k+1]=p[k+2]=255-p[k]; } }
+        g.putImageData(id,0,0);
+        URL.revokeObjectURL(url);
+        c.toBlob(function(b){ if(!b){ reject(new Error("image")); return; } b.arrayBuffer().then(resolve,reject); },"image/png");
+      }catch(err){ URL.revokeObjectURL(url); reject(err); }
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); reject(new Error("Image illisible")); };
+    img.src=url;
+  });
+}
+function ocrReadFile(file,onProgress,psm){
+  return ocrInit().then(function(){
+    return ocrPrepareImage(file);
+  }).then(function(png){
+    OCR.onProgress=onProgress||null;
+    return ocrSend({cmd:"read",img:png,psm:psm||4},[png]);
+  });
+}
+
+/* =================== SUIVI DOWNTIME : donnees, reconnaissance des pannes, lecture des rapports =================== */
+var DOWN_KEY="gmao_down_v1", DCFG_KEY="gmao_down_cfg";
+var DOWN={reports:{}};                       // "AAAA-MM-JJ|D" ou "|N" -&gt; {date,shift,rows,src,file,added}
+var DCFG={fleet:[], removed:[], learn:{}, target:85};
+var SHIFT_H=12;                              // un shift = 12 h
+function downLoad(){
+  try{ var d=JSON.parse(localStorage.getItem(DOWN_KEY)||"null"); if(d&amp;&amp;d.reports&amp;&amp;typeof d.reports==="object") DOWN=d; }catch(e){}
+  try{ var c=JSON.parse(localStorage.getItem(DCFG_KEY)||"null");
+    if(c){ DCFG.fleet=c.fleet||[]; DCFG.removed=c.removed||[]; DCFG.learn=c.learn||{}; DCFG.target=c.target||85; } }catch(e){}
+}
+function downSave(){
+  try{ localStorage.setItem(DOWN_KEY,JSON.stringify(DOWN)); localStorage.setItem(DCFG_KEY,JSON.stringify(DCFG)); return true; }
+  catch(e){ try{ toast("Memoire pleine : rapport non enregistre"); }catch(x){} return false; }
+}
+
+/* ----- dates, heures ----- */
+function pad2(n){ return (n&lt;10?"0":"")+n; }
+function dIso(d){ return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+function dParse(iso){ var p=String(iso).split("-"); return new Date(+p[0],+p[1]-1,+p[2],12,0,0); }
+function dAdd(iso,n){ var d=dParse(iso); d.setDate(d.getDate()+n); return dIso(d); }
+function dNum(iso){ var p=String(iso).split("-"); return Math.round(Date.UTC(+p[0],+p[1]-1,+p[2])/86400000); }
+function dValid(iso){ return /^\d{4}-\d{2}-\d{2}$/.test(String(iso||"")) &amp;&amp; !isNaN(dParse(iso).getTime()); }
+function shiftIdx(date,shift){ return dNum(date)*2+(shift==="N"?1:0); }
+function idxToShift(i){ var day=Math.floor(i/2); var d=new Date(day*86400000); return {date:d.getUTCFullYear()+"-"+pad2(d.getUTCMonth()+1)+"-"+pad2(d.getUTCDate()), shift:(i%2)?"N":"D"}; }
+var JOURS=["dim","lun","mar","mer","jeu","ven","sam"];
+function dDow(iso){ var p=String(iso).split("-"); return new Date(Date.UTC(+p[0],+p[1]-1,+p[2])).getUTCDay(); }
+// La semaine commence le mardi (shift Day) et finit le lundi (shift Night)
+function weekStart(iso){ var back=(dDow(iso)-2+7)%7; return dAdd(iso,-back); }
+function fmtDM(iso){ var p=String(iso).split("-"); return p[2]+"/"+p[1]; }
+function fmtDMY(iso){ var p=String(iso).split("-"); return p[2]+"/"+p[1]+"/"+p[0]; }
+function shiftName(s){ return s==="N"?"Night":"Day"; }
+function hFmt(h){ var m=Math.round((+h||0)*60); var hh=Math.floor(m/60), mm=m%60; if(!hh) return mm+" min"; return hh+" h"+(mm?" "+pad2(mm):""); }
+function tMin(s){
+  var m=/^(\d{1,2})\s*[:h.]\s*(\d{2})$/.exec(String(s==null?"":s).trim());
+  if(!m) return null; var h=+m[1], mi=+m[2]; if(h&gt;24||mi&gt;59) return null; return (h%24)*60+mi;
+}
+function tStr(min){ min=((min%1440)+1440)%1440; return pad2(Math.floor(min/60))+":"+pad2(min%60); }
+function durH(from,to){ var a=tMin(from), b=tMin(to); if(a===null||b===null) return null; var d=b-a; if(d&lt;0) d+=1440; return Math.round(d/60*100)/100; }
+function numVal(v){ if(typeof v==="number") return v; var s=String(v==null?"":v).replace(/\s/g,"").replace(",","."); if(!/^-?\d+(\.\d+)?$/.test(s)) return null; return parseFloat(s); }
+
+/* ----- machines ----- */
+function eqNorm(s){ return String(s||"").toUpperCase().replace(/[_|]+/g," ").replace(/\s*-\s*/g,"-").replace(/\s+/g," ").replace(/^[\s\-.:]+|[\s\-.:]+$/g,"").trim(); }
+function eqDigits(s){ var m=String(s||"").match(/(\d{2,4})(?!.*\d)/); return m?m[1]:""; }
+function lev(a,b,max){
+  if(a===b) return 0; var la=a.length, lb=b.length; if(Math.abs(la-lb)&gt;max) return max+1;
+  var prev=[], cur=[], i, j;
+  for(j=0;j&lt;=lb;j++) prev[j]=j;
+  for(i=1;i&lt;=la;i++){ cur=[i]; var best=i;
+    for(j=1;j&lt;=lb;j++){ cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a.charAt(i-1)===b.charAt(j-1)?0:1)); if(cur[j]&lt;best) best=cur[j]; }
+    if(best&gt;max) return max+1; prev=cur; }
+  return prev[lb];
+}
+function downMachines(){
+  var seen={}, out=[], i, k, r;
+  for(i=0;i&lt;DCFG.fleet.length;i++){ k=eqNorm(DCFG.fleet[i]); if(k&amp;&amp;!seen[k]){ seen[k]=1; out.push(k); } }
+  for(var key in DOWN.reports){ r=DOWN.reports[key]; for(i=0;i&lt;(r.rows||[]).length;i++){ k=eqNorm(r.rows[i].eq); if(k&amp;&amp;!seen[k]){ seen[k]=1; out.push(k); } } }
+  var rem={}; for(i=0;i&lt;DCFG.removed.length;i++) rem[eqNorm(DCFG.removed[i])]=1;
+  out=out.filter(function(x){ return !rem[x]; });
+  out.sort(); return out;
+}
+// Corrige une lecture de capture approximative (ex: AB-CD12T -&gt; AB-CD127) : seulement les confusions
+// lettre/chiffre typiques (O/0, I/1, S/5, B/8, T/7, Z/2, G/6). Jamais un chiffre par un autre chiffre :
+// AB-CD130 et AB-CD131 sont deux machines differentes.
+var OCR_LOOK={"O":"0","D":"0","Q":"0","I":"1","L":"1","S":"5","B":"8","T":"7","Z":"2","G":"6"};
+function eqLooksLike(read,known){
+  if(read.length!==known.length) return false;
+  var diff=0;
+  for(var i=0;i&lt;read.length;i++){
+    var a=read.charAt(i), k=known.charAt(i);
+    if(a===k) continue;
+    if(OCR_LOOK[a]===k||OCR_LOOK[k]===a) { diff++; continue; }
+    return false;
+  }
+  return diff&gt;0&amp;&amp;diff&lt;=2;
+}
+function eqFix(eq,allowFix){
+  var n=eqNorm(eq); if(!n) return {eq:"",fixed:false};
+  if(!allowFix) return {eq:n,fixed:false};
+  var list=downMachines(); if(list.indexOf(n)&gt;=0) return {eq:n,fixed:false};
+  var hit=null, cnt=0;
+  for(var i=0;i&lt;list.length;i++){ if(eqLooksLike(n,list[i])){ hit=list[i]; cnt++; } }
+  if(cnt===1) return {eq:hit,fixed:true,from:n};
+  return {eq:n,fixed:false};
+}
+
+/* ----- reconnaissance des pannes (anglais, francais, abreviations, fautes) ----- */
+var DSYS=["Hydraulique","Moteur","Compresseur","Electrique","Translation / chenilles","Tete de rotation","Mat / feed","Stabilisateurs / verins","Refroidissement","Carburant","Outils de forage","Depoussiereur","Cabine / clim","Autre"];
+var DTYPE=["Fuite","Flexible eclate","Flexible","Surchauffe","Ne demarre pas","Pression","Casse","Attente pieces","Reglage","Panne"];
+var DCON={
+  HYD:["hyd","hydr","hydraulic","hydraulics","hydraulique","hydrauliques","hydrolic","hydraulik","hydro"],
+  OIL:["oil","oils","huile","huiles"],
+  LEAK:["leak","leaks","leaking","leakage","leek","lek","leks","leack","leacks","fuite","fuites","fuyant","seep","seeping","suintement"],
+  HOSE:["hose","hoses","flexible","flexibles","flex","pipe","pipes","tuyau","tuyaux","durite","line","lines"],
+  BURST:["burst","bursted","busted","eclate","eclatement","rupture","ruptured","broken","pete","explose","cracked","fissure"],
+  ENGINE:["engine","engines","moteur","moteurs","eng","cummins","caterpillar","turbo","crankcase"],
+  COMP:["compressor","compresseur","compr","comp","compresor","compressors","compresseurs"],
+  OVERHEAT:["overheat","overheating","overheated","surchauffe","surchauffes","hot","temperature","temp"],
+  TRAM:["tramming","tram","travel","traveling","travelling","track","tracks","chenille","chenilles","undercarriage","translation","propel","crawler","roller","rollers","idler","sprocket","barbotin"],
+  ELEC:["electrical","electric","electrique","elec","wiring","wire","wires","cable","cables","harness","faisceau","short","fuse","fusible","relay","relais","battery","batterie","batteries","alternator","alternateur","starter","demarreur","canbus","ecu","ecm","controller","sensor","sensors","capteur","capteurs","display","screen","ecran","light","lights","lamp","lampe","switch","contact","loose","error","fault","code"],
+  ROT:["rothead","rotation","rotary"],
+  FEED:["feed","mast","mat","chain","chaine","boom","cradle","centraliser","centralizer","centraliseur"],
+  STAB:["stabilizer","stabiliser","stabilisateur","stab","jack","jacks","verin","verins","leveling","levelling","outrigger"],
+  COOL:["coolant","radiator","radiateur","cooler","cooling","fan","ventilateur","refroidissement","water","eau"],
+  FUEL:["fuel","gasoil","gazole","carburant","injector","injecteur","injecteurs","injectors","injection","diesel"],
+  AC:["aircon","clim","climatisation","cabin","cabine","seat","door","porte","window","vitre","wiper","essuie"],
+  DUST:["dustcollector","dust","depoussiereur","poussiere","collector"],
+  TOOLS:["bit","bits","hammer","marteau","dth","rod","rods","tige","tiges","taillant","shank","rodhandler","carousel","carrousel","coupling"],
+  SERVICE:["dailyservice","service","services","servicing","pm","preventive","preventif","preventive","scheduled","planned","planifie","inspection","greasing","graissage","grease","entretien","wash","washing","lavage","250h","500h","1000h","2000h","3000h"],
+  WAIT:["waiting","attente","awaiting","wop"],
+  NOSTART:["nostart"],
+  PRESS:["pressure","pression","lowpressure","highpressure"],
+  ADJ:["adjust","adjustment","adjusted","reglage","calibration","calibrate","calibrated","etalonnage","setting"]
+};
+var DPHRASE=[
+  [/\bover\s+heat(ing|ed)?\b/g,"overheat"],[/\bdaily\s+service\b/g,"dailyservice"],[/\bdaily\b/g,"dailyservice"],
+  [/\bno\s+start(ing)?\b|\bwon\s*t\s+start\b|\bwont\s+start\b|\bnot\s+start(ing)?\b|\bne\s+demarre\s+pas\b|\bno\s+crank(ing)?\b|\bhard\s+start(ing)?\b/g,"nostart"],
+  [/\brod\s+handler\b|\bpipe\s+handler\b|\bhandler\b/g,"rodhandler"],[/\bdust\s+collector\b/g,"dustcollector"],
+  [/\btete\s+de\s+rotation\b|\brotation\s+head\b|\brotary\s+head\b|\brot\s+head\b/g,"rothead"],
+  [/\bcan\s+bus\b/g,"canbus"],[/\ba\s+c\b|\bair\s+con(dition(ing|er)?)?\b/g,"aircon"],[/\bwaiting\s+(for\s+)?parts?\b|\battente\s+(de\s+)?pieces?\b/g,"wop"],
+  [/\b(\d{3,4})\s*h(rs?|ours?)?\s+service\b/g,"$1h service"]
+];
+var DWORD=null;
+function dWordMap(){
+  if(DWORD) return DWORD; DWORD={};
+  for(var c in DCON){ for(var i=0;i&lt;DCON[c].length;i++){ if(!DWORD[DCON[c][i]]) DWORD[DCON[c][i]]=c; } }
+  return DWORD;
+}
+function txtNorm(s){
+  var t=String(s||"").toLowerCase();
+  try{ t=t.normalize("NFD").replace(/[\u0300-\u036f]/g,""); }catch(e){}
+  return t.replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+}
+function dConcepts(text){
+  var t=" "+txtNorm(text)+" ";
+  for(var p=0;p&lt;DPHRASE.length;p++) t=t.replace(DPHRASE[p][0],DPHRASE[p][1]);
+  var words=t.trim().split(" "), map=dWordMap(), got={};
+  for(var i=0;i&lt;words.length;i++){
+    var w=words[i]; if(!w) continue;
+    if(map[w]){ got[map[w]]=1; continue; }
+    if(/^\d+h$/.test(w)){ got.SERVICE=1; continue; }
+    if(w.length&lt;4) continue;
+    var max=w.length&gt;=7?2:1, best=null, bd=9;
+    for(var k in map){ if(k.length&lt;4||k.charAt(0)!==w.charAt(0)) continue; var dd=lev(w,k,max); if(dd&lt;=max&amp;&amp;dd&lt;bd){ bd=dd; best=k; } }
+    if(best) got[map[best]]=1;
+  }
+  return got;
+}
+// -&gt; {sys, type, planned, key, label, auto}
+function dClassify(text){
+  var n=txtNorm(text);
+  var L=DCFG.learn[n];
+  if(L) return dCat(L.sys,L.type,!!L.planned,false);
+  var c=dConcepts(text);
+  try{ var sx=spellSuggest(text); if(sx) c=dConcepts(sx.text); }catch(e){}   // texte corrige (ex: "hose bass" -&gt; "hose burst")
+  if(c.SERVICE) return dCat("Entretien planifie","",true,true);
+  var sys=null;
+  var order=[["HYD","Hydraulique"],["COMP","Compresseur"],["FUEL","Carburant"],["ENGINE","Moteur"],["COOL","Refroidissement"],["TRAM","Translation / chenilles"],["ROT","Tete de rotation"],["FEED","Mat / feed"],["STAB","Stabilisateurs / verins"],["TOOLS","Outils de forage"],["DUST","Depoussiereur"],["AC","Cabine / clim"],["ELEC","Electrique"]];
+  for(var i=0;i&lt;order.length;i++){ if(c[order[i][0]]){ sys=order[i][1]; break; } }
+  var type="Panne";
+  if(c.BURST) type=c.HOSE?"Flexible eclate":"Casse";
+  else if(c.LEAK) type="Fuite";
+  else if(c.OVERHEAT) type="Surchauffe";
+  else if(c.NOSTART) type="Ne demarre pas";
+  else if(c.PRESS) type="Pression";
+  else if(c.WAIT) type="Attente pieces";
+  else if(c.ADJ) type="Reglage";
+  else if(c.HOSE) type="Flexible";
+  if(!sys){
+    if(c.OIL&amp;&amp;c.LEAK) sys="Hydraulique";               // "oil leak" seul : fuite d huile
+    else if(c.HOSE||c.BURST) sys="Hydraulique";
+    else if(c.NOSTART) sys="Moteur";
+    else if(c.WAIT) sys="Autre";
+  }
+  if(!sys) return {sys:"A classer",type:"",planned:false,key:"?|"+n,label:"A classer",auto:true,unknown:true};
+  return dCat(sys,type,false,true);
+}
+function dCat(sys,type,planned,auto){
+  if(planned) return {sys:"Entretien planifie",type:"",planned:true,key:"PLAN",label:"Entretien planifie",auto:auto};
+  return {sys:sys,type:type||"Panne",planned:false,key:sys+"|"+(type||"Panne"),label:sys+" - "+(type||"Panne"),auto:auto};
+}
+function dLearn(text,sys,type,planned){
+  var n=txtNorm(text); if(!n) return;
+  DCFG.learn[n]={sys:sys,type:type,planned:!!planned};
+  downSave();
+}
+
+/* ----- lecture d une date / d un shift dans un texte ----- */
+var DMONTHS={jan:1,janv:1,january:1,janvier:1,feb:2,fev:2,february:2,fevrier:2,mar:3,march:3,mars:3,apr:4,avr:4,april:4,avril:4,may:5,mai:5,jun:6,june:6,juin:6,jul:7,july:7,juil:7,juillet:7,aug:8,august:8,aout:8,sep:9,sept:9,september:9,septembre:9,oct:10,october:10,octobre:10,nov:11,november:11,novembre:11,dec:12,december:12,decembre:12};
+function mkIso(y,m,d){ y=+y; if(y&lt;100) y+=2000; m=+m; d=+d; if(m&lt;1||m&gt;12||d&lt;1||d&gt;31||y&lt;2000||y&gt;2100) return ""; var iso=y+"-"+pad2(m)+"-"+pad2(d); return dParse(iso).getDate()===d?iso:""; }
+function findDate(text){
+  var t=txtNorm(text), m;
+  var re=/\b(\d{1,2})\s+([a-z]{3,9})\s+(\d{4})\b/g;
+  while((m=re.exec(t))){ var mo=DMONTHS[m[2]]; if(mo){ var iso=mkIso(m[3],mo,m[1]); if(iso) return iso; } }
+  var re2=/(?:^|[^\d])(\d{1,2})[\/\-._](\d{1,2})[\/\-._](\d{2,4})(?!\d)/g, raw=String(text||"");
+  while((m=re2.exec(raw))){ var iso2=mkIso(m[3],m[2],m[1]); if(iso2) return iso2; }
+  return "";
+}
+function findShift(text,loose){
+  var raw=String(text||""), t=txtNorm(raw), m;
+  if((m=/\bshift\s*(day|night|jour|nuit|ds|ns|d|n)\b/.exec(t))) return /^(night|nuit|ns|n)$/.test(m[1])?"N":"D";
+  if((m=/\b(day|night|jour|nuit)\s+shift\b/.exec(t))) return /^(night|nuit)$/.test(m[1])?"N":"D";
+  if((m=/\d{1,2}[\-._\/]\d{1,2}[\-._\/]\d{2,4}\s*[_\-]?\s*(ds|ns)(?![a-z])/i.exec(raw))) return m[1].toLowerCase()==="ns"?"N":"D";
+  if(loose&amp;&amp;(m=/(?:^|[^a-z])(ds|ns)(?:[^a-z]|$)/i.exec(raw))) return m[1].toLowerCase()==="ns"?"N":"D";
+  return "";
+}
+
+/* ----- ligne de rapport -&gt; objet propre (avec controles) ----- */
+// r = {eq, comp, det, from, to, hRead, sec}
+function downFinishRow(r){
+  var warn=[];
+  var fx=eqFix(r.eq,!!r.ocr);
+  r.eq=fx.eq;
+  if(fx.fixed) warn.push("machine lue "+fx.from+", corrigee en "+fx.eq);
+  if(!r.eq) warn.push("machine non lue");
+  r.comp=String(r.comp||"").replace(/^[\s_\-|.:;,]+|[\s_\-|.:;,]+$/g,"").replace(/\s{2,}/g," ");
+  r.det=String(r.det||"").replace(/^[\s_\-|.:;,]+|[\s_\-|.:;,]+$/g,"").replace(/\s{2,}/g," ");
+  if(!r.comp) warn.push("panne non lue");
+  var fm=tMin(r.from), tm=tMin(r.to);
+  r.from=fm===null?"":tStr(fm); r.to=tm===null?"":tStr(tm);
+  var d=durH(r.from,r.to), hr=numVal(r.hRead);
+  if(hr!==null&amp;&amp;(hr&lt;0||hr&gt;24)) hr=null;
+  if(d!==null&amp;&amp;hr!==null){
+    if(Math.abs(d-hr)&lt;=0.05) r.h=hr;
+    else { r.h=d; warn.push("heures du rapport "+String(r.hRead).replace(".",",")+" differentes de De-A ("+hFmt(d)+") : De-A garde"); }
+  } else if(d!==null) r.h=d;
+  else if(hr!==null){ r.h=hr; warn.push("heures De/A non lues"); }
+  else { r.h=0; warn.push("heures non lues"); }
+  if(r.h&gt;SHIFT_H+0.5) warn.push("plus de 12 h sur un shift");
+  if(r.sec&amp;&amp;!downSecCounts(r.sec)) warn.push("section "+r.sec+" : non comptee comme maintenance");
+  delete r.hRead; delete r.ocr;
+  r.warn=warn;
+  return r;
+}
+function downSecCounts(sec){ return !/operat|standby|stand by|delay|weather|meteo|blast|tir|production|idle|attente op/i.test(String(sec||"")); }
+
+/* ----- lecture d une capture d ecran (texte rendu par l OCR) ----- */
+function parseOcrLine(line){
+  var s=String(line||"").replace(/[\[\]{}|\u2018\u2019\u201c\u201d\u0060]/g," ");
+  var times=[], m, re=/(^|[^\d])(\d{1,2})\s?[:;.h]\s?(\d{2})(?![\d])/g;
+  while((m=re.exec(s))){ var h=+m[2], mi=+m[3]; if(h&lt;=24&amp;&amp;mi&lt;=59){ times.push({v:pad2(h%24)+":"+pad2(mi), i:m.index+m[1].length, e:re.lastIndex}); } }
+  if(times.length&lt;2){
+    var re4=/(^|\s)([01]\d|2[0-3])([0-5]\d)(?=\s|$)/g; var t4=[];
+    while((m=re4.exec(s))){ t4.push({v:m[2]+":"+m[3], i:m.index+m[1].length, e:re4.lastIndex}); }
+    if(t4.length&gt;=2) times=t4;
+  }
+  var pre=times.length?s.slice(0,times[0].i):s;
+  var em=/(^|[^A-Za-z0-9])([A-Z]{1,4}(?:\s?-\s?|\s)?[A-Z]{0,4}\s?-?\s?\d{2,4}[A-Z]{0,2})(?![A-Za-z0-9])/.exec(pre);
+  var eq="", rest=pre;
+  if(em){ eq=em[2]; rest=pre.slice(em.index+em[0].length); }
+  else { rest=pre.replace(/^\s*\d{1,3}\s+/,""); }
+  var parts=rest.replace(/^[\s_\-.:;,]+/,"").split(/\s{3,}/);
+  var comp=parts.shift()||"", det=parts.join(" ");
+  var hRead=null;
+  if(times.length&gt;=2){
+    var post=s.slice(times[1].e);
+    var hm=/(\d{1,2}(?:[.,]\d{1,2})?)/.exec(post);
+    if(hm) hRead=hm[1];
+  }
+  return {eq:eq, comp:comp, det:det, from:times[0]?times[0].v:"", to:times[1]?times[1].v:"", hRead:hRead, nTimes:times.length, ocr:true};
+}
+// Texte complet d une capture -&gt; {date, shift, rows, notes}
+function parseOcrText(text,fileName){
+  var lines=String(text||"").split(/\r?\n/);
+  var date=findDate(text)||findDate(fileName||""), shift=findShift(text)||findShift(fileName||"",true);
+  var rows=[], sec="", started=false, total=null;
+  for(var i=0;i&lt;lines.length;i++){
+    var L=lines[i]; var n=txtNorm(L);
+    if(!n) continue;
+    if(/\btotal\b/.test(n)&amp;&amp;started){ var tm=String(L).match(/(\d{1,3}(?:[.,]\d{1,2})?)\s*$/); if(tm) total=numVal(tm[1]); break; }
+    if(/equipment|major component|additional details/.test(n)){ started=true; continue; }
+    var r=parseOcrLine(L);
+    if(r.nTimes&gt;=2&amp;&amp;(r.eq||r.comp)){ started=true; r.sec=sec; rows.push(r); continue; }
+    if(r.eq&amp;&amp;r.nTimes&lt;2&amp;&amp;started&amp;&amp;r.comp){ r.sec=sec; rows.push(r); continue; }
+    // titre de section ("Maintenance", "Operational"...)
+    if(/^(?:\d{1,3}\s+)?(maintenance|breakdown|mechanical|operational|operations?|standby|stand by|delays?)$/.test(n)) sec=n.replace(/^\d{1,3}\s+/,"");
+  }
+  for(var j=0;j&lt;rows.length;j++){ delete rows[j].nTimes; }
+  return {date:date, shift:shift, rows:rows, total:total};
+}
+// heures d une ligne brute (avant controle)
+function rawRowH(r){ var h=numVal(r.hRead); if(h!==null&amp;&amp;h&gt;=0&amp;&amp;h&lt;=24) return h; var d=durH(r.from,r.to); return d===null?0:d; }
+function rowsSum(rows,raw){ var t=0; for(var i=0;i&lt;rows.length;i++) t+=raw?rawRowH(rows[i]):(+rows[i].h||0); return Math.round(t*100)/100; }
+// la lecture est-elle complete ? (somme des lignes = total du rapport)
+function ocrComplete(r){ if(!r.rows.length) return false; if(r.total===null||r.total===undefined) return true; return Math.abs(rowsSum(r.rows,true)-r.total)&lt;=0.05; }
+function ocrBest(a,b){
+  var ca=ocrComplete(a), cb=ocrComplete(b);
+  if(ca&amp;&amp;!cb) return a; if(cb&amp;&amp;!ca) return b;
+  var r=b.rows.length&gt;a.rows.length?b:a;
+  if(!r.date) r.date=a.date||b.date; if(!r.shift) r.shift=a.shift||b.shift; if(r.total===null) r.total=a.total!==null?a.total:b.total;
+  return r;
+}
+
+/* ----- lecture d un fichier Excel (.xlsx), sans librairie ----- */
+function inflateRaw(u8){
+  if(typeof DecompressionStream==="undefined") return Promise.reject(new Error("Cet iPhone ne sait pas ouvrir les Excel (mettre a jour iOS)"));
+  var ds=new DecompressionStream("deflate-raw");
+  return new Response(new Blob([u8]).stream().pipeThrough(ds)).arrayBuffer().then(function(b){ return new Uint8Array(b); });
+}
+function zipIndex(u8){
+  var dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength), eocd=-1;
+  for(var i=u8.length-22;i&gt;=Math.max(0,u8.length-65600);i--){ if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; } }
+  if(eocd&lt;0) throw new Error("Ce n est pas un fichier Excel .xlsx");
+  var n=dv.getUint16(eocd+10,true), p=dv.getUint32(eocd+16,true), out={}, dec=new TextDecoder();
+  for(var k=0;k&lt;n;k++){
+    if(dv.getUint32(p,true)!==0x02014b50) break;
+    var nlen=dv.getUint16(p+28,true), elen=dv.getUint16(p+30,true), clen=dv.getUint16(p+32,true);
+    var name=dec.decode(u8.subarray(p+46,p+46+nlen));
+    out[name]={method:dv.getUint16(p+10,true), csize:dv.getUint32(p+20,true), loff:dv.getUint32(p+42,true)};
+    p+=46+nlen+elen+clen;
+  }
+  return out;
+}
+function zipText(u8,idx,name){
+  var ent=idx[name]; if(!ent) return Promise.resolve(null);
+  var dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
+  var lo=ent.loff, start=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true);
+  var data=u8.subarray(start,start+ent.csize);
+  var pr=ent.method===0?Promise.resolve(data):(ent.method===8?inflateRaw(data):Promise.reject(new Error("compression")));
+  return pr.then(function(b){ return new TextDecoder().decode(b); });
+}
+function xmlDoc(s){ return new DOMParser().parseFromString(s,"application/xml"); }
+function xmlAll(node,tag){ return node.getElementsByTagNameNS("*",tag); }
+function colNum(ref){ var m=/^([A-Z]+)(\d+)$/.exec(ref||""); if(!m) return null; var c=0; for(var i=0;i&lt;m[1].length;i++) c=c*26+(m[1].charCodeAt(i)-64); return {c:c,r:+m[2]}; }
+function xlsxSheets(buf){
+  var u8=new Uint8Array(buf), idx=zipIndex(u8);
+  return Promise.all([zipText(u8,idx,"xl/workbook.xml"),zipText(u8,idx,"xl/_rels/workbook.xml.rels"),zipText(u8,idx,"xl/sharedStrings.xml")]).then(function(r){
+    if(!r[0]) throw new Error("Fichier Excel non reconnu");
+    var wb=xmlDoc(r[0]), rels={}, ss=[];
+    if(r[1]){ var rl=xmlAll(xmlDoc(r[1]),"Relationship"); for(var i=0;i&lt;rl.length;i++){ var tg=rl[i].getAttribute("Target")||""; rels[rl[i].getAttribute("Id")]=tg.charAt(0)==="/"?tg.slice(1):"xl/"+tg.replace(/^\.\//,""); } }
+    if(r[2]){ var si=xmlAll(xmlDoc(r[2]),"si"); for(var j=0;j&lt;si.length;j++){ var ts=xmlAll(si[j],"t"), str=""; for(var q=0;q&lt;ts.length;q++){ if(ts[q].parentNode&amp;&amp;ts[q].parentNode.localName==="rPh") continue; str+=ts[q].textContent; } ss.push(str); } }
+    var sh=xmlAll(wb,"sheet"), jobs=[];
+    for(var s=0;s&lt;sh.length;s++){
+      var rid=sh[s].getAttribute("r:id")||sh[s].getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id");
+      var path=rels[rid]||("xl/worksheets/sheet"+(s+1)+".xml");
+      jobs.push((function(name,path){ return zipText(u8,idx,path).then(function(x){ return x?{name:name,grid:xlsxGrid(x,ss)}:null; }); })(sh[s].getAttribute("name"),path));
+    }
+    return Promise.all(jobs).then(function(a){ return a.filter(Boolean); });
+  });
+}
+function xlsxGrid(xml,ss){
+  var doc=xmlDoc(xml), cells=xmlAll(doc,"c"), g={};
+  for(var i=0;i&lt;cells.length;i++){
+    var c=cells[i], pos=colNum(c.getAttribute("r")); if(!pos) continue;
+    var t=c.getAttribute("t"), vEl=xmlAll(c,"v")[0], v=vEl?vEl.textContent:null, val=null;
+    if(t==="s"){ val=v!==null?(ss[+v]||""):""; }
+    else if(t==="inlineStr"){ var tt=xmlAll(c,"t"), s2=""; for(var k=0;k&lt;tt.length;k++) s2+=tt[k].textContent; val=s2; }
+    else if(t==="str"||t==="e"){ val=v; }
+    else if(t==="b"){ val=v==="1"?"TRUE":"FALSE"; }
+    else if(v!==null&amp;&amp;v!==""){ var f=parseFloat(v); val=isNaN(f)?v:f; }
+    if(val===null||val==="") continue;
+    if(!g[pos.r]) g[pos.r]={};
+    g[pos.r][pos.c]=val;
+  }
+  return g;
+}
+function xlTime(v){
+  if(typeof v==="number"){ var fr=v-Math.floor(v); var mi=Math.round(fr*1440); if(mi&gt;=1440) mi=0; return tStr(mi); }
+  var s=String(v||"").trim(), m=/(\d{1,2})\s*[:h.]\s*(\d{2})/.exec(s);
+  if(m) return pad2(+m[1]%24)+":"+m[2];
+  m=/^([01]\d|2[0-3])([0-5]\d)$/.exec(s); if(m) return m[1]+":"+m[2];
+  return "";
+}
+function xlDate(v){
+  if(typeof v==="number"&amp;&amp;v&gt;30000&amp;&amp;v&lt;80000){ var d=new Date(Date.UTC(1899,11,30)+Math.floor(v)*86400000); return d.getUTCFullYear()+"-"+pad2(d.getUTCMonth()+1)+"-"+pad2(d.getUTCDate()); }
+  return findDate(String(v||""));
+}
+// Une feuille -&gt; liste de rapports {date, shift, rows}
+function gridReports(grid,fileName,sheetName){
+  var rowsIdx=Object.keys(grid).map(Number).sort(function(a,b){return a-b;});
+  var date="", shift="", out=[];
+  // date et shift : "Date: 13 October 2026" dans une cellule, ou "Date:" puis la cellule suivante
+  for(var a=0;a&lt;rowsIdx.length;a++){
+    var R=grid[rowsIdx[a]], cols=Object.keys(R).map(Number).sort(function(x,y){return x-y;});
+    for(var b=0;b&lt;cols.length;b++){
+      var v=R[cols[b]], s=String(v);
+      if(!date&amp;&amp;/date/i.test(s)){ date=findDate(s); if(!date){ for(var b2=b+1;b2&lt;cols.length&amp;&amp;!date;b2++) date=xlDate(R[cols[b2]]); } }
+      if(!shift&amp;&amp;/shift/i.test(s)&amp;&amp;!/downtime/i.test(s)){ shift=findShift(s); if(!shift&amp;&amp;b+1&lt;cols.length){ var nx=String(R[cols[b+1]]); shift=/^(night|nuit|ns|n)$/i.test(nx.trim())?"N":(/^(day|jour|ds|d)$/i.test(nx.trim())?"D":""); } }
+    }
+  }
+  if(!date) date=findDate(fileName||"");
+  if(!shift) shift=findShift(fileName||"",true);
+  // tableaux : ligne d en-tete avec Equipment + From + To
+  for(var i=0;i&lt;rowsIdx.length;i++){
+    var H=grid[rowsIdx[i]], map={};
+    for(var c in H){ var h=txtNorm(H[c]);
+      if(/equip|machine|unit/.test(h)&amp;&amp;!map.eq) map.eq=+c;
+      else if(/major|component|compon|panne|failure|description/.test(h)&amp;&amp;!map.comp) map.comp=+c;
+      else if(/additional|detail|comment|remark/.test(h)&amp;&amp;!map.det) map.det=+c;
+      else if(/^(from|de|debut|start)$/.test(h)) map.from=+c;
+      else if(/^(to|a|fin|end)$/.test(h)) map.to=+c;
+      else if(/^(hours?|heures?|hrs?|duration|duree|total hours?)$/.test(h)) map.h=+c;
+    }
+    if(!map.eq||!(map.from||map.h)) continue;
+    // section juste au-dessus du tableau
+    var sec="";
+    for(var u=i-1;u&gt;=Math.max(0,i-3);u--){ var U=grid[rowsIdx[u]], ks=Object.keys(U); if(ks.length===1&amp;&amp;/^[a-z ]{4,30}$/i.test(String(U[ks[0]]).trim())&amp;&amp;!/downtime|report/i.test(String(U[ks[0]]))){ sec=String(U[ks[0]]).trim(); break; } }
+    var rows=[], empty=0, xTotal=null;
+    for(var j=i+1;j&lt;rowsIdx.length;j++){
+      if(rowsIdx[j]-rowsIdx[j-1]&gt;1) empty+=rowsIdx[j]-rowsIdx[j-1]-1;
+      if(empty&gt;=3) break;
+      var D=grid[rowsIdx[j]], all=[]; for(var cc in D) all.push(String(D[cc]));
+      var joined=txtNorm(all.join(" "));
+      if(/^total\b|\btotal\b/.test(joined)&amp;&amp;!D[map.eq]){ if(map.h&amp;&amp;D[map.h]!=null) xTotal=numVal(D[map.h]); break; }
+      if(/equip/.test(joined)&amp;&amp;/from|to/.test(joined)) { i=j-1; break; }
+      var eqv=D[map.eq];
+      if(!eqv){
+        var keys=Object.keys(D);
+        if(keys.length===1&amp;&amp;/^[a-z ]{4,30}$/i.test(String(D[keys[0]]).trim())) sec=String(D[keys[0]]).trim();
+        continue;
+      }
+      if(/^total/i.test(String(eqv))){ if(map.h&amp;&amp;D[map.h]!=null) xTotal=numVal(D[map.h]); break; }
+      if(!/\d/.test(String(eqv))){
+        var hasT=(map.from&amp;&amp;D[map.from]!=null)||(map.to&amp;&amp;D[map.to]!=null)||(map.h&amp;&amp;D[map.h]!=null);
+        if(!hasT&amp;&amp;/^[a-z ]{3,30}$/i.test(String(eqv).trim())) sec=String(eqv).trim();
+        continue;
+      }
+      rows.push({eq:String(eqv), comp:map.comp?String(D[map.comp]||""):"", det:map.det?String(D[map.det]||""):"",
+        from:map.from?xlTime(D[map.from]):"", to:map.to?xlTime(D[map.to]):"", hRead:map.h&amp;&amp;D[map.h]!=null?(typeof D[map.h]==="number"?Math.round(D[map.h]*100)/100:String(D[map.h])):null, sec:sec});
+      empty=0;
+    }
+    if(rows.length) out.push({date:date, shift:shift, rows:rows, sheet:sheetName, total:(typeof xTotal==="number"&amp;&amp;!isNaN(xTotal))?Math.round(xTotal*100)/100:null});
+  }
+  return out;
+}
+function readXlsxFile(file){
+  return file.arrayBuffer().then(function(buf){ return xlsxSheets(buf); }).then(function(sheets){
+    var reps=[];
+    for(var i=0;i&lt;sheets.length;i++){ reps=reps.concat(gridReports(sheets[i].grid,file.name,sheets[i].name)); }
+    return reps;
+  });
+}
+
+/* =================== SUIVI DOWNTIME : calculs =================== */
+var DCLS_CACHE={};
+function dClassifyRow(row){
+  var k=(row.comp||"")+"\u0001"+(row.det||"");
+  if(DCLS_CACHE[k]) return DCLS_CACHE[k];
+  var c=dClassify(row.comp||"");
+  if(c.unknown&amp;&amp;row.det){ var c2=dClassify(row.det); if(!c2.unknown) c=c2; }
+  DCLS_CACHE[k]=c; return c;
+}
+function dClsReset(){ DCLS_CACHE={}; }
+// Toutes les lignes enregistrees -&gt; evenements
+function downEvents(){
+  var ev=[];
+  for(var key in DOWN.reports){
+    var r=DOWN.reports[key]; if(!r||!dValid(r.date)) continue;
+    var si=shiftIdx(r.date,r.shift);
+    for(var i=0;i&lt;(r.rows||[]).length;i++){
+      var row=r.rows[i], eq=eqNorm(row.eq); if(!eq) continue;
+      var cat=dClassifyRow(row);
+      ev.push({eq:eq, date:r.date, shift:r.shift, si:si, from:row.from||"", to:row.to||"", h:Math.max(0,Math.min(SHIFT_H,+row.h||0)),
+        comp:row.comp||"", det:row.det||"", cat:cat, planned:cat.planned, counts:downSecCounts(row.sec)});
+    }
+  }
+  ev.sort(function(a,b){ return a.si-b.si || ((tMin(a.from)||0)-(tMin(b.from)||0)); });
+  return ev;
+}
+function inWin(min,a,b){ return min!==null &amp;&amp; min&gt;=a &amp;&amp; min&lt;=b; }
+function endsAtShiftEnd(e){ var t=tMin(e.to); return e.shift==="N"?inWin(t,270,450):inWin(t,990,1170); }      // fin vers 06:00 / 18:00 (+-1 h 30)
+function startsAtShiftStart(e){ var t=tMin(e.from); return e.shift==="N"?inWin(t,990,1200):inWin(t,270,480); } // debut vers 17:00-20:00 / 04:30-08:00 (retards compris)
+// Une panne qui continue au shift suivant = UNE seule panne
+function downFailures(ev){
+  var list=ev.filter(function(e){ return !e.planned&amp;&amp;e.counts; });
+  list.sort(function(a,b){ return a.eq&lt;b.eq?-1:(a.eq&gt;b.eq?1:(a.si-b.si || ((tMin(a.from)||0)-(tMin(b.from)||0)))); });
+  var fails=[], open={};
+  for(var i=0;i&lt;list.length;i++){
+    var e=list[i], k=e.eq+"|"+e.cat.key, f=open[k];
+    if(f&amp;&amp;e.si===f.lastEv.si+1&amp;&amp;endsAtShiftEnd(f.lastEv)&amp;&amp;startsAtShiftStart(e)){ f.h+=e.h; f.parts.push(e); f.lastEv=e; }
+    else { f={eq:e.eq, cat:e.cat, si:e.si, date:e.date, shift:e.shift, h:e.h, parts:[e], lastEv:e, comp:e.comp}; fails.push(f); open[k]=f; }
+  }
+  return fails;
+}
+// Shift en cours (les rapports arrivent apres la fin du shift)
+function nowShiftIdx(){ var d=new Date(), h=d.getHours(); if(h&lt;6) return shiftIdx(dAdd(dIso(d),-1),"N"); return shiftIdx(dIso(d),h&lt;18?"D":"N"); }
+function downPeriod(anchorWeek,nWeeks){
+  var from=dAdd(anchorWeek,-(nWeeks-1)*7), to=dAdd(anchorWeek,6);
+  return {from:from, to:to, nWeeks:nWeeks, siFrom:shiftIdx(from,"D"), siTo:shiftIdx(to,"N")};
+}
+function downLatestWeek(){
+  var best=null; for(var k in DOWN.reports){ var d=DOWN.reports[k].date; if(dValid(d)&amp;&amp;(!best||d&gt;best)) best=d; }
+  return weekStart(best||dIso(new Date()));
+}
+function downMyReports(eq,siFrom,siTo){
+  var dg=eqDigits(eq), out=[]; if(!dg||typeof DB==="undefined"||!DB) return out;
+  for(var i=0;i&lt;DB.length;i++){
+    var e=DB[i]; if(!e||e.type!=="Panne"||!e.rows||!dValid(e.date)) continue;
+    var sh=e.shift==="Night"?"N":"D", si=shiftIdx(e.date,sh);
+    var ok=(si&gt;=siFrom&amp;&amp;si&lt;=siTo)||(sh==="N"&amp;&amp;si-2&gt;=siFrom&amp;&amp;si-2&lt;=siTo);
+    if(!ok) continue;
+    for(var j=0;j&lt;e.rows.length;j++){ var r=e.rows[j]; if(eqDigits(r.machine)===dg&amp;&amp;(r.failure||r.action)) out.push({date:e.date,shift:sh,failure:r.failure||"",action:r.action||""}); }
+  }
+  return out;
+}
+function downAnalyze(p,ev){
+  ev=ev||downEvents();
+  var fleet=downMachines(), M={}, i, e;
+  for(i=0;i&lt;fleet.length;i++) M[fleet[i]]={eq:fleet[i], hUn:0, hPl:0, n:0, sh:{}, cats:{}};
+  // shifts presents dans la periode
+  var have={}, nSh=0;
+  for(var k in DOWN.reports){ var r=DOWN.reports[k]; if(!dValid(r.date)) continue; var s=shiftIdx(r.date,r.shift); if(s&gt;=p.siFrom&amp;&amp;s&lt;=p.siTo&amp;&amp;!have[s]){ have[s]=1; nSh++; } }
+  var lastI=nowShiftIdx()-1, missing=[], expected=0;
+  for(var hk in have){ if(+hk&gt;lastI) lastI=+hk; }
+  for(var x=p.siFrom;x&lt;=p.siTo&amp;&amp;x&lt;=lastI;x++){ expected++; if(!have[x]) missing.push(x); }
+  var tot={hUn:0,hPl:0,hOther:0,dayUn:0,nightUn:0}, unknown={};
+  for(i=0;i&lt;ev.length;i++){
+    e=ev[i]; if(e.si&lt;p.siFrom||e.si&gt;p.siTo) continue;
+    if(!e.counts){ tot.hOther+=e.h; continue; }
+    var m=M[e.eq]; if(!m){ m=M[e.eq]={eq:e.eq,hUn:0,hPl:0,n:0,sh:{},cats:{},extra:true}; }
+    var before=m.sh[e.si]||0, add=Math.max(0,Math.min(SHIFT_H-before,e.h));
+    m.sh[e.si]=before+add;
+    if(e.planned){ m.hPl+=add; tot.hPl+=add; }
+    else {
+      m.hUn+=add; tot.hUn+=add;
+      if(e.shift==="N") tot.nightUn+=add; else tot.dayUn+=add;
+      var c=m.cats[e.cat.key]||(m.cats[e.cat.key]={label:e.cat.label,h:0,n:0,unknown:!!e.cat.unknown,texts:{}}); c.h+=add; c.texts[e.comp]=1;
+      if(e.cat.unknown) unknown[e.comp]=(unknown[e.comp]||0)+1;
+    }
+  }
+  // pannes (une panne sur 2 shifts = 1)
+  var fails=downFailures(ev), cats={}, nFail=0;
+  for(i=0;i&lt;fails.length;i++){
+    var f=fails[i]; if(f.si&lt;p.siFrom||f.si&gt;p.siTo) continue;
+    nFail++; var mm=M[f.eq]; if(mm){ mm.n++; if(mm.cats[f.cat.key]) mm.cats[f.cat.key].n++; }
+    var cc=cats[f.cat.key]||(cats[f.cat.key]={key:f.cat.key,label:f.cat.label,unknown:!!f.cat.unknown,h:0,n:0,eqs:{}}); cc.n++; cc.eqs[f.eq]=1;
+  }
+  for(var mk in M){ for(var ck in M[mk].cats){ var cx=cats[ck]||(cats[ck]={key:ck,label:M[mk].cats[ck].label,unknown:M[mk].cats[ck].unknown,h:0,n:0,eqs:{}}); cx.h+=M[mk].cats[ck].h; cx.eqs[mk]=1; } }
+  // disponibilite
+  var list=[], fleetN=0, maintAll=0;
+  for(var q in M){
+    var mq=M[q]; if(!mq.extra) fleetN++; else if(mq.hUn+mq.hPl&gt;0) fleetN++; else continue;
+    var hm=0; for(var ss in mq.sh) hm+=mq.sh[ss];
+    mq.hMaint=hm; maintAll+=hm;
+    mq.dispo=nSh?Math.max(0,1-hm/(SHIFT_H*nSh)):null;
+    mq.mttr=mq.n?mq.hUn/mq.n:null;
+    list.push(mq);
+  }
+  var dispo=(nSh&amp;&amp;fleetN)?Math.max(0,1-maintAll/(SHIFT_H*nSh*fleetN)):null;
+  // methode jack-knife : frequence et duree moyenne par rapport a la moyenne de la flotte
+  var avgN=fleetN?nFail/fleetN:0, avgT=nFail?tot.hUn/nFail:0;
+  for(i=0;i&lt;list.length;i++){
+    var L=list[i];
+    if(!L.n){ L.jk=""; continue; }
+    var fr=L.n&gt;avgN, lg=L.mttr&gt;avgT;
+    L.jk=fr&amp;&amp;lg?"crit":(fr?"freq":(lg?"long":"ok"));
+  }
+  list.sort(function(a,b){ return (b.hUn-a.hUn)||(b.n-a.n)||(a.eq&lt;b.eq?-1:1); });
+  var top=list.filter(function(z){ return z.hUn&gt;0; }).slice(0,3);
+  var topH=0; for(i=0;i&lt;top.length;i++) topH+=top[i].hUn;
+  var catList=[]; for(var ck2 in cats) catList.push(cats[ck2]);
+  catList.sort(function(a,b){ return (b.h-a.h)||(b.n-a.n); });
+  // pannes repetitives : meme machine + meme panne dans les 7 jours
+  var reps=[], byK={};
+  for(i=0;i&lt;fails.length;i++){ var g=fails[i]; if(g.cat.unknown) continue; var kk=g.eq+"|"+g.cat.key; (byK[kk]||(byK[kk]=[])).push(g); }
+  for(var rk in byK){
+    var arr=byK[rk], hit={};
+    for(var a=0;a&lt;arr.length;a++){
+      if(arr[a].si&lt;p.siFrom||arr[a].si&gt;p.siTo) continue;
+      for(var b=0;b&lt;arr.length;b++){ if(b!==a&amp;&amp;arr[b].si&lt;=arr[a].si&amp;&amp;arr[a].si-arr[b].si&lt;=14&amp;&amp;arr[a].si!==arr[b].si){ hit[a]=1; hit[b]=1; } }
+    }
+    var idx=Object.keys(hit).map(Number).sort(function(u,v){return arr[u].si-arr[v].si;});
+    if(idx.length&gt;=2) reps.push({eq:arr[0].eq, label:arr[0].cat.label, list:idx.map(function(z){ return arr[z]; })});
+  }
+  reps.sort(function(a,b){ return b.list.length-a.list.length; });
+  return {p:p, nSh:nSh, expected:expected, missing:missing, fleetN:fleetN, dispo:dispo, tot:tot, nFail:nFail,
+    mttr:nFail?tot.hUn/nFail:null, machines:list, top:top, topShare:tot.hUn?topH/tot.hUn:0, cats:catList, reps:reps, unknown:unknown, avgN:avgN, avgT:avgT};
+}
+// Historique semaine par semaine
+function downHistory(anchorWeek,nWeeks,ev){
+  ev=ev||downEvents(); var out=[];
+  for(var w=nWeeks-1;w&gt;=0;w--){
+    var ws=dAdd(anchorWeek,-7*w), a=downAnalyze(downPeriod(ws,1),ev);
+    out.push({week:ws, hUn:a.tot.hUn, hPl:a.tot.hPl, dispo:a.dispo, nSh:a.nSh, nFail:a.nFail});
+  }
+  return out;
+}
+
+/* =================== SUIVI DOWNTIME : ecrans =================== */
+var DPEND=[];                       // rapports lus, en attente de verification
+var DSTATE={week:null, span:1, pick:null};
+var DSPANS=[[1,"Semaine"],[4,"4 sem."],[26,"6 mois"],[52,"1 an"]];
+var DJK={crit:["Critique","pannes frequentes ET longues : priorite 1","#f04848"],
+         freq:["Pannes frequentes","fiabilite : cause racine, preventif","#f0a832"],
+         long:["Pannes longues","reparation : pieces, diagnostic, competences","#38b6ff"],
+         ok:["Normal","sous la moyenne de la flotte","#22c97a"]};
+function dEl(id){ return document.getElementById(id); }
+function dEsc(v){ return escP(v).replace(/'/g,"&amp;#39;"); }
+function dPct(x){ return x===null||x===undefined?"-":(Math.round(x*1000)/10).toString().replace(".",",")+" %"; }
+function dStatus(html){ var s=dEl("down-status"); if(s) s.innerHTML=html||""; }
+
+/* ----- import ----- */
+function downPick(kind){ var i=dEl(kind==="img"?"down-img":"down-xlsx"); if(i) i.click(); }
+function downImport(input,kind){
+  var files=[].slice.call(input.files||[]); input.value="";
+  if(!files.length) return;
+  var cands=[], notes=[], k=0;
+  function step(){
+    if(k&gt;=files.length){ downAfterRead(cands,notes,kind); return; }
+    var f=files[k], label=(kind==="img"?"Lecture de la capture ":"Lecture du fichier ")+(k+1)+"/"+files.length;
+    dStatus("&lt;span style='color:var(--amber);'&gt;"+label+"...&lt;/span&gt;");
+    var pr;
+    if(kind==="img"){
+      var prog=function(p){ dStatus("&lt;span style='color:var(--amber);'&gt;"+label+" : "+Math.min(100,Math.round(p))+" %&lt;/span&gt;"); };
+      // 1re lecture ; si une ligne semble manquer (total different), on relit avec un autre decoupage de la page
+      var modes=[4,6,3], best=null, mi=0, base=label;
+      var pass=function(){
+        return ocrReadFile(f,prog,modes[mi]).then(function(res){
+          var r=parseOcrText(res.text,f.name);
+          best=best?ocrBest(best,r):r;
+          mi++;
+          if(ocrComplete(best)||mi&gt;=modes.length) return best;
+          label=base+" ("+(mi+1)+"e lecture)";
+          return pass();
+        },function(err){ if(best) return best; throw err; });
+      };
+      pr=pass().then(function(r){
+        if(!r.rows.length) notes.push("Aucune ligne lue dans la capture "+(k+1)+" ("+dEsc(f.name)+")");
+        else cands.push({date:r.date, shift:r.shift, rows:r.rows, total:r.total, src:"capture", files:[f.name]});
+      });
+    } else {
+      pr=readXlsxFile(f).then(function(reps){
+        if(!reps.length) notes.push("Aucun tableau de downtime trouve dans "+dEsc(f.name));
+        for(var i=0;i&lt;reps.length;i++) cands.push({date:reps[i].date, shift:reps[i].shift, rows:reps[i].rows, total:reps[i].total, src:"excel", files:[f.name+(reps.length&gt;1?" ("+reps[i].sheet+")":"")]});
+      });
+    }
+    pr.then(function(){ k++; step(); },function(err){
+      var m=String(err&amp;&amp;err.message||err);
+      if(kind==="img"&amp;&amp;/fichier absent|core|worker/i.test(m)){
+        notes.push("La lecture des captures n est pas installee : il manque les fichiers ocr_core.js et ocr_eng.gz sur GitHub (ou ouvre l app une fois avec du reseau).");
+        k=files.length; step(); return;
+      }
+      notes.push("Probleme avec "+dEsc(f.name)+" : "+dEsc(m)); k++; step();
+    });
+  }
+  step();
+}
+function rowSig(r){ return eqNorm(r.eq)+"|"+(r.from||"")+"|"+(r.to||"")+"|"+txtNorm(r.comp); }
+function downAfterRead(cands,notes,kind){
+  // captures d un meme rapport (ecran fait defiler) : la date/le shift suivent la capture precedente
+  var last=null;
+  for(var i=0;i&lt;cands.length;i++){
+    var c=cands[i];
+    if(kind==="img"&amp;&amp;last){ if(!c.date) c.date=last.date; if(!c.shift) c.shift=last.shift; }
+    if(c.date) last=c;
+  }
+  // regroupe par date + shift, sans doublon de ligne
+  var merged=[], byKey={};
+  for(var j=0;j&lt;cands.length;j++){
+    var cd=cands[j], key=(cd.date&amp;&amp;cd.shift)?cd.date+"|"+cd.shift:"?"+j;
+    var t=byKey[key];
+    if(!t){ t=byKey[key]={date:cd.date||"", shift:cd.shift||"", rows:[], src:cd.src, files:[], seen:{}, total:null}; merged.push(t); }
+    t.files=t.files.concat(cd.files);
+    if(cd.total!==null&amp;&amp;cd.total!==undefined) t.total=(t.total===null||cd.src==="excel")?cd.total:Math.max(t.total,cd.total);
+    for(var q=0;q&lt;cd.rows.length;q++){ var rr=cd.rows[q]; var sig=rowSig(rr); if(t.seen[sig]) continue; t.seen[sig]=1; t.rows.push(rr); }
+  }
+  for(var m=0;m&lt;merged.length;m++){
+    delete merged[m].seen;
+    for(var z=0;z&lt;merged[m].rows.length;z++) downFinishRow(merged[m].rows[z]);
+    DPEND.push(merged[m]);
+  }
+  var msg=merged.length?("&lt;span style='color:var(--green);'&gt;&amp;#9989; "+merged.length+" rapport(s) lu(s) : verifie puis enregistre ci-dessous.&lt;/span&gt;"):"";
+  if(notes.length) msg+=(msg?"&lt;br&gt;":"")+"&lt;span style='color:var(--amber);'&gt;&amp;#9888; "+notes.join("&lt;br&gt;&amp;#9888; ")+"&lt;/span&gt;";
+  dStatus(msg);
+  renderVerif();
+  if(merged.length){ var v=dEl("down-verif"); if(v&amp;&amp;v.scrollIntoView) v.scrollIntoView({block:"start"}); }
+}
+function downManual(){
+  var h=new Date().getHours();
+  DPEND.push({date:dIso(new Date(h&lt;6?Date.now()-86400000:Date.now())), shift:(h&gt;=6&amp;&amp;h&lt;18)?"D":"N", rows:[{eq:"",comp:"",det:"",from:"",to:"",h:0,sec:"",warn:[]}], src:"manuel", files:[]});
+  renderVerif();
+  var v=dEl("down-verif"); if(v&amp;&amp;v.scrollIntoView) v.scrollIntoView({block:"start"});
+}
+
+/* ----- ecran de verification ----- */
+function dCatChip(row,ci,ri){
+  var c=dClassifyRow(row), col=c.planned?"var(--blue)":(c.unknown?"var(--amber)":"var(--green)");
+  return "&lt;button type='button' class='dchip' data-act='pickcat' data-c='"+ci+"' data-r='"+ri+"' style='border-color:"+col+";color:"+col+";'&gt;"+dEsc(c.unknown?"A classer : touche ici":c.label)+" &amp;#9662;&lt;/button&gt;";
+}
+function dPicker(ci,ri,text){
+  var c=dClassify(text), sysOpts="", typeOpts="";
+  var cur=c.planned?"__PLAN":(c.unknown?"":c.sys);
+  sysOpts+="&lt;option value=''&gt;-- Systeme --&lt;/option&gt;";
+  for(var i=0;i&lt;DSYS.length;i++) sysOpts+="&lt;option"+(DSYS[i]===cur?" selected":"")+"&gt;"+DSYS[i]+"&lt;/option&gt;";
+  sysOpts+="&lt;option value='__PLAN'"+(cur==="__PLAN"?" selected":"")+"&gt;Entretien planifie (pas une panne)&lt;/option&gt;";
+  for(var j=0;j&lt;DTYPE.length;j++) typeOpts+="&lt;option"+(DTYPE[j]===c.type?" selected":"")+"&gt;"+DTYPE[j]+"&lt;/option&gt;";
+  return "&lt;div class='dpick'&gt;&lt;div style='font-size:12px;color:var(--text2);margin-bottom:8px;'&gt;Classer &amp;laquo; "+dEsc(text||"(vide)")+" &amp;raquo; : l app s en souviendra.&lt;/div&gt;"+
+    "&lt;div class='field'&gt;&lt;select class='dp-sys'&gt;"+sysOpts+"&lt;/select&gt;&lt;/div&gt;&lt;div class='field'&gt;&lt;select class='dp-type'&gt;"+typeOpts+"&lt;/select&gt;&lt;/div&gt;"+
+    "&lt;button type='button' class='btn btn-green' data-act='savecat' data-c='"+ci+"' data-r='"+ri+"'&gt;Valider le classement&lt;/button&gt;"+
+    "&lt;button type='button' class='btn btn-ghost' data-act='closecat'&gt;Annuler&lt;/button&gt;&lt;/div&gt;";
+}
+function renderVerif(){
+  var box=dEl("down-verif"); if(!box) return;
+  if(!DPEND.length){ box.innerHTML=""; return; }
+  var h="";
+  if(DPEND.length&gt;1) h+="&lt;button type='button' class='btn btn-green' data-act='saveall'&gt;Enregistrer les "+DPEND.length+" rapports&lt;/button&gt;";
+  for(var ci=0;ci&lt;DPEND.length;ci++){
+    var c=DPEND[ci], key=c.date+"|"+c.shift, exists=!!DOWN.reports[key], tot=0;
+    h+="&lt;div class='card' style='border-color:var(--amber);'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title'&gt;&amp;#128269; Rapport a verifier&lt;/div&gt;"+
+      "&lt;div style='font-size:11px;color:var(--text3);'&gt;"+(c.src==="capture"?"capture":(c.src==="excel"?"Excel":"saisie"))+(c.files.length?" : "+dEsc(c.files.join(", ")):"")+"&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;";
+    h+="&lt;div class='dgrid2'&gt;&lt;div class='field'&gt;&lt;label&gt;Date du shift&lt;/label&gt;&lt;input type='date' value='"+dEsc(c.date)+"' data-c='"+ci+"' data-f='date'&gt;&lt;/div&gt;"+
+       "&lt;div class='field'&gt;&lt;label&gt;Shift&lt;/label&gt;&lt;select data-c='"+ci+"' data-f='shift'&gt;&lt;option value=''"+(c.shift?"":" selected")+"&gt;--&lt;/option&gt;&lt;option value='D'"+(c.shift==="D"?" selected":"")+"&gt;Day&lt;/option&gt;&lt;option value='N'"+(c.shift==="N"?" selected":"")+"&gt;Night&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;";
+    if(!c.date||!c.shift) h+="&lt;div class='dwarn'&gt;&amp;#9888; Date ou shift non lu : choisis-les ci-dessus.&lt;/div&gt;";
+    if(c.shift==="N") h+="&lt;div style='font-size:11px;color:var(--text3);margin:-4px 0 10px;'&gt;Night = du "+(c.date?fmtDM(c.date):"jour")+" a 17 h au lendemain matin.&lt;/div&gt;";
+    if(exists) h+="&lt;div class='dwarn'&gt;&amp;#9888; Le rapport du "+fmtDM(c.date)+" "+shiftName(c.shift)+" est deja enregistre : il sera remplace par celui-ci.&lt;/div&gt;";
+    for(var ri=0;ri&lt;c.rows.length;ri++){
+      var r=c.rows[ri]; tot+=(+r.h||0);
+      h+="&lt;div class='mb-card'&gt;&lt;div class='mb-head'&gt;&lt;div class='mb-title'&gt;"+dEsc(r.eq||"Ligne "+(ri+1))+"&lt;/div&gt;&lt;button type='button' class='rm' aria-label='Supprimer' data-act='delrow' data-c='"+ci+"' data-r='"+ri+"'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;&lt;div class='mb-body'&gt;";
+      h+="&lt;div class='field'&gt;&lt;label&gt;Machine&lt;/label&gt;&lt;input list='down-fleet' value='"+dEsc(r.eq)+"' data-c='"+ci+"' data-r='"+ri+"' data-f='eq' autocapitalize='characters'&gt;&lt;/div&gt;";
+      h+="&lt;div class='field'&gt;&lt;label&gt;Panne (Major Component)&lt;/label&gt;&lt;input value='"+dEsc(r.comp)+"' data-c='"+ci+"' data-r='"+ri+"' data-f='comp'&gt;&lt;/div&gt;";
+      h+="&lt;div class='field'&gt;&lt;label&gt;Details&lt;/label&gt;&lt;input value='"+dEsc(r.det)+"' data-c='"+ci+"' data-r='"+ri+"' data-f='det'&gt;&lt;/div&gt;";
+      h+="&lt;div class='dgrid2'&gt;&lt;div class='field'&gt;&lt;label&gt;De&lt;/label&gt;&lt;input type='time' value='"+dEsc(r.from)+"' data-c='"+ci+"' data-r='"+ri+"' data-f='from'&gt;&lt;/div&gt;"+
+         "&lt;div class='field'&gt;&lt;label&gt;A&lt;/label&gt;&lt;input type='time' value='"+dEsc(r.to)+"' data-c='"+ci+"' data-r='"+ri+"' data-f='to'&gt;&lt;/div&gt;&lt;/div&gt;"+
+         "&lt;div class='dgrid2'&gt;"+
+         "&lt;div class='field'&gt;&lt;label&gt;Heures&lt;/label&gt;&lt;input type='text' inputmode='decimal' value='"+String(+r.h||0).replace(".",",")+"' data-c='"+ci+"' data-r='"+ri+"' data-f='h' id='dh-"+ci+"-"+ri+"'&gt;&lt;/div&gt;&lt;/div&gt;";
+      h+="&lt;div id='dcat-"+ci+"-"+ri+"'&gt;"+dCatChip(r,ci,ri)+"&lt;/div&gt;";
+      if(r.sec&amp;&amp;!downSecCounts(r.sec)) h+="&lt;div class='dwarn'&gt;&amp;#9888; Section "+dEsc(r.sec)+" : pas comptee comme maintenance.&lt;/div&gt;";
+      for(var w=0;w&lt;(r.warn||[]).length;w++) h+="&lt;div class='dwarn'&gt;&amp;#9888; "+dEsc(r.warn[w])+"&lt;/div&gt;";
+      h+="&lt;div id='dpk-"+ci+"-"+ri+"'&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;";
+    }
+    h+="&lt;div style='font-size:13px;color:var(--text2);margin:4px 0 12px;'&gt;"+c.rows.length+" ligne(s) &amp;middot; total &lt;b id='dtot-"+ci+"'&gt;"+hFmt(tot)+"&lt;/b&gt;"+(c.total!==null&amp;&amp;c.total!==undefined?" &amp;middot; total du rapport : "+hFmt(c.total):"")+"&lt;/div&gt;";
+    h+="&lt;div id='dtotw-"+ci+"'&gt;"+dTotWarn(c)+"&lt;/div&gt;";
+    h+="&lt;button type='button' class='btn btn-ghost' data-act='addrow' data-c='"+ci+"'&gt;+ Ajouter une ligne&lt;/button&gt;";
+    h+="&lt;button type='button' class='btn btn-green' data-act='save' data-c='"+ci+"'&gt;Enregistrer ce rapport&lt;/button&gt;";
+    h+="&lt;button type='button' class='btn btn-ghost' data-act='drop' data-c='"+ci+"'&gt;Ignorer ce rapport&lt;/button&gt;";
+    h+="&lt;/div&gt;&lt;/div&gt;";
+  }
+  box.innerHTML=h;
+  downFleetList();
+  try{ var sp=box.querySelectorAll("input[data-f=comp],input[data-f=det]"); for(var si=0;si&lt;sp.length;si++) spellAttach(sp[si]); }catch(e){}
+}
+function downFleetList(){
+  var dl=dEl("down-fleet"); if(!dl) return;
+  var ms=downMachines(), h=""; for(var i=0;i&lt;ms.length;i++) h+="&lt;option value='"+dEsc(ms[i])+"'&gt;";
+  dl.innerHTML=h;
+}
+function downOnInput(ev){
+  var t=ev.target, f=t.getAttribute("data-f"); if(!f) return;
+  var ci=+t.getAttribute("data-c"), c=DPEND[ci]; if(!c) return;
+  if(!t.hasAttribute("data-r")){
+    c[f]=t.value;
+    if(ev.type==="change") renderVerif();
+    return;
+  }
+  var ri=+t.getAttribute("data-r"), r=c.rows[ri]; if(!r) return;
+  if(f==="h"){ var v=numVal(t.value); r.h=v===null?0:v; r.hManual=true; }
+  else r[f]=t.value;
+  if(f==="eq") r.eq=t.value;
+  if((f==="from"||f==="to")&amp;&amp;!r.hManual){ var d=durH(r.from,r.to); if(d!==null){ r.h=d; var hi=dEl("dh-"+ci+"-"+ri); if(hi) hi.value=String(d).replace(".",","); } }
+  if(f==="comp"||f==="det"){ var cb=dEl("dcat-"+ci+"-"+ri); if(cb) cb.innerHTML=dCatChip(r,ci,ri); }
+  var tot=0; for(var i=0;i&lt;c.rows.length;i++) tot+=(+c.rows[i].h||0);
+  var te=dEl("dtot-"+ci); if(te) te.textContent=hFmt(tot);
+  var tw=dEl("dtotw-"+ci); if(tw) tw.innerHTML=dTotWarn(c);
+}
+function dTotWarn(c){
+  if(c.total===null||c.total===undefined) return "";
+  var s=0; for(var i=0;i&lt;c.rows.length;i++) s+=(+c.rows[i].h||0);
+  if(Math.abs(s-c.total)&lt;=0.05) return "&lt;div style='font-size:12px;color:var(--green);margin:-6px 0 10px;'&gt;&amp;#9989; Les lignes donnent bien le total du rapport.&lt;/div&gt;";
+  return "&lt;div class='dwarn'&gt;&amp;#9888; Total du rapport : "+hFmt(c.total)+", lignes lues : "+hFmt(s)+". Il manque peut-etre une ligne ou une heure est mal lue : compare avec la capture.&lt;/div&gt;";
+}
+function downValidate(c){
+  if(!dValid(c.date)) return "Choisis la date du shift";
+  if(c.shift!=="D"&amp;&amp;c.shift!=="N") return "Choisis le shift (Day ou Night)";
+  var rows=[];
+  for(var i=0;i&lt;c.rows.length;i++){
+    var r=c.rows[i];
+    if(!String(r.eq||"").trim()&amp;&amp;!String(r.comp||"").trim()&amp;&amp;!(+r.h)) continue;
+    if(!String(r.eq||"").trim()) return "Machine manquante a la ligne "+(i+1);
+    var h=+r.h||0;
+    if(h&lt;=0) return "Heures manquantes pour "+eqNorm(r.eq);
+    if(h&gt;SHIFT_H+0.5) return "Plus de 12 h pour "+eqNorm(r.eq)+" sur un shift : verifie les heures";
+    rows.push({eq:eqNorm(r.eq), comp:String(r.comp||"").trim(), det:String(r.det||"").trim(), from:r.from||"", to:r.to||"", h:Math.round(h*100)/100, sec:r.sec||""});
+  }
+  if(!rows.length) return "Aucune ligne a enregistrer";
+  c._rows=rows; return "";
+}
+function downSaveCand(ci,silent){
+  var c=DPEND[ci]; if(!c) return false;
+  var err=downValidate(c); if(err){ if(!silent) toast(err); return false; }
+  var key=c.date+"|"+c.shift;
+  if(DOWN.reports[key]&amp;&amp;!silent&amp;&amp;!confirm("Remplacer le rapport du "+fmtDM(c.date)+" "+shiftName(c.shift)+" deja enregistre ?")) return false;
+  DOWN.reports[key]={date:c.date, shift:c.shift, rows:c._rows, src:c.src, files:c.files, added:Date.now()};
+  if(!downSave()) return false;
+  DPEND.splice(ci,1);
+  dClsReset();
+  DSTATE.week=weekStart(c.date);
+  return true;
+}
+function downOnClick(ev){
+  var t=ev.target.closest?ev.target.closest("[data-act]"):null; if(!t) return;
+  var act=t.getAttribute("data-act"), ci=+t.getAttribute("data-c"), ri=+t.getAttribute("data-r");
+  if(act==="addrow"){ DPEND[ci].rows.push({eq:"",comp:"",det:"",from:"",to:"",h:0,sec:"",warn:[]}); renderVerif(); return; }
+  if(act==="delrow"){ var rr=DPEND[ci].rows[ri]; if((rr.eq||rr.comp)&amp;&amp;!confirm("Supprimer la ligne "+(rr.eq||"")+" ?")) return; DPEND[ci].rows.splice(ri,1); renderVerif(); return; }
+  if(act==="drop"){ if(!confirm("Ignorer ce rapport ? Il ne sera pas enregistre.")) return; DPEND.splice(ci,1); renderVerif(); return; }
+  if(act==="save"){ var c=DPEND[ci], lbl=c?fmtDM(c.date)+" "+shiftName(c.shift):""; if(downSaveCand(ci,false)){ toast("Rapport du "+lbl+" enregistre"); renderVerif(); renderDash(); renderManage(); } return; }
+  if(act==="saveall"){
+    var ok=0, bad=0, rep=0;
+    for(var i=DPEND.length-1;i&gt;=0;i--){ if(DOWN.reports[DPEND[i].date+"|"+DPEND[i].shift]) rep++; }
+    if(rep&amp;&amp;!confirm(rep+" rapport(s) deja enregistre(s) seront remplaces. Continuer ?")) return;
+    for(var j=DPEND.length-1;j&gt;=0;j--){ if(downSaveCand(j,true)) ok++; else bad++; }
+    toast(ok+" rapport(s) enregistre(s)"+(bad?" - "+bad+" a completer":""));
+    renderVerif(); renderDash(); renderManage(); return;
+  }
+  if(act==="pickcat"){
+    var row=DPEND[ci].rows[ri], pk=dEl("dpk-"+ci+"-"+ri);
+    if(pk) pk.innerHTML=pk.innerHTML?"":dPicker(ci,ri,row.comp||row.det||"");
+    return;
+  }
+  if(act==="pickcat2"){ DSTATE.pick=t.getAttribute("data-text"); renderDash(); var pb=dEl("dpick-dash"); if(pb&amp;&amp;pb.scrollIntoView) pb.scrollIntoView({block:"center"}); return; }
+  if(act==="closecat"){ var p0=t.closest(".dpick"); if(p0&amp;&amp;p0.parentNode) p0.parentNode.innerHTML=""; DSTATE.pick=null; if(!p0) renderDash(); return; }
+  if(act==="savecat"){
+    var pkb=t.closest(".dpick"), sys=pkb.querySelector(".dp-sys").value, typ=pkb.querySelector(".dp-type").value;
+    if(!sys){ toast("Choisis le systeme"); return; }
+    var text=t.hasAttribute("data-text")?t.getAttribute("data-text"):(DPEND[ci].rows[ri].comp||DPEND[ci].rows[ri].det||"");
+    if(!String(text).trim()){ toast("Ecris d abord la panne"); return; }
+    dLearn(text,sys==="__PLAN"?"":sys,typ,sys==="__PLAN"); dClsReset(); DSTATE.pick=null;
+    toast("Classement enregistre");
+    renderVerif(); renderDash(); return;
+  }
+  if(act==="span"){ DSTATE.span=+t.getAttribute("data-v"); renderDash(); return; }
+  if(act==="wprev"){ DSTATE.week=dAdd(DSTATE.week,-7); renderDash(); return; }
+  if(act==="wnext"){ DSTATE.week=dAdd(DSTATE.week,7); renderDash(); return; }
+  if(act==="editrep"){
+    var key=t.getAttribute("data-k"), r0=DOWN.reports[key]; if(!r0) return;
+    for(var x=0;x&lt;DPEND.length;x++){ if(DPEND[x].date+"|"+DPEND[x].shift===key){ toast("Deja ouvert plus haut"); return; } }
+    var rows=[]; for(var y=0;y&lt;r0.rows.length;y++){ var o=r0.rows[y]; rows.push({eq:o.eq,comp:o.comp,det:o.det,from:o.from,to:o.to,h:o.h,sec:o.sec,warn:[]}); }
+    DPEND.push({date:r0.date, shift:r0.shift, rows:rows, src:r0.src||"manuel", files:r0.files||[]});
+    renderVerif(); var vb=dEl("down-verif"); if(vb&amp;&amp;vb.scrollIntoView) vb.scrollIntoView({block:"start"}); return;
+  }
+  if(act==="delrep"){
+    var k2=t.getAttribute("data-k"), r2=DOWN.reports[k2]; if(!r2) return;
+    if(!confirm("Supprimer le rapport du "+fmtDM(r2.date)+" "+shiftName(r2.shift)+" ?")) return;
+    delete DOWN.reports[k2]; downSave(); toast("Rapport supprime"); renderDash(); renderManage(); return;
+  }
+  if(act==="fleetadd"){
+    var inp=dEl("down-fleet-in"), v=eqNorm(inp?inp.value:"");
+    if(!v){ toast("Ecris le numero de la machine"); return; }
+    if(DCFG.fleet.indexOf(v)&lt;0) DCFG.fleet.push(v);
+    DCFG.removed=DCFG.removed.filter(function(z){ return eqNorm(z)!==v; });
+    downSave(); toast(v+" ajoutee a la flotte"); renderDash(); renderManage(); return;
+  }
+  if(act==="fleetdel"){
+    var e2=t.getAttribute("data-eq");
+    if(!confirm("Retirer "+e2+" de la flotte ? (ses pannes deja enregistrees restent dans l historique)")) return;
+    DCFG.fleet=DCFG.fleet.filter(function(z){ return eqNorm(z)!==e2; });
+    if(DCFG.removed.indexOf(e2)&lt;0) DCFG.removed.push(e2);
+    downSave(); renderDash(); renderManage(); return;
+  }
+}
+
+/* ----- tableau de bord ----- */
+function dKpi(title,val,sub,col){
+  return "&lt;div class='dkpi'&gt;&lt;div class='dkpi-t'&gt;"+title+"&lt;/div&gt;&lt;div class='dkpi-v' style='color:"+(col||"var(--text)")+";'&gt;"+val+"&lt;/div&gt;&lt;div class='dkpi-s'&gt;"+sub+"&lt;/div&gt;&lt;/div&gt;";
+}
+function dChart(hist){
+  var W=340, H=150, pl=26, pr=8, pt=10, pb=22, n=hist.length, max=1, i;
+  for(i=0;i&lt;n;i++) max=Math.max(max,hist[i].hUn+hist[i].hPl);
+  max=Math.ceil(max/10)*10;
+  var bw=(W-pl-pr)/n, s="&lt;svg viewBox='0 0 "+W+" "+H+"' width='100%' role='img' aria-label='Historique par semaine' style='display:block;'&gt;";
+  var y=function(v){ return pt+(H-pt-pb)*(1-v/max); };
+  var yd=function(d){ return pt+(H-pt-pb)*(1-(d-0.5)/0.5); };          // dispo : axe 50-100 %
+  s+="&lt;line x1='"+pl+"' y1='"+y(0)+"' x2='"+(W-pr)+"' y2='"+y(0)+"' stroke='#2e4d3c'/&gt;";
+  s+="&lt;text x='2' y='"+(pt+8)+"' font-size='8' fill='#9ab8a8'&gt;"+max+" h&lt;/text&gt;";
+  var tgt=yd((DCFG.target||85)/100);
+  s+="&lt;line x1='"+pl+"' y1='"+tgt+"' x2='"+(W-pr)+"' y2='"+tgt+"' stroke='#22c97a' stroke-dasharray='3 3' opacity='0.7'/&gt;";
+  s+="&lt;text x='"+(W-pr)+"' y='"+(tgt-3)+"' font-size='8' fill='#22c97a' text-anchor='end'&gt;"+(DCFG.target||85)+" %&lt;/text&gt;";
+  var pts=[];
+  for(i=0;i&lt;n;i++){
+    var hw=hist[i], x=pl+i*bw+bw*0.15, w=Math.max(1,bw*0.7);
+    if(hw.nSh){
+      s+="&lt;rect x='"+x.toFixed(1)+"' y='"+y(hw.hUn).toFixed(1)+"' width='"+w.toFixed(1)+"' height='"+(y(0)-y(hw.hUn)).toFixed(1)+"' fill='#f04848' opacity='0.85'&gt;&lt;title&gt;"+fmtDM(hw.week)+" : pannes "+hFmt(hw.hUn)+"&lt;/title&gt;&lt;/rect&gt;";
+      if(hw.hPl&gt;0) s+="&lt;rect x='"+x.toFixed(1)+"' y='"+y(hw.hUn+hw.hPl).toFixed(1)+"' width='"+w.toFixed(1)+"' height='"+(y(hw.hUn)-y(hw.hUn+hw.hPl)).toFixed(1)+"' fill='#38b6ff' opacity='0.8'/&gt;";
+      if(hw.dispo!==null) pts.push([x+w/2, yd(Math.max(0.5,hw.dispo)), hw.dispo]);
+    }
+    var every=n&lt;=13?2:(n&lt;=26?4:8);
+    if(i%every===0||i===n-1) s+="&lt;text x='"+(x+w/2).toFixed(1)+"' y='"+(H-8)+"' font-size='8' fill='#9ab8a8' text-anchor='middle'&gt;"+fmtDM(hw.week)+"&lt;/text&gt;";
+  }
+  if(pts.length&gt;1){ var d="M"; for(i=0;i&lt;pts.length;i++) d+=(i?" L":"")+pts[i][0].toFixed(1)+" "+pts[i][1].toFixed(1); s+="&lt;path d='"+d+"' fill='none' stroke='#e8f2ec' stroke-width='1.2' opacity='0.6'/&gt;"; }
+  for(i=0;i&lt;pts.length;i++) s+="&lt;circle cx='"+pts[i][0].toFixed(1)+"' cy='"+pts[i][1].toFixed(1)+"' r='3' fill='"+(pts[i][2]*100&gt;=(DCFG.target||85)?"#22c97a":"#f0a832")+"' stroke='#080f0c'/&gt;";
+  s+="&lt;/svg&gt;";
+  s+="&lt;div style='display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-top:6px;'&gt;&lt;span&gt;&lt;b style='color:#f04848;'&gt;&amp;#9632;&lt;/b&gt; pannes (h)&lt;/span&gt;&lt;span&gt;&lt;b style='color:#38b6ff;'&gt;&amp;#9632;&lt;/b&gt; entretien planifie (h)&lt;/span&gt;&lt;span&gt;&lt;b style='color:#22c97a;'&gt;&amp;#9679;&lt;/b&gt; dispo (echelle 50-100 %)&lt;/span&gt;&lt;/div&gt;";
+  return s;
+}
+function renderDash(){
+  var box=dEl("down-dash"); if(!box) return;
+  var nRep=Object.keys(DOWN.reports).length;
+  if(!nRep){
+    box.innerHTML="&lt;div class='card'&gt;&lt;div class='card-body' style='font-size:13px;line-height:1.6;color:var(--text2);'&gt;"+
+      "&lt;b style='color:var(--text);'&gt;Aucun rapport downtime pour l instant.&lt;/b&gt;&lt;br&gt;Ajoute des captures d ecran ou des fichiers Excel du rapport &amp;laquo; Equipment Downtime Report &amp;raquo; (un par shift, Day et Night). L app calcule ensuite :&lt;br&gt;"+
+      "&amp;#8226; la disponibilite de la flotte (objectif "+(DCFG.target||85)+" %)&lt;br&gt;&amp;#8226; le Top 3 des machines et des pannes&lt;br&gt;&amp;#8226; les pannes repetitives&lt;br&gt;&amp;#8226; l historique semaine par semaine (6 mois, 1 an).&lt;br&gt;La semaine va du mardi (Day) au lundi (Night).&lt;/div&gt;&lt;/div&gt;";
+    return;
+  }
+  if(!DSTATE.week) DSTATE.week=downLatestWeek();
+  var ev=downEvents(), p=downPeriod(DSTATE.week,DSTATE.span), a=downAnalyze(p,ev), tg=DCFG.target||85, h="", i;
+  // periode
+  h+="&lt;div class='dspan'&gt;"; for(i=0;i&lt;DSPANS.length;i++) h+="&lt;button type='button' data-act='span' data-v='"+DSPANS[i][0]+"' class='"+(DSTATE.span===DSPANS[i][0]?"on":"")+"'&gt;"+DSPANS[i][1]+"&lt;/button&gt;"; h+="&lt;/div&gt;";
+  var title=DSTATE.span===1?("Semaine du mar "+fmtDM(p.from)+" au lun "+fmtDM(p.to)):(DSTATE.span+" semaines : du "+fmtDMY(p.from)+" au "+fmtDMY(p.to));
+  h+="&lt;div class='dnav'&gt;&lt;button type='button' data-act='wprev' aria-label='Avant'&gt;&amp;#8249;&lt;/button&gt;&lt;div&gt;"+title+"&lt;/div&gt;&lt;button type='button' data-act='wnext' aria-label='Apres'&gt;&amp;#8250;&lt;/button&gt;&lt;/div&gt;";
+  // rapports manquants
+  var mlist=a.missing.map(function(x){ var o=idxToShift(x); return fmtDM(o.date)+" "+(o.shift==="N"?"N":"D"); });
+  h+="&lt;div style='font-size:12px;color:var(--text2);margin:0 0 12px;'&gt;Rapports : &lt;b style='color:var(--text);'&gt;"+a.nSh+" shift(s)&lt;/b&gt;"+(a.expected?" sur "+a.expected+" termines":"");
+  if(mlist.length) h+="&lt;br&gt;&lt;span style='color:var(--amber);'&gt;&amp;#9888; Manquants : "+(mlist.length&gt;8?mlist.slice(0,8).join(", ")+" +"+(mlist.length-8):mlist.join(", "))+"&lt;/span&gt;";
+  h+="&lt;/div&gt;";
+  if(!a.nSh){ h+="&lt;div class='card'&gt;&lt;div class='card-body' style='color:var(--text3);font-size:13px;'&gt;Aucun rapport sur cette periode. Utilise les fleches pour changer de semaine.&lt;/div&gt;&lt;/div&gt;"; box.innerHTML=h+dHistBlock(ev); return; }
+  // indicateurs
+  var dcol=a.dispo===null?"var(--text)":(a.dispo*100&gt;=tg?"var(--green)":"var(--red)");
+  h+="&lt;div class='dkpis'&gt;"+
+     dKpi("Dispo flotte",dPct(a.dispo),"objectif "+tg+" % &amp;middot; "+a.fleetN+" machines",dcol)+
+     dKpi("Downtime pannes",hFmt(a.tot.hUn),"+ entretien planifie "+hFmt(a.tot.hPl))+
+     dKpi("Pannes",String(a.nFail),"Day "+hFmt(a.tot.dayUn)+" / Night "+hFmt(a.tot.nightUn))+
+     dKpi("Temps moyen de reparation",a.mttr===null?"-":hFmt(a.mttr),"par panne (MTTR)")+"&lt;/div&gt;";
+  if(a.tot.hOther&gt;0) h+="&lt;div style='font-size:11px;color:var(--text3);margin:-6px 0 12px;'&gt;"+hFmt(a.tot.hOther)+" hors maintenance (attente, operation...) non comptees.&lt;/div&gt;";
+  // Top 3 machines
+  h+="&lt;div class='card'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title'&gt;&amp;#127942; Top 3 machines critiques&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;";
+  if(!a.top.length) h+="&lt;div style='color:var(--green);font-size:13px;'&gt;Aucune panne sur la periode.&lt;/div&gt;";
+  for(i=0;i&lt;a.top.length;i++){
+    var m=a.top[i], jk=DJK[m.jk]||DJK.ok, share=a.tot.hUn?m.hUn/a.tot.hUn:0;
+    h+="&lt;div class='dtop'&gt;&lt;div class='dtop-h'&gt;&lt;span class='dtop-n'&gt;"+(i+1)+"&lt;/span&gt;&lt;span class='dtop-eq'&gt;"+dEsc(m.eq)+"&lt;/span&gt;&lt;span class='dtop-v'&gt;"+hFmt(m.hUn)+"&lt;/span&gt;&lt;/div&gt;";
+    h+="&lt;div class='dtop-s'&gt;"+m.n+" panne(s) &amp;middot; dispo &lt;b style='color:"+(m.dispo!==null&amp;&amp;m.dispo*100&gt;=tg?"var(--green)":"var(--red)")+";'&gt;"+dPct(m.dispo)+"&lt;/b&gt; &amp;middot; "+Math.round(share*100)+" % du downtime"+(m.mttr!==null?" &amp;middot; "+hFmt(m.mttr)+" par panne":"")+"&lt;/div&gt;";
+    h+="&lt;div class='dtag' style='border-color:"+jk[2]+";color:"+jk[2]+";'&gt;"+jk[0]+" : "+jk[1]+"&lt;/div&gt;";
+    var cl=[]; for(var ck in m.cats) cl.push(m.cats[ck]); cl.sort(function(x,y){ return y.h-x.h; });
+    for(var q=0;q&lt;cl.length&amp;&amp;q&lt;3;q++){
+      var lab=cl[q].unknown?("A classer : "+Object.keys(cl[q].texts).join(", ")):cl[q].label;
+      h+="&lt;div class='dline'&gt;&amp;#8226; "+dEsc(lab)+" : &lt;b&gt;"+hFmt(cl[q].h)+"&lt;/b&gt;"+(cl[q].n?" ("+cl[q].n+" fois)":"")+"&lt;/div&gt;";
+    }
+    var det=[]; for(var e1=0;e1&lt;ev.length;e1++){ var x=ev[e1]; if(x.eq===m.eq&amp;&amp;!x.planned&amp;&amp;x.si&gt;=p.siFrom&amp;&amp;x.si&lt;=p.siTo&amp;&amp;x.det&amp;&amp;det.indexOf(x.det)&lt;0) det.push(x.det); }
+    if(det.length) h+="&lt;div class='dline' style='color:var(--text2);'&gt;Details : "+dEsc(det.slice(0,3).join(" / "))+"&lt;/div&gt;";
+    var my=downMyReports(m.eq,p.siFrom,p.siTo);
+    if(my.length){
+      h+="&lt;div class='dmy'&gt;&lt;div style='font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;'&gt;Causes et actions (tes rapports Panne)&lt;/div&gt;";
+      for(var y=0;y&lt;my.length&amp;&amp;y&lt;3;y++) h+="&lt;div&gt;"+fmtDM(my[y].date)+" "+my[y].shift+" : "+dEsc(my[y].failure||"-")+(my[y].action?" &amp;rarr; &lt;b&gt;"+dEsc(my[y].action)+"&lt;/b&gt;":"")+"&lt;/div&gt;";
+      h+="&lt;/div&gt;";
+    } else h+="&lt;div class='dline' style='color:var(--text3);font-size:11.5px;'&gt;Pas de cause/action trouvee dans tes rapports Panne pour cette machine.&lt;/div&gt;";
+    h+="&lt;/div&gt;";
+  }
+  if(a.top.length) h+="&lt;div style='font-size:12.5px;color:var(--text2);margin-top:4px;'&gt;Ces "+a.top.length+" machine(s) = &lt;b style='color:var(--text);'&gt;"+Math.round(a.topShare*100)+" %&lt;/b&gt; du downtime pannes de la periode.&lt;/div&gt;";
+  h+="&lt;/div&gt;&lt;/div&gt;";
+  // Top 3 pannes
+  var cats=a.cats.filter(function(c){ return c.h&gt;0; });
+  h+="&lt;div class='card'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title'&gt;&amp;#128295; Top 3 pannes&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;";
+  if(!cats.length) h+="&lt;div style='color:var(--green);font-size:13px;'&gt;Aucune panne.&lt;/div&gt;";
+  for(i=0;i&lt;cats.length&amp;&amp;i&lt;3;i++){
+    var c=cats[i];
+    h+="&lt;div class='dline' style='padding:6px 0;border-bottom:1px solid var(--border);'&gt;&lt;b&gt;"+(i+1)+". "+dEsc(c.unknown?"A classer":c.label)+"&lt;/b&gt; : "+hFmt(c.h)+" &amp;middot; "+c.n+" fois&lt;br&gt;&lt;span style='color:var(--text3);font-size:11.5px;'&gt;"+dEsc(Object.keys(c.eqs).join(", "))+"&lt;/span&gt;&lt;/div&gt;";
+  }
+  h+="&lt;/div&gt;&lt;/div&gt;";
+  // pannes repetitives
+  h+="&lt;div class='card'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title'&gt;&amp;#128260; Pannes repetitives (7 jours)&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;";
+  if(!a.reps.length) h+="&lt;div style='color:var(--green);font-size:13px;'&gt;Aucune panne repetee sur la meme machine en 7 jours.&lt;/div&gt;";
+  for(i=0;i&lt;a.reps.length&amp;&amp;i&lt;6;i++){
+    var rp=a.reps[i];
+    h+="&lt;div class='dline' style='padding:6px 0;border-bottom:1px solid var(--border);'&gt;&lt;b style='color:var(--red);'&gt;"+dEsc(rp.eq)+"&lt;/b&gt; &amp;middot; "+dEsc(rp.label)+" : &lt;b&gt;"+rp.list.length+" fois&lt;/b&gt;&lt;br&gt;&lt;span style='color:var(--text3);font-size:11.5px;'&gt;"+rp.list.map(function(f){ return fmtDM(f.date)+" "+f.shift; }).join(", ")+" &amp;rarr; l action n a pas regle la cause : faire les 5 Pourquoi&lt;/span&gt;&lt;/div&gt;";
+  }
+  h+="&lt;/div&gt;&lt;/div&gt;";
+  // a classer
+  var unk=Object.keys(a.unknown);
+  if(unk.length){
+    h+="&lt;div class='card' style='border-color:var(--amber);'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title' style='color:var(--amber);'&gt;&amp;#9888; Pannes a classer ("+unk.length+")&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;&lt;div style='font-size:12px;color:var(--text3);margin-bottom:8px;'&gt;L app ne reconnait pas ces mots. Classe-les une fois, elle s en souviendra.&lt;/div&gt;";
+    for(i=0;i&lt;unk.length&amp;&amp;i&lt;10;i++){
+      h+="&lt;button type='button' class='dchip' style='border-color:var(--amber);color:var(--amber);margin:0 6px 8px 0;' data-act='pickcat2' data-text='"+dEsc(unk[i])+"'&gt;"+dEsc(unk[i]||"(vide)")+" &amp;#9662;&lt;/button&gt;";
+    }
+    if(DSTATE.pick!==null&amp;&amp;DSTATE.pick!==undefined&amp;&amp;unk.indexOf(DSTATE.pick)&gt;=0){
+      h+="&lt;div id='dpick-dash'&gt;"+dPicker(-1,-1,DSTATE.pick).replace("data-act='savecat'","data-act='savecat' data-text='"+dEsc(DSTATE.pick)+"'")+"&lt;/div&gt;";
+    }
+    h+="&lt;/div&gt;&lt;/div&gt;";
+  }
+  box.innerHTML=h+dHistBlock(ev);
+}
+function dHistBlock(ev){
+  var n=DSTATE.span&gt;=52?52:(DSTATE.span&gt;=26?26:12);
+  var hist=downHistory(DSTATE.week||downLatestWeek(),n,ev);
+  var withData=hist.filter(function(x){ return x.nSh; }).length;
+  var h="&lt;div class='card'&gt;&lt;div class='card-head'&gt;&lt;div class='card-title'&gt;&amp;#128200; Historique ("+n+" semaines)&lt;/div&gt;&lt;/div&gt;&lt;div class='card-body'&gt;";
+  if(!withData) h+="&lt;div style='color:var(--text3);font-size:13px;'&gt;Pas encore de donnees sur ces semaines.&lt;/div&gt;";
+  else h+=dChart(hist);
+  h+="&lt;details style='margin-top:10px;'&gt;&lt;summary style='font-size:12px;color:var(--text2);'&gt;Comment l app calcule&lt;/summary&gt;&lt;div style='font-size:11.5px;color:var(--text3);line-height:1.6;margin-top:6px;'&gt;"+
+    "&amp;#8226; Dispo = (12 h - heures de maintenance) / 12 h, par machine et par shift. Une machine absente du rapport = 100 %. Retard d operateur ou machine garee = disponible.&lt;br&gt;"+
+    "&amp;#8226; Les heures viennent du rapport (De / A), pas de l horloge. Max 12 h par machine et par shift.&lt;br&gt;"+
+    "&amp;#8226; Daily Service et services = entretien planifie : comptes dans la dispo, pas dans le Top 3.&lt;br&gt;"+
+    "&amp;#8226; Une panne qui continue au shift suivant compte pour 1 panne.&lt;br&gt;"+
+    "&amp;#8226; Critique / frequentes / longues : comparaison avec la moyenne de la flotte (methode jack-knife).&lt;br&gt;"+
+    "&amp;#8226; Semaine : du mardi Day au lundi Night.&lt;/div&gt;&lt;/details&gt;";
+  h+="&lt;/div&gt;&lt;/div&gt;";
+  return h;
+}
+
+/* ----- rapports enregistres + flotte ----- */
+function renderManage(){
+  var box=dEl("down-manage"); if(!box) return;
+  var keys=Object.keys(DOWN.reports).sort().reverse(), h="";
+  h+="&lt;details class='card' style='padding:0;'&gt;&lt;summary class='card-head' style='cursor:pointer;'&gt;&lt;span class='card-title'&gt;&amp;#128193; Rapports enregistres ("+keys.length+")&lt;/span&gt;&lt;/summary&gt;&lt;div class='card-body'&gt;";
+  if(!keys.length) h+="&lt;div style='color:var(--text3);font-size:13px;'&gt;Aucun.&lt;/div&gt;";
+  var lastW="";
+  for(var i=0;i&lt;keys.length&amp;&amp;i&lt;200;i++){
+    var r=DOWN.reports[keys[i]], w=weekStart(r.date), tot=0;
+    for(var j=0;j&lt;r.rows.length;j++) tot+=(+r.rows[j].h||0);
+    if(w!==lastW){ h+="&lt;div style='font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin:10px 0 6px;'&gt;Semaine du "+fmtDM(w)+"&lt;/div&gt;"; lastW=w; }
+    h+="&lt;div class='drep'&gt;&lt;div&gt;&lt;b&gt;"+JOURS[dDow(r.date)]+" "+fmtDM(r.date)+" &amp;middot; "+shiftName(r.shift)+"&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:11.5px;color:var(--text3);'&gt;"+r.rows.length+" ligne(s) &amp;middot; "+hFmt(tot)+" &amp;middot; "+(r.src==="capture"?"capture":(r.src==="excel"?"Excel":"saisie"))+"&lt;/span&gt;&lt;/div&gt;"+
+       "&lt;div style='display:flex;gap:6px;'&gt;&lt;button type='button' class='btn btn-ghost btn-sm' data-act='editrep' data-k='"+dEsc(keys[i])+"'&gt;Modifier&lt;/button&gt;&lt;button type='button' class='btn btn-red btn-sm' data-act='delrep' data-k='"+dEsc(keys[i])+"' aria-label='Supprimer'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;";
+  }
+  h+="&lt;/div&gt;&lt;/details&gt;";
+  var fl=downMachines();
+  h+="&lt;details class='card' style='padding:0;'&gt;&lt;summary class='card-head' style='cursor:pointer;'&gt;&lt;span class='card-title'&gt;&amp;#128667; Flotte ("+fl.length+" machines)&lt;/span&gt;&lt;/summary&gt;&lt;div class='card-body'&gt;";
+  h+="&lt;div style='font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5;'&gt;Toutes les foreuses du site, meme celles sans panne : elles comptent a 100 % dans la dispo. Les machines lues dans les rapports sont ajoutees toutes seules.&lt;/div&gt;";
+  for(var k=0;k&lt;fl.length;k++) h+="&lt;span class='dfleet'&gt;"+dEsc(fl[k])+"&lt;button type='button' data-act='fleetdel' data-eq='"+dEsc(fl[k])+"' aria-label='Retirer'&gt;&amp;#10005;&lt;/button&gt;&lt;/span&gt;";
+  h+="&lt;div style='display:flex;gap:8px;margin-top:10px;'&gt;&lt;div class='field' style='flex:1;margin:0;'&gt;&lt;input id='down-fleet-in' placeholder='numero de la machine' autocapitalize='characters'&gt;&lt;/div&gt;&lt;button type='button' class='btn btn-green btn-sm' data-act='fleetadd'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
+  h+="&lt;/div&gt;&lt;/details&gt;";
+  box.innerHTML=h;
+}
+function renderSuivi(){
+  try{ downLoad(); }catch(e){}
+  dClsReset();
+  renderVerif(); renderDash(); renderManage();
+}
+var DOWN_WIRED=false;
+function downWire(){
+  if(DOWN_WIRED) return; var v=dEl("v-suivi"); if(!v) return; DOWN_WIRED=true;
+  v.addEventListener("click",downOnClick);
+  v.addEventListener("input",downOnInput);
+  v.addEventListener("change",downOnInput);
+}
+
+/* ===== DATE DU SHIFT ===== */
+// Un rapport Night fait apres minuit garde la date du DEBUT du shift (comme le rapport downtime du site)
+var DATE_IDS=["p-date","mds-date","oil-date"], AUTO_DATE={}, RESTORED_DATES={};
+function shiftDateFor(shift){ var d=new Date(); if(shift==="Night"&amp;&amp;d.getHours()&lt;6) d=new Date(d.getTime()-86400000); return dIso(d); }
+function setAutoDate(id,force){
+  var e=document.getElementById(id); if(!e) return;
+  if(force||!e.value||e.value===AUTO_DATE[id]){
+    var sh=(document.getElementById("p-shift")||{}).value||"Day", v=shiftDateFor(sh);
+    e.value=v; AUTO_DATE[id]=v;
+  }
+}
+function initDates(){
+  for(var i=0;i&lt;DATE_IDS.length;i++){ if(!RESTORED_DATES[DATE_IDS[i]]) setAutoDate(DATE_IDS[i],true); }
+  var dd=document.getElementById("d-date"); if(dd&amp;&amp;!RESTORED_DATES["d-date"]) dd.value=dIso(new Date()); // Daily : toujours Day
+}
+
 
 /* ======== FIN DES DECLARATIONS EN TETE ======== */
 
@@ -920,7 +2497,8 @@ function restoreMDSDraft(){
   var d;
   try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}"); }catch(e){ return; }
   if(!d||!d.mds) return;
-  if(d.mds.date) sv("mds-date",d.mds.date);
+  var mdsFull=false; for(var mv=0;mv&lt;(d.mds.vals||[]).length;mv++){ if(d.mds.vals[mv]&amp;&amp;d.mds.vals[mv].v) mdsFull=true; }
+  if(d.mds.date&amp;&amp;mdsFull) sv("mds-date",d.mds.date);
   sv("mds-comment",d.mds.comment);
   var vals=d.mds.vals||[];
   var mn=document.querySelectorAll(".mds-num"), mo=document.querySelectorAll(".mds-ok");
@@ -937,7 +2515,8 @@ function restoreOilDraft(){
   var d;
   try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}"); }catch(e){ return; }
   if(!d||!d.oil) return;
-  if(d.oil.date) sv("oil-date",d.oil.date);
+  var oilFull=false; for(var ov0=0;ov0&lt;(d.oil.rows||[]).length;ov0++){ if(d.oil.rows[ov0]&amp;&amp;d.oil.rows[ov0].rig) oilFull=true; }
+  if(d.oil.date&amp;&amp;oilFull) sv("oil-date",d.oil.date);
   sv("oil-st",d.oil.st); sv("oil-comment",d.oil.comment);
   var rows=d.oil.rows||[];
   var hasContent=false;
@@ -1000,7 +2579,7 @@ function restoreDrafts(){
       addPanne(p);
     }
     if(!hasContent){ document.getElementById("panne-list").innerHTML=""; pCount=0; addPanne(); }
-    if(d.pmeta){ if(d.pmeta.date) sv("p-date",d.pmeta.date); sv("p-lead",d.pmeta.lead); sv("p-sup",d.pmeta.sup); sv("p-site",d.pmeta.site); }
+    if(d.pmeta){ if(d.pmeta.date&amp;&amp;hasContent){ sv("p-date",d.pmeta.date); RESTORED_DATES["p-date"]=true; } sv("p-lead",d.pmeta.lead); sv("p-sup",d.pmeta.sup); sv("p-site",d.pmeta.site); }
   }
   // DAILY
   if(d.daily&amp;&amp;d.daily.length){
@@ -1012,13 +2591,13 @@ function restoreDrafts(){
       addDaily(dd);
     }
     if(!hasD){ document.getElementById("daily-list").innerHTML=""; dCount=0; addDaily(); }
-    if(d.dmeta){ if(d.dmeta.date) sv("d-date",d.dmeta.date); sv("d-loc",d.dmeta.loc); sv("d-lead",d.dmeta.lead); sv("d-forman",d.dmeta.forman); sv("d-comment",d.dmeta.comment); }
+    if(d.dmeta){ if(d.dmeta.date&amp;&amp;hasD){ sv("d-date",d.dmeta.date); RESTORED_DATES["d-date"]=true; } sv("d-loc",d.dmeta.loc); sv("d-lead",d.dmeta.lead); sv("d-forman",d.dmeta.forman); sv("d-comment",d.dmeta.comment); }
   }
 }
 
 function exportData(){
   try{
-    var data=JSON.stringify(DB);
+    var data=JSON.stringify({app:"gmao",v:2,reports:DB,down:DOWN,downcfg:DCFG});
     var blob=new Blob([data],{type:"application/json"});
     var d=new Date();
     var fname="GMAO_sauvegarde_"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".json";
@@ -1055,11 +2634,14 @@ function importData(input){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
-      var imported=JSON.parse(e.target.result);
+      var raw=JSON.parse(e.target.result), imported=raw, dn=null;
+      if(raw&amp;&amp;!Array.isArray(raw)&amp;&amp;Array.isArray(raw.reports)){ imported=raw.reports; if(raw.down&amp;&amp;raw.down.reports) dn=raw; }
       if(!Array.isArray(imported)) throw new Error("format");
-      if(!confirm("Importer "+imported.length+" rapport(s) ? Cela remplacera ton historique actuel.")){ input.value=""; return; }
+      var nd=dn?Object.keys(dn.down.reports).length:0;
+      if(!confirm("Importer "+imported.length+" rapport(s)"+(dn?" et "+nd+" rapport(s) downtime":"")+" ? Cela remplacera ton historique actuel.")){ input.value=""; return; }
       DB=imported; saveDB();
-      toast("Sauvegarde importee : "+imported.length+" rapport(s)");
+      if(dn){ DOWN=dn.down; if(dn.downcfg){ DCFG.fleet=dn.downcfg.fleet||[]; DCFG.removed=dn.downcfg.removed||[]; DCFG.learn=dn.downcfg.learn||{}; DCFG.target=dn.downcfg.target||85; } downSave(); dClsReset(); }
+      toast("Sauvegarde importee : "+imported.length+" rapport(s)"+(dn?" + "+nd+" downtime":""));
     }catch(err){ toast("Fichier invalide"); }
     input.value="";
   };
@@ -1079,6 +2661,7 @@ function nav(v){
   if(v==="oil") initOil();
   if(v==="wo") initWO();
   if(v==="info"){ renderSendList(); try{ checkOffline(); }catch(e){} }
+  if(v==="suivi"){ try{ downWire(); renderSuivi(); }catch(e){ toast("Erreur Suivi : "+e.message); } }
   window.scrollTo(0,0);
 }
 
@@ -1112,6 +2695,7 @@ function addPanne(data){
   suggBox.style.cssText="display:none;margin:-6px 0 12px;";
   body.appendChild(suggBox);
   var inFail=fFail.querySelector(".p-f"), inAct=fAct.querySelector(".p-a");
+  try{ spellAttach(inFail,""); spellAttach(inAct,"action"); }catch(e){}
   var actOpen=false;
   var chipCss="display:block;width:100%;text-align:left;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:9px 11px;font-size:13px;margin-bottom:5px;font-family:inherit;";
   var pillCss="display:inline-block;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:16px;padding:8px 12px;font-size:13px;margin:0 6px 6px 0;font-family:inherit;";
@@ -1274,6 +2858,7 @@ function getPanne(){
 
 var lastPanne=null;
 function genPanne(){
+  try{ spellCheckFields("#panne-list .p-f, #panne-list .p-a","#panne-list .p-a"); }catch(e){}
   var rows=getPanne();
   if(!rows.length){ toast("Ajoute au moins une panne"); return; }
   // doublon reel = meme machine ET meme panne (une machine peut tomber 2 fois)
@@ -2788,8 +4373,6 @@ function editPanne(ref){
 }
 
 /* ===== INIT ===== */
-try{ document.getElementById("p-date").valueAsDate=new Date(); }catch(e){}
-try{ document.getElementById("d-date").valueAsDate=new Date(); }catch(e){}
 addPanne();
 addDaily();
 // pre-remplissage des noms habituels
@@ -2801,6 +4384,8 @@ try{
 // restaure les brouillons en cours (panne/daily non encore generes)
 try{ restoreDrafts(); }catch(e){}
 try{ initShifts(); }catch(e){}
+try{ initDates(); }catch(e){}
+try{ downLoad(); downWire(); }catch(e){}
 // sauvegarde auto du brouillon a chaque saisie dans les vues Panne et Daily
 try{
   ["v-panne","v-daily","v-mds","v-oil"].forEach(function(vid){
