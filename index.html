@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.5 (suivi downtime + huiles + correcteur anglais + QR + reglages) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.7 (suivi downtime + huiles + correcteur anglais + QR + reglages + termes foreuse + liste equipe) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -66,6 +66,25 @@ body.qrs-open .toast{bottom:auto;top:12px;}
 html[data-mode="light"] .btn-amber,html[data-mode="light"] .spell-ok,html[data-mode="light"] .lk-dot{color:#fff;}
 html[data-mode="light"] #lockscreen{--amber:#f0a832;--text:#e8f2ec;--text2:#9ab8a8;--text3:#5a7868;--border2:#2e4d3c;--surface2:#162219;}
 @media (max-width:380px){ .tb-lock-t{display:none;} }
+.tm-sum{font-size:13.5px;color:var(--text2);line-height:1.5;margin:4px 0 8px;}
+.tm-sum b{color:var(--text);font-size:15px;}
+.tm-add{display:flex;gap:8px;margin-bottom:6px;}
+.tm-add input{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px;font-size:16px;color:var(--text);min-height:44px;}
+.tm-add .btn{flex:0 0 auto;width:auto;margin:0;}
+.tm-hint{font-size:12px;color:var(--text3);margin:4px 0 8px;line-height:1.5;}
+.tm-list{border-top:1px solid var(--border);}
+.tm-row{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding:4px 0;}
+.tm-n{flex:1;min-width:0;font-size:15px;color:var(--text);overflow-wrap:anywhere;}
+.tm-st{flex:0 0 auto;min-width:42px;min-height:40px;padding:0 4px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--text3);font-weight:700;font-size:13px;}
+.tm-st.on{background:var(--amber);border-color:var(--amber);color:#000;}
+html[data-mode="light"] .tm-st.on{color:#fff;}
+.tm-x{flex:0 0 auto;min-width:40px;min-height:44px;background:none;border:none;color:var(--red);font-size:17px;}
+.tm-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.tm-chip{display:inline-flex;align-items:center;gap:2px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:0 0 0 12px;font-size:14px;font-weight:700;color:var(--text);}
+.tm-chip button{background:none;border:none;color:var(--red);min-width:40px;min-height:40px;font-size:14px;}
+.tm-area{width:100%;min-height:150px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px;font-size:16px;color:var(--text);font-family:inherit;}
+.tm-err{color:var(--red);font-size:13px;margin-top:6px;line-height:1.5;}
+.tm-reset{background:none;border:none;color:var(--text3);font-size:12.5px;text-decoration:underline;margin-top:12px;min-height:44px;width:100%;}
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
 .tb-logo{width:32px;height:32px;border:1.5px solid var(--amber);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;}
 .tb-name{font-size:14px;font-weight:800;color:var(--amber);letter-spacing:1px;}
@@ -3207,7 +3226,11 @@ function lookRender(){
   for(var s in LOOK_SIZES) h+=lookBtn("size",s,LOOK_SIZES[s][1],(L.size||"normal")===s," style='font-size:"+Math.round(14*LOOK_SIZES[s][0])+"px'");
   h+="&lt;/div&gt;&lt;div class='lk-t'&gt;Style d ecriture&lt;/div&gt;&lt;div class='lk-grid2'&gt;";
   for(var f in LOOK_FONTS) h+=lookBtn("font",f,"&lt;span style=\"font-family:"+LOOK_FONTS[f][0].replace(/'/g,"&amp;#39;")+";\"&gt;Aa "+LOOK_FONTS[f][1]+"&lt;/span&gt;",(L.font||"standard")===f);
-  h+="&lt;/div&gt;&lt;div class='gm-note'&gt;Les reglages restent sur ce telephone. Les PDF des rapports gardent leur presentation officielle.&lt;/div&gt;";
+  h+="&lt;/div&gt;&lt;div class='lk-t'&gt;Equipe et machines&lt;/div&gt;&lt;div class='tm-sum'&gt;"+teamSummary()+"&lt;/div&gt;&lt;div class='lk-grid3'&gt;"+
+     "&lt;button type='button' class='lk-opt' onclick=\"teamOpen('edit')\"&gt;Modifier&lt;/button&gt;"+
+     "&lt;button type='button' class='lk-opt' onclick=\"teamOpen('share')\"&gt;Partager&lt;/button&gt;"+
+     "&lt;button type='button' class='lk-opt' onclick=\"teamOpen('receive')\"&gt;Recevoir&lt;/button&gt;&lt;/div&gt;";
+  h+="&lt;div class='gm-note'&gt;Les reglages restent sur ce telephone. Les PDF des rapports gardent leur presentation officielle.&lt;/div&gt;";
   h+="&lt;div class='gm-row'&gt;&lt;button type='button' class='btn btn-ghost btn-sm' onclick='lookReset()'&gt;Reglages d origine&lt;/button&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='lookClose()'&gt;OK&lt;/button&gt;&lt;/div&gt;";
   m.innerHTML="&lt;div class='gm-box'&gt;"+h+"&lt;/div&gt;";
 }
@@ -3217,6 +3240,218 @@ function lookOpen(){
   m.style.display="flex"; lookRender();
 }
 function lookClose(){ var m=document.getElementById("look-modal"); if(m){ m.style.display="none"; m.innerHTML=""; } }
+
+/* =================== EQUIPE ET MACHINES =================== */
+// La liste des noms et des machines reste dans le telephone (jamais dans le code sur GitHub).
+// Elle circule dans l equipe par un message WhatsApp "GMAO-EQUIPE" a copier / coller.
+var TEAM_KEY="gmao_team";
+var TEAM={w:null, dirty:false, view:"edit", msg:""};
+function teamGet(){
+  try{
+    var o=JSON.parse(localStorage.getItem(TEAM_KEY)||"null");
+    if(o&amp;&amp;Array.isArray(o.names)&amp;&amp;Array.isArray(o.machines)){ if(!Array.isArray(o.st)) o.st=[]; if(!Array.isArray(o.lh)) o.lh=[]; return o; }
+  }catch(e){}
+  return null;
+}
+function teamSave(o){ o.v=1; o.ts=Date.now(); localStorage.setItem(TEAM_KEY,JSON.stringify(o)); }
+function teamClean(s){ return String(s==null?"":s).replace(/^[\s\-*.\u2022\u00B7]+/,"").replace(/\s+/g," ").trim().slice(0,60); }
+function teamKey(s){ return txtNorm(s); }
+function teamUniq(a){
+  var seen={}, out=[];
+  for(var i=0;i&lt;a.length;i++){ var c=teamClean(a[i]), k=teamKey(c); if(c&amp;&amp;k&amp;&amp;!seen[k]){ seen[k]=1; out.push(c); } }
+  return out;
+}
+function teamCmp(x,y){ try{ return x.localeCompare(y,undefined,{numeric:true,sensitivity:"base"}); }catch(e){ return x&lt;y?-1:(x&gt;y?1:0); } }
+function teamSorted(a){ return teamUniq(a).sort(teamCmp); }
+function teamHas(list,name){ var k=teamKey(name); for(var i=0;i&lt;list.length;i++) if(teamKey(list[i])===k) return i; return -1; }
+// remplace les listes de l app (machines, techniciens, chauffeurs ST, superviseurs)
+function teamApplyLists(){
+  var T=teamGet(); if(!T) return false;
+  function fill(arr,vals){ arr.length=0; for(var i=0;i&lt;vals.length;i++) arr.push(vals[i]); }
+  if(T.machines.length){ fill(RIGS,T.machines); fill(OIL_RIGS,T.machines); }
+  if(T.names.length){ fill(TECHS,T.names); fill(OIL_SUPS,T.names); fill(OIL_NAMES,T.st.length?T.st:T.names); }
+  return true;
+}
+// suggestions de noms dans les cases Leading Hand, Supervisor...
+function teamDatalist(){
+  var T=teamGet(); if(!T||!T.names.length) return;
+  function mk(id,vals){
+    var dl=document.getElementById(id);
+    if(!dl){ dl=document.createElement("datalist"); dl.id=id; document.body.appendChild(dl); }
+    dl.innerHTML="";
+    for(var i=0;i&lt;vals.length;i++){ var o=document.createElement("option"); o.value=vals[i]; dl.appendChild(o); }
+  }
+  mk("dl-team",T.names); mk("dl-team-lh",T.lh.length?T.lh:T.names);
+  var ids={"p-lead":"dl-team-lh","d-lead":"dl-team-lh","p-sup":"dl-team","p-site":"dl-team","d-forman":"dl-team"};
+  for(var k in ids){ var el=document.getElementById(k); if(el&amp;&amp;!el.getAttribute("list")) el.setAttribute("list",ids[k]); }
+}
+function teamSummary(T){
+  T=T||teamGet();
+  if(!T) return "Pas encore de liste : l app affiche Technicien 1, Machine 1...";
+  return "Effectif : &lt;b&gt;"+T.names.length+"&lt;/b&gt; technicien"+(T.names.length&gt;1?"s":"")+" (dont "+T.st.length+" ST Driver, "+(T.lh||[]).length+" Leading Hand) &amp;middot; "+T.machines.length+" machine"+(T.machines.length&gt;1?"s":"");
+}
+// ---------- message a partager ----------
+function teamText(T){
+  var lh=T.lh||[];
+  var L=["GMAO-EQUIPE","Machines ("+T.machines.length+") : "+T.machines.join(", "),"ST Driver ("+T.st.length+") : "+T.st.join(" ; "),"Leading Hand ("+lh.length+") : "+lh.join(" ; "),"Noms ("+T.names.length+") :"];
+  return L.concat(T.names).concat(["FIN"]).join("\n");
+}
+function teamParse(txt){
+  var s=String(txt||"").replace(/\r/g,""), i=s.search(/GMAO-EQUIPE/i);
+  if(i&lt;0) return null;
+  s=s.slice(i+11);
+  var end=s.search(/(^|\n)\s*FIN\s*(\n|$)/); if(end&gt;=0) s=s.slice(0,end);
+  function sec(re){ var m=s.match(re); return m?m[1]:""; }
+  var H="(?=Machines[^:\\n]*:|ST\\s*Driver[^:\\n]*:|Leading\\s*Hand[^:\\n]*:|Noms[^:\\n]*:|$)";
+  var mach=sec(new RegExp("Machines[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var st=sec(new RegExp("ST\\s*Driver[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var lhT=sec(new RegExp("Leading\\s*Hand[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var nm=sec(new RegExp("Noms[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var machines=teamSorted(mach.split(/[,;\n]+/)), sts=teamSorted(st.split(/[;\n]+/)), lhs=teamSorted(lhT.split(/[;\n]+/));
+  var names=teamSorted(nm.split(/[;\n]+/).concat(sts,lhs));
+  if(!names.length&amp;&amp;!machines.length) return null;
+  if(names.length&gt;400||machines.length&gt;200) return null;
+  return {v:1, names:names, st:sts, lh:lhs, machines:machines};
+}
+// ---------- fenetre ----------
+function teamModal(){
+  var m=document.getElementById("team-modal");
+  if(!m){ m=document.createElement("div"); m.id="team-modal"; m.className="gm-modal"; document.body.appendChild(m);
+    m.addEventListener("click",function(ev){ if(ev.target===m) teamClose(); }); }
+  return m;
+}
+function teamOpen(view){
+  var T=teamGet();
+  TEAM.w=T?JSON.parse(JSON.stringify(T)):{v:1,names:[],st:[],lh:[],machines:[]};
+  TEAM.dirty=false; TEAM.view=view||"edit"; TEAM.msg="";
+  if(TEAM.view==="share"&amp;&amp;!T){ toast("Pas encore de liste a partager"); return; }
+  try{ lookClose(); }catch(e){}
+  teamModal().style.display="flex"; teamRender();
+}
+function teamClose(force){
+  if(!force&amp;&amp;TEAM.view==="edit"&amp;&amp;TEAM.dirty&amp;&amp;!confirm("Quitter sans enregistrer les changements ?")) return;
+  var m=document.getElementById("team-modal"); if(m){ m.style.display="none"; m.innerHTML=""; }
+  TEAM.dirty=false;
+}
+function teamHead(t){ return "&lt;div class='gm-head'&gt;&lt;b&gt;"+t+"&lt;/b&gt;&lt;button type='button' class='gm-x' aria-label='Fermer' onclick='teamClose()'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;"; }
+function teamRender(){
+  var m=document.getElementById("team-modal"); if(!m||m.style.display==="none") return;
+  var W=TEAM.w, h="";
+  if(TEAM.view==="edit"){
+    h+=teamHead("&amp;#128101; Equipe et machines");
+    h+="&lt;div class='tm-sum'&gt;"+teamSummary(W)+"&lt;/div&gt;";
+    h+="&lt;div class='lk-t'&gt;Noms ("+W.names.length+")&lt;/div&gt;";
+    h+="&lt;div class='tm-add'&gt;&lt;input type='text' id='tm-new-name' placeholder='Nom a ajouter' autocomplete='off'&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamAddName()'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
+    h+="&lt;div class='tm-hint'&gt;&lt;b&gt;LH&lt;/b&gt; = Leading Hand (propose dans la case Leading Hand). &lt;b&gt;ST&lt;/b&gt; = chauffeur de service truck (propose dans Truck Operator, rapport Huile).&lt;/div&gt;";
+    h+="&lt;div class='tm-list'&gt;";
+    for(var i=0;i&lt;W.names.length;i++){
+      var st=teamHas(W.st,W.names[i])&gt;=0, lh=teamHas(W.lh,W.names[i])&gt;=0;
+      h+="&lt;div class='tm-row'&gt;&lt;span class='tm-n'&gt;"+escP(W.names[i])+"&lt;/span&gt;&lt;button type='button' class='tm-st"+(lh?" on":"")+"' aria-label='Leading Hand' onclick='teamToggleLh("+i+")'&gt;LH&lt;/button&gt;&lt;button type='button' class='tm-st"+(st?" on":"")+"' aria-label='ST Driver' onclick='teamToggleSt("+i+")'&gt;ST&lt;/button&gt;&lt;button type='button' class='tm-x' aria-label='Retirer' onclick='teamDelName("+i+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;";
+    }
+    if(!W.names.length) h+="&lt;div class='tm-hint'&gt;Aucun nom pour l instant.&lt;/div&gt;";
+    h+="&lt;/div&gt;";
+    h+="&lt;div class='lk-t'&gt;Machines ("+W.machines.length+")&lt;/div&gt;";
+    h+="&lt;div class='tm-add'&gt;&lt;input type='text' id='tm-new-m' placeholder='Machine (ex : DR232)' autocomplete='off' autocapitalize='characters'&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamAddMach()'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
+    h+="&lt;div class='tm-chips'&gt;";
+    for(var k=0;k&lt;W.machines.length;k++) h+="&lt;span class='tm-chip'&gt;"+escP(W.machines[k])+"&lt;button type='button' aria-label='Retirer' onclick='teamDelMach("+k+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/span&gt;";
+    h+="&lt;/div&gt;";
+    h+="&lt;div class='gm-row'&gt;&lt;button type='button' class='btn btn-ghost btn-sm' onclick='teamClose()'&gt;Annuler&lt;/button&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamCommit()'&gt;Enregistrer&lt;/button&gt;&lt;/div&gt;";
+    if(teamGet()) h+="&lt;button type='button' class='tm-reset' onclick='teamReset()'&gt;Revenir aux noms generiques (Technicien 1, Machine 1...)&lt;/button&gt;";
+  } else if(TEAM.view==="receive"){
+    h+=teamHead("&amp;#128229; Recevoir une liste");
+    h+="&lt;div class='gm-steps'&gt;&lt;b&gt;1.&lt;/b&gt; Dans WhatsApp, appuie longuement sur le message &lt;b&gt;GMAO-EQUIPE&lt;/b&gt;, puis &lt;b&gt;Copier&lt;/b&gt;.&lt;br&gt;&lt;b&gt;2.&lt;/b&gt; Reviens ici, touche &lt;b&gt;Coller&lt;/b&gt;, puis &lt;b&gt;Importer&lt;/b&gt;.&lt;/div&gt;";
+    h+="&lt;textarea id='tm-paste' class='tm-area' placeholder='Colle ici le message GMAO-EQUIPE'&gt;&lt;/textarea&gt;";
+    if(TEAM.msg) h+="&lt;div class='tm-err'&gt;"+TEAM.msg+"&lt;/div&gt;";
+    h+="&lt;div class='gm-row'&gt;&lt;button type='button' class='btn btn-ghost btn-sm' onclick='teamPaste()'&gt;Coller&lt;/button&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamImport()'&gt;Importer&lt;/button&gt;&lt;/div&gt;";
+  } else {
+    var T=teamGet(), txt=T?teamText(T):"";
+    h+=teamHead("&amp;#128228; Partager la liste");
+    h+="&lt;div class='gm-steps'&gt;Envoie ce message dans le groupe WhatsApp de l equipe. Chacun le copie, puis dans l app : &lt;b&gt;&amp;#9881;&amp;#65039; Reglages &amp;gt; Recevoir&lt;/b&gt;.&lt;/div&gt;";
+    h+="&lt;textarea id='tm-out' class='tm-area' readonly&gt;&lt;/textarea&gt;";
+    h+="&lt;div class='gm-row'&gt;"+((navigator.share&amp;&amp;!isDesktop())?"&lt;button type='button' class='btn btn-wa btn-sm' onclick='teamShareNow()'&gt;Partager sur WhatsApp&lt;/button&gt;":"")+"&lt;button type='button' class='btn btn-ghost btn-sm' onclick='teamCopy()'&gt;Copier le message&lt;/button&gt;&lt;/div&gt;";
+    m.innerHTML="&lt;div class='gm-box'&gt;"+h+"&lt;/div&gt;";
+    m.querySelector("#tm-out").value=txt;
+    return;
+  }
+  m.innerHTML="&lt;div class='gm-box'&gt;"+h+"&lt;/div&gt;";
+}
+function teamAddName(){
+  var inp=document.getElementById("tm-new-name"), v=teamClean(inp&amp;&amp;inp.value);
+  if(!v){ toast("Tape un nom"); return; }
+  if(teamHas(TEAM.w.names,v)&gt;=0){ toast("Deja dans la liste"); return; }
+  TEAM.w.names=teamSorted(TEAM.w.names.concat([v])); TEAM.dirty=true; teamRender();
+  var n=document.getElementById("tm-new-name"); if(n) n.focus();
+  toast(v+" ajoute");
+}
+function teamDelName(i){
+  var n=TEAM.w.names[i]; if(n==null) return;
+  if(!confirm("Retirer "+n+" de la liste ?")) return;
+  TEAM.w.names.splice(i,1); var j=teamHas(TEAM.w.st,n); if(j&gt;=0) TEAM.w.st.splice(j,1); var j2=teamHas(TEAM.w.lh,n); if(j2&gt;=0) TEAM.w.lh.splice(j2,1);
+  TEAM.dirty=true; teamRender();
+}
+function teamToggleSt(i){
+  var n=TEAM.w.names[i]; if(n==null) return;
+  var j=teamHas(TEAM.w.st,n);
+  if(j&gt;=0) TEAM.w.st.splice(j,1); else TEAM.w.st=teamSorted(TEAM.w.st.concat([n]));
+  TEAM.dirty=true; teamRender();
+}
+function teamToggleLh(i){
+  var n=TEAM.w.names[i]; if(n==null) return;
+  var j=teamHas(TEAM.w.lh,n);
+  if(j&gt;=0) TEAM.w.lh.splice(j,1); else TEAM.w.lh=teamSorted(TEAM.w.lh.concat([n]));
+  TEAM.dirty=true; teamRender();
+}
+function teamAddMach(){
+  var inp=document.getElementById("tm-new-m"), v=teamClean(inp&amp;&amp;inp.value).toUpperCase();
+  if(!v){ toast("Tape une machine"); return; }
+  if(teamHas(TEAM.w.machines,v)&gt;=0){ toast("Deja dans la liste"); return; }
+  TEAM.w.machines=teamSorted(TEAM.w.machines.concat([v])); TEAM.dirty=true; teamRender();
+  var n=document.getElementById("tm-new-m"); if(n) n.focus();
+}
+function teamDelMach(i){
+  var n=TEAM.w.machines[i]; if(n==null) return;
+  if(!confirm("Retirer la machine "+n+" de la liste ?")) return;
+  TEAM.w.machines.splice(i,1); TEAM.dirty=true; teamRender();
+}
+function teamReload(msg){
+  try{ saveDraft(); }catch(e){}
+  toast(msg);
+  setTimeout(function(){ location.reload(); },700);
+}
+function teamCommit(){
+  var W=TEAM.w;
+  if(!W.names.length&amp;&amp;!W.machines.length){ teamReset(); return; }
+  try{ teamSave({names:teamSorted(W.names), st:teamSorted(W.st), lh:teamSorted(W.lh), machines:teamSorted(W.machines)}); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
+  TEAM.dirty=false; teamClose(true); teamReload("Liste enregistree");
+}
+function teamReset(){
+  if(!confirm("Revenir aux noms generiques (Technicien 1, Machine 1...) ? Ta liste sera effacee de ce telephone.")) return;
+  try{ localStorage.removeItem(TEAM_KEY); }catch(e){}
+  TEAM.dirty=false; teamClose(true); teamReload("Noms generiques remis");
+}
+function teamPaste(){
+  var ta=document.getElementById("tm-paste");
+  if(navigator.clipboard&amp;&amp;navigator.clipboard.readText){
+    navigator.clipboard.readText().then(function(t){ if(ta) ta.value=t||""; if(!t) toast("Rien a coller"); },function(){ toast("Appuie longuement dans la case, puis Coller"); if(ta) ta.focus(); });
+  } else { toast("Appuie longuement dans la case, puis Coller"); if(ta) ta.focus(); }
+}
+function teamImport(){
+  var ta=document.getElementById("tm-paste"), raw=ta?ta.value:"", T=teamParse(raw);
+  if(!T){ TEAM.msg="Ce texte n est pas une liste GMAO-EQUIPE. Copie le message en entier, de GMAO-EQUIPE jusqu a FIN."; teamRender(); var t2=document.getElementById("tm-paste"); if(t2) t2.value=raw; return; }
+  if(!confirm("Remplacer la liste de ce telephone par celle-ci ?\n"+T.names.length+" noms (dont "+T.st.length+" ST Driver, "+T.lh.length+" Leading Hand), "+T.machines.length+" machines")) return;
+  try{ teamSave(T); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
+  teamClose(true); teamReload("Liste importee : "+T.names.length+" noms, "+T.machines.length+" machines");
+}
+function teamShareNow(){
+  var T=teamGet(); if(!T) return;
+  navigator.share({text:teamText(T)}).catch(function(e){ if(e&amp;&amp;e.name==="AbortError") return; teamCopy(); });
+}
+function teamCopy(){
+  var T=teamGet(); if(!T) return; var txt=teamText(T), out=document.getElementById("tm-out");
+  function manual(){ if(out){ out.focus(); out.select(); } toast("Selectionne le texte et copie-le"); }
+  if(navigator.clipboard&amp;&amp;navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function(){ toast("Message copie : colle-le dans WhatsApp"); },manual);
+  else manual();
+}
 
 /* =================== ORDINATEUR -&gt; TELEPHONE PAR QR CODE =================== */
 // Sur un ordinateur sans WhatsApp : le rapport voyage dans un QR code (ecran -&gt; appareil photo).
@@ -3380,7 +3615,13 @@ var SPELL_PHRASES=[
   "Stabilizer valve cleaned","Stabilizer sensor replaced","Coil replaced","Cooler washed","ECM cleaned","ECM connector cleaned","Hose replaced","Hose repaired","Fitting replaced","Seal replaced",
   "O-ring replaced","Filter replaced","Fuse replaced","Relay replaced","Sensor replaced","Battery replaced","Battery charged","Cable repaired","Connector cleaned","Wiring repaired",
   "Valve replaced","Valve cleaned","Pump replaced","Belt replaced","Track tension adjusted","System reset","Parameters reset","Calibration done","Leak fixed","Fault code cleared",
-  "Greasing done","Air filter cleaned","Radiator cleaned","Waiting parts"
+  "Greasing done","Air filter cleaned","Radiator cleaned","Waiting parts",
+  // termes de foreuse donnes par le Leading Hand (+ "problem")
+  "Dust collector","Suction head","Mast rest","Ground pin","Feed forward","Feed backward","Feed extension","Square bar","Rod handler","Rod changer",
+  "VEE-Block","Deck spanner","Track roller","Hobo dies","Pito jaw","Arm jaw",
+  "Suction head problem","Tramming problem","Mast rest problem","Ground pin problem","Oscillation problem","Feed forward problem",
+  "Feed backward problem","Feed extension problem","Boom problem","Square bar problem","Rod changer problem","VEE-Block problem","Wrench problem",
+  "Deck spanner problem","Track roller problem","Track problem","Link problem","Hobo dies problem","Pito jaw problem","Jaws problem","Arm jaw problem"
 ];
 var SPELL_WORDS=(
  // anglais : maintenance foreuse
@@ -3401,6 +3642,11 @@ var SPELL_WORDS=(
  "ring rings pin pins bush liner plate plates block hydraulique cleaned done fixed cleared cleared reset parts noise noisy smoke smoking hot cold wet dry dirty blocked clogged "+
  "missing loose tight slack stretched bent twisted snapped torn chafed rubbed burnt burned melted corroded rusty seized jammed slipping sticking intermittent random "+
  "operator damage accident collision rock rocks bench pit ramp road "+
+ // termes de foreuse (Leading Hand) et autres mots du metier
+ "section heads rest oscillation oscillating oscillate forward forwards backward backwards extension extensions square changer vee wrench wrenches deck spanner spanners "+
+ "link links hobo die dies pito jaw jaws arm arms drifter shank adapter sleeve thread threads threaded breakout cuttings flushing injection foam lubricator damper "+
+ "dampener beam cradle slide slides wear pads reel drum dth button retainer swing tilt levelling leveling outrigger canopy rack magazine gripper grippers holder "+
+ "final drive drives frame chassis receiver separator unloader "+
  // orthographe britannique et mots francais du terrain
  "centraliser centralisers stabiliser stabilisers tyre tyres colour "+
  "plat plate vide plein pleine perte puissance bruit bruits chauffe chaud froid arret arrete arreter marche coupe coupure alarme voyant allume eteint faible fort lent "+
@@ -3438,7 +3684,16 @@ var SPELL_FIX={clin:"clean",cline:"clean",klin:"clean",kleen:"clean",clen:"clean
   tigthened:"tightened",remplaced:"replaced",replased:"replaced",riplaced:"replaced",chek:"check",cheked:"checked",sensur:"sensor",senser:"sensor",
   batery:"battery",baterie:"battery",fiter:"filter",coolent:"coolant",kulant:"coolant",engin:"engine",enjin:"engine",motore:"motor",
   overhiting:"overheating",overheting:"overheating",trammin:"tramming",traming:"tramming",staibilizer:"stabilizer",lose:"loose",
-  louse:"loose",contac:"contact",shorcircuit:"short-circuit",repear:"repair",repeared:"repaired",reparied:"repaired",cleanned:"cleaned",clined:"cleaned"};
+  louse:"loose",contac:"contact",shorcircuit:"short-circuit",repear:"repair",repeared:"repaired",reparied:"repaired",cleanned:"cleaned",clined:"cleaned",
+  jow:"jaw",jows:"jaws",bom:"boom",boum:"boom",ranch:"wrench",rench:"wrench",wrentch:"wrench",spaner:"spanner",spanar:"spanner",carousal:"carousel",
+  carrousel:"carousel",carousell:"carousel",oscilation:"oscillation",osillation:"oscillation",extention:"extension",extansion:"extension",foward:"forward",
+  forword:"forward",bakward:"backward",backword:"backward",roler:"roller",linck:"link",lenk:"link",hobbo:"hobo",pitto:"pito",dast:"dust",
+  colector:"collector",collecter:"collector",handeler:"handler",handlar:"handler",chenger:"changer",changeur:"changer",squar:"square",squere:"square",
+  barre:"bar",grond:"ground",graund:"ground",trammming:"tramming",tramin:"tramming"};
+// ecriture officielle de certains termes (ex: "v block" -&gt; "VEE-Block")
+var SPELL_CANON=[[/\bv(?:ee)?[ -]?blo(?:ck|c|k)\b/gi,"VEE-Block"],
+  [/\bsection[ -]?head(s?)\b/gi,function(m,pl){ return (/^[A-Z]/.test(m)?"Suction head":"suction head")+pl; }]];
+function spellCanon(seg){ var t=seg; for(var i=0;i&lt;SPELL_CANON.length;i++) t=t.replace(SPELL_CANON[i][0],SPELL_CANON[i][1]); return t; }
 var SPELL={dict:null, phon:null, sig:"", keep:null, phrases:null};
 function spellKeepLoad(){ if(SPELL.keep) return SPELL.keep; SPELL.keep={}; try{ var k=JSON.parse(localStorage.getItem(SPELL_KEY)||"[]"); for(var i=0;i&lt;k.length;i++) SPELL.keep[k[i]]=1; }catch(e){} return SPELL.keep; }
 function spellKeep(words){
@@ -3484,6 +3739,8 @@ function spellBuild(){
   SPELL.sig=sig;
 }
 function spellKnown(w){ var d=SPELL.dict[w]; return d!==undefined&amp;&amp;d&gt;0; }
+// mot francais connu du traducteur (donc un mot fini, pas un debut de mot)
+function spellFrWord(w){ try{ var M=frMap(); return !!(FR_NOUN[w]||FR_ADJ[w]||M.act[w]||M.state[w]); }catch(e){ return false; } }
 // meilleur mot connu pour un mot inconnu (ou null)
 function spellCandidate(w){
   if(SPELL_FIX[w]) return SPELL_FIX[w];
@@ -3612,7 +3869,10 @@ function spellSuggest(text,typing,mode){
   // pendant la frappe, le dernier mot n est peut-etre pas fini : on ne juge que l orthographe des mots finis
   if(typing){
     var m=src.match(/^(.*[^A-Za-z0-9\u00C0-\u00FF])?([A-Za-z0-9\u00C0-\u00FF]+)$/);
-    if(m){ var head=m[1]||""; if(!head.trim()) return null; var r0=spellSuggest(head,false,"typing");
+    if(m){ var head=m[1]||"";
+      spellBuild(); var lastN=txtNorm(m[2]);
+      if(head.trim()&amp;&amp;lastN.length&gt;=2&amp;&amp;(spellKnown(lastN)||SPELL_FIX[lastN]||spellFrWord(lastN))) return spellSuggest(src,false,mode==="typing"?"":mode);
+      if(!head.trim()) return null; var r0=spellSuggest(head,false,"typing");
       return r0?{text:r0.text+m[2], words:r0.words, kind:"spell"}:null; }
   }
   spellBuild();
@@ -3630,6 +3890,9 @@ function spellSuggest(text,typing,mode){
         out.push(seg); continue;          // francais que l app ne sait pas traduire : on n y touche pas
       }
     } else if(frDetect(seg)){ out.push(seg); continue; }
+    var cKey="~c:"+txtNorm(seg);
+    if(spellKeepLoad()[cKey]){ out.push(seg); continue; }            // texte garde tel quel par le mecanicien
+    var cn=spellCanon(seg); if(cn!==seg){ seg=cn; changed=true; unknown.push(cKey); }
     var ph=spellPhraseFor(seg);
     if(ph&amp;&amp;txtNorm(ph)!==txtNorm(seg)){
       var segWords=spellWordsOf(seg); for(var u=0;u&lt;segWords.length;u++) if(!spellKnown(segWords[u])) unknown.push(segWords[u]);
@@ -3730,7 +3993,9 @@ var FR_MULTI=[
   [/\ben surchauffe\b/g,"surchauffe"],[/\bfaire l appoint\b|\bfaire le plein\b|\b(re)?mise a niveau\b/g,"appoint"],
   [/\b(remis|remise) en place\b/g,"refit"],[/\bmise en place\b/g,"install"],[/\bmise a jour\b/g,"updated"],
   [/\b(en )?attente (de )?pieces?\b/g,"waitingparts"],[/\bau niveau (du|de la|des|de l|de)\b/g,"sur"],[/\bvidange moteur\b/g,"enginedrain"],
-  [/\bniveau (d huile )?(trop )?(bas|faible)\b/g,"niveaubas"]
+  [/\bniveau (d huile )?(trop )?(bas|faible)\b/g,"niveaubas"],
+  [/\bgalets? de chenilles?\b/g,"trackroller"],[/\bchangeur de tiges?\b/g,"rodchanger"],
+  [/\bavance (en )?avant\b/g,"feedforward"],[/\bbarres? carrees?\b/g,"squarebar"],[/\btetes? d aspiration\b/g,"suctionhead"],[/\bavance (en )?arriere\b/g,"feedbackward"]
 ];
 var FR_ACT={replaced:"remplacer remplace remplacee remplaces remplacees remplacement",cleaned:"nettoyer nettoye nettoyee nettoyes nettoyees nettoyage",
   changed:"changer change changee changes changees changement",tightened:"serrer serre serree serres serrage resserrer resserre resserree resserrage",
@@ -3746,7 +4011,7 @@ var FR_ACT={replaced:"remplacer remplace remplacee remplaces remplacees remplace
 var FR_STATE={leak:"fuite fuites",overheating:"surchauffe",burst:"eclate eclatee eclates",broken:"casse cassee casses cassees",cracked:"fissure fissuree",
   worn:"use usee uses usees",loose:"desserre desserree desserres",stuck:"bloque bloquee bloques",jammed:"coince coincee",faulty:"defectueux defectueuse hs",
   damaged:"endommage endommagee abime abimee",blocked:"encrasse encrassee bouche bouchee colmate colmatee",dirty:"sale sales",bent:"tordu tordue",cut:"coupe coupee",
-  burnt:"grille grillee brule brulee",flat:"flat","not working":"notworking","no start":"nostart",problem:"probleme problemes",noise:"bruit bruits",
+  burnt:"grille grillee brule brulee",flat:"flat","not working":"notworking","no start":"nostart",problem:"probleme problemes problem problems",noise:"bruit bruits",
   alarm:"alarme alarmes",error:"erreur erreurs",fault:"defaut defauts",missing:"manque manquant manquante"};
 var FR_NOUN={flexible:"hose",flexibles:"hoses",durite:"hose",durites:"hoses",tuyau:"pipe",tuyaux:"pipes",raccord:"fitting",raccords:"fittings",joint:"seal",joints:"seals",
   filtre:"filter",filtres:"filters",pompe:"pump",pompes:"pumps",moteur:"engine",compresseur:"compressor",huile:"oil",eau:"water",air:"air",gasoil:"fuel",gazole:"fuel",
@@ -3765,7 +4030,9 @@ var FR_NOUN={flexible:"hose",flexibles:"hoses",durite:"hose",durites:"hoses",tuy
   code:"code",loosecontact:"loose contact",shortcircuit:"short circuit",contact:"contact",circuit:"circuit",masse:"ground",tension:"tension",translation:"tramming",
   machine:"machine",foreuse:"drill",carter:"housing",couvercle:"cover",protection:"guard",tole:"plate",plaque:"plate",accumulateur:"accumulator",echangeur:"cooler",
   refroidisseur:"cooler",thermostat:"thermostat",pneu:"tyre",roue:"wheel",bras:"arm",flasque:"cover",cadre:"frame",chassis:"frame",lampe:"lamp",gyrophare:"beacon",
-  camera:"camera",antenne:"antenna",ecm:"ECM",ecu:"ECU",can:"CAN",gps:"GPS"};
+  camera:"camera",antenne:"antenna",ecm:"ECM",ecu:"ECU",can:"CAN",gps:"GPS",
+  fleche:"boom",maillon:"link",maillons:"links",machoire:"jaw",machoires:"jaws",mors:"jaws",cle:"wrench",cles:"wrenches",rallonge:"extension",
+  oscillation:"oscillation",trackroller:"track roller",rodchanger:"rod changer",feedforward:"feed forward",feedbackward:"feed backward",squarebar:"square bar",suctionhead:"suction head"};
 var FR_ADJ={hydraulique:"hydraulic",hydrauliques:"hydraulic",electrique:"electrical",electriques:"electrical",principal:"main",principale:"main",avant:"front",
   arriere:"rear",gauche:"left",droit:"right",droite:"right",superieur:"upper",superieure:"upper",inferieur:"lower",inferieure:"lower",neuf:"new",neuve:"new",
   nouveau:"new",nouvelle:"new",ancien:"old",ancienne:"old",haute:"high",basse:"low",mecanique:"mechanical",pneumatique:"pneumatic"};
@@ -3775,7 +4042,8 @@ var FR_LOC={sur:1,dans:1};
 // mots qui existent aussi en anglais : seuls, ils ne disent pas que le texte est en francais
 var FR_AMBIG={air:1,code:1,contact:1,circuit:1,turbo:1,temperature:1,vibration:1,vibrations:1,support:1,cable:1,cables:1,flexible:1,rotation:1,installation:1,
   calibration:1,tension:1,valve:1,joystick:1,machine:1,camera:1,a:1,refit:1,install:1,updated:1,coolant:1,wiper:1,flat:1,ecm:1,ecu:1,can:1,gps:1,translation:1,
-  protection:1,thermostat:1,lampe:0,test:1,sale:1,cut:1,fixation:1,montage:1,lavage:0};
+  protection:1,thermostat:1,lampe:0,test:1,sale:1,cut:1,fixation:1,montage:1,lavage:0,
+  problem:1,problems:1,oscillation:1};
 var FR_MAP=null;
 function frMap(){
   if(FR_MAP) return FR_MAP; FR_MAP={act:{},state:{}};
@@ -5230,6 +5498,7 @@ var OIL_COMP = ["Eng","Comp","G/Box","Hyd/T","W/H TD","F/FD","R/Bead","Coolant",
 var OIL_NAMES = ["Technicien 1","Technicien 2","Technicien 3","Technicien 4","Technicien 5","Technicien 6"];
 var OIL_SUPS = ["Superviseur 1","Superviseur 2","Superviseur 3","Superviseur 4","Superviseur 5"];
 var TECHS = ["Technicien 1","Technicien 2","Technicien 3","Technicien 4","Technicien 5","Technicien 6","Technicien 7","Technicien 8","Technicien 9","Technicien 10"];
+try{ teamApplyLists(); }catch(e){}
 
 var DB;
 try { DB = JSON.parse(localStorage.getItem("gmao_v3") || "[]"); if(!Array.isArray(DB)) DB = []; } catch(e){ DB = []; }
@@ -5626,6 +5895,7 @@ function fieldMachine(val,titleEl){
   sel.style.cssText="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:12px;font-size:16px;color:var(--text);width:100%;min-height:46px;font-weight:700;";
   var o0=document.createElement("option"); o0.value=""; o0.textContent="-- Choisir machine --"; sel.appendChild(o0);
   for(var i=0;i&lt;RIGS.length;i++){ var o=document.createElement("option"); o.value=RIGS[i]; o.textContent=RIGS[i]; if(val===RIGS[i])o.selected=true; sel.appendChild(o); }
+  if(val&amp;&amp;RIGS.indexOf(val)&lt;0){ var ox=document.createElement("option"); ox.value=val; ox.textContent=val; ox.selected=true; sel.appendChild(ox); }
   sel.onchange=function(){ if(titleEl) titleEl.textContent=this.value||("Panne"); };
   f.appendChild(l); f.appendChild(sel); return f;
 }
@@ -5770,6 +6040,7 @@ function addDaily(data){
   var sM=document.createElement("select"); sM.className="d-rig";
   var o0=document.createElement("option"); o0.value=""; o0.textContent="-- Choisir --"; sM.appendChild(o0);
   for(var i=0;i&lt;RIGS.length;i++){ var o=document.createElement("option"); o.value=RIGS[i]; o.textContent=RIGS[i]; if(data.rig===RIGS[i])o.selected=true; sM.appendChild(o); }
+  if(data.rig&amp;&amp;RIGS.indexOf(data.rig)&lt;0){ var ox=document.createElement("option"); ox.value=data.rig; ox.textContent=data.rig; ox.selected=true; sM.appendChild(ox); }
   sM.onchange=function(){ t.textContent=this.value||"Choisir machine"; };
   fM.appendChild(lM); fM.appendChild(sM);
   body.appendChild(fM);
@@ -7229,6 +7500,7 @@ try{ initShifts(); }catch(e){}
 try{ initDates(); }catch(e){}
 try{ downLoad(); downWire(); }catch(e){}
 try{ lookApply(); }catch(e){}
+try{ teamDatalist(); }catch(e){}
 try{ qrsInit(); }catch(e){}
 // sauvegarde auto du brouillon a chaque saisie dans les vues Panne et Daily
 try{
