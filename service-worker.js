@@ -1,6 +1,6 @@
-// Service Worker - GMAO Drilling (fichier unique) - v10 (VERSION 8.5)
+// Service Worker - GMAO Drilling (fichier unique) - v14 (VERSION 8.7)
 // Objectif : l app s ouvre et genere ses PDF sans aucun reseau.
-var CACHE_NAME = "gmao-solo-v11";
+var CACHE_NAME = "gmao-solo-v14";
 
 // Indispensables : sans eux l app ne s ouvre pas hors-ligne
 var CORE = [
