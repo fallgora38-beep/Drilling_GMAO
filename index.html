@@ -3260,7 +3260,7 @@ var TEAM={w:null, dirty:false, view:"edit", msg:""};
 function teamGet(){
   try{
     var o=JSON.parse(localStorage.getItem(TEAM_KEY)||"null");
-    if(o&amp;&amp;Array.isArray(o.names)&amp;&amp;Array.isArray(o.machines)){ if(!Array.isArray(o.st)) o.st=[]; if(!Array.isArray(o.lh)) o.lh=[]; if(!Array.isArray(o.trucks)) o.trucks=[]; return o; }
+    if(o&amp;&amp;Array.isArray(o.names)&amp;&amp;Array.isArray(o.machines)){ if(!Array.isArray(o.st)) o.st=[]; if(!Array.isArray(o.lh)) o.lh=[]; if(!Array.isArray(o.trucks)) o.trucks=[]; if(!Array.isArray(o.fm)) o.fm=[]; return o; }
   }catch(e){}
   return null;
 }
@@ -3280,7 +3280,10 @@ function teamApplyLists(){
   var T=teamGet(); if(!T) return false;
   function fill(arr,vals){ arr.length=0; for(var i=0;i&lt;vals.length;i++) arr.push(vals[i]); }
   if(T.machines.length){ fill(RIGS,T.machines); fill(OIL_RIGS,T.machines); }
-  if(T.names.length){ fill(TECHS,T.names); fill(OIL_SUPS,T.names); fill(OIL_NAMES,T.st.length?T.st:T.names); }
+  if(T.names.length){ fill(TECHS,T.names); fill(OIL_NAMES,T.st.length?T.st:T.names); }
+  // superviseur du rapport Huile : les Leading Hand + les Forman (sinon tous les noms)
+  var sups=teamSorted((T.lh||[]).concat(T.fm||[]));
+  if(sups.length) fill(OIL_SUPS,sups); else if(T.names.length) fill(OIL_SUPS,T.names);
   // service trucks du rapport Huile : vrais numeros gardes dans le telephone seulement
   if(T.trucks.length){
     var os=document.getElementById("oil-st");
@@ -3297,19 +3300,20 @@ function teamDatalist(){
     dl.innerHTML="";
     for(var i=0;i&lt;vals.length;i++){ var o=document.createElement("option"); o.value=vals[i]; dl.appendChild(o); }
   }
-  mk("dl-team",T.names); mk("dl-team-lh",T.lh.length?T.lh:T.names);
-  var ids={"p-lead":"dl-team-lh","d-lead":"dl-team-lh","p-sup":"dl-team","p-site":"dl-team","d-forman":"dl-team"};
+  mk("dl-team",T.names); mk("dl-team-lh",T.lh.length?T.lh:T.names); mk("dl-team-fm",T.fm.length?T.fm:T.names);
+  var ids={"p-lead":"dl-team-lh","d-lead":"dl-team-lh","p-sup":"dl-team","p-site":"dl-team","d-forman":"dl-team-fm"};
   for(var k in ids){ var el=document.getElementById(k); if(el&amp;&amp;!el.getAttribute("list")) el.setAttribute("list",ids[k]); }
 }
 function teamSummary(T){
   T=T||teamGet();
   if(!T) return "Pas encore de liste : l app affiche Technicien 1, Machine 1...";
-  return "Effectif : &lt;b&gt;"+T.names.length+"&lt;/b&gt; technicien"+(T.names.length&gt;1?"s":"")+" (dont "+T.st.length+" ST Driver, "+(T.lh||[]).length+" Leading Hand) &amp;middot; "+T.machines.length+" machine"+(T.machines.length&gt;1?"s":"")+" &amp;middot; "+(T.trucks||[]).length+" service truck"+((T.trucks||[]).length&gt;1?"s":"");
+  return "Effectif : &lt;b&gt;"+T.names.length+"&lt;/b&gt; technicien"+(T.names.length&gt;1?"s":"")+" (dont "+T.st.length+" ST Driver, "+(T.lh||[]).length+" Leading Hand, "+(T.fm||[]).length+" Forman) &amp;middot; "+T.machines.length+" machine"+(T.machines.length&gt;1?"s":"")+" &amp;middot; "+(T.trucks||[]).length+" service truck"+((T.trucks||[]).length&gt;1?"s":"");
 }
 // ---------- message a partager ----------
 function teamText(T){
   var lh=T.lh||[];
-  var L=["GMAO-EQUIPE","Trucks ("+(T.trucks||[]).length+") : "+(T.trucks||[]).join(", "),"Machines ("+T.machines.length+") : "+T.machines.join(", "),"ST Driver ("+T.st.length+") : "+T.st.join(" ; "),"Leading Hand ("+lh.length+") : "+lh.join(" ; "),"Noms ("+T.names.length+") :"];
+  var fm=T.fm||[];
+  var L=["GMAO-EQUIPE","Forman ("+fm.length+") : "+fm.join(" ; "),"Trucks ("+(T.trucks||[]).length+") : "+(T.trucks||[]).join(", "),"Machines ("+T.machines.length+") : "+T.machines.join(", "),"ST Driver ("+T.st.length+") : "+T.st.join(" ; "),"Leading Hand ("+lh.length+") : "+lh.join(" ; "),"Noms ("+T.names.length+") :"];
   return L.concat(T.names).concat(["FIN"]).join("\n");
 }
 function teamParse(txt){
@@ -3318,18 +3322,20 @@ function teamParse(txt){
   s=s.slice(i+11);
   var end=s.search(/(^|\n)\s*FIN\s*(\n|$)/); if(end&gt;=0) s=s.slice(0,end);
   function sec(re){ var m=s.match(re); return m?m[1]:""; }
-  var H="(?=Machines[^:\\n]*:|ST\\s*Driver[^:\\n]*:|Leading\\s*Hand[^:\\n]*:|Trucks[^:\\n]*:|Noms[^:\\n]*:|$)";
+  var H="(?=Machines[^:\\n]*:|ST\\s*Driver[^:\\n]*:|Leading\\s*Hand[^:\\n]*:|Forman[^:\\n]*:|Trucks[^:\\n]*:|Noms[^:\\n]*:|$)";
   var mach=sec(new RegExp("Machines[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var st=sec(new RegExp("ST\\s*Driver[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var lhT=sec(new RegExp("Leading\\s*Hand[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var nm=sec(new RegExp("Noms[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var fmT=sec(new RegExp("Forman[^:\\n]*:([\\s\\S]*?)"+H,"i")), fms=teamSorted(fmT.split(/[;\n]+/));
   var trT=sec(new RegExp("Trucks[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var trucks=teamSorted(trT.split(/[,;\n]+/).map(function(x){ return String(x).toUpperCase(); }));
   var machines=teamSorted(mach.split(/[,;\n]+/)), sts=teamSorted(st.split(/[;\n]+/)), lhs=teamSorted(lhT.split(/[;\n]+/));
   var names=teamSorted(nm.split(/[;\n]+/).concat(sts,lhs));
   if(!names.length&amp;&amp;!machines.length&amp;&amp;!trucks.length) return null;
   if(names.length&gt;400||machines.length&gt;200||trucks.length&gt;50) return null;
-  return {v:1, names:names, st:sts, lh:lhs, machines:machines, trucks:trucks};
+  names=teamSorted(names.concat(fms));
+  return {v:1, names:names, st:sts, lh:lhs, fm:fms, machines:machines, trucks:trucks};
 }
 // ---------- fenetre ----------
 function teamModal(){
@@ -3340,7 +3346,7 @@ function teamModal(){
 }
 function teamOpen(view){
   var T=teamGet();
-  TEAM.w=T?JSON.parse(JSON.stringify(T)):{v:1,names:[],st:[],lh:[],machines:[],trucks:[]};
+  TEAM.w=T?JSON.parse(JSON.stringify(T)):{v:1,names:[],st:[],lh:[],fm:[],machines:[],trucks:[]};
   TEAM.dirty=false; TEAM.view=view||"edit"; TEAM.msg="";
   if(TEAM.view==="share"&amp;&amp;!T){ toast("Pas encore de liste a partager"); return; }
   try{ lookClose(); }catch(e){}
@@ -3360,11 +3366,11 @@ function teamRender(){
     h+="&lt;div class='tm-sum'&gt;"+teamSummary(W)+"&lt;/div&gt;";
     h+="&lt;div class='lk-t'&gt;Noms ("+W.names.length+")&lt;/div&gt;";
     h+="&lt;div class='tm-add'&gt;&lt;input type='text' id='tm-new-name' placeholder='Nom a ajouter' autocomplete='off'&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamAddName()'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
-    h+="&lt;div class='tm-hint'&gt;&lt;b&gt;LH&lt;/b&gt; = Leading Hand (propose dans la case Leading Hand). &lt;b&gt;ST&lt;/b&gt; = chauffeur de service truck (propose dans Truck Operator, rapport Huile).&lt;/div&gt;";
+    h+="&lt;div class='tm-hint'&gt;&lt;b&gt;LH&lt;/b&gt; = Leading Hand (propose dans la case Leading Hand). &lt;b&gt;FM&lt;/b&gt; = Forman. LH et FM sont proposes comme Supervisor du rapport Huile. &lt;b&gt;ST&lt;/b&gt; = chauffeur de service truck (propose dans Truck Operator, rapport Huile).&lt;/div&gt;";
     h+="&lt;div class='tm-list'&gt;";
     for(var i=0;i&lt;W.names.length;i++){
-      var st=teamHas(W.st,W.names[i])&gt;=0, lh=teamHas(W.lh,W.names[i])&gt;=0;
-      h+="&lt;div class='tm-row'&gt;&lt;span class='tm-n'&gt;"+escP(W.names[i])+"&lt;/span&gt;&lt;button type='button' class='tm-st"+(lh?" on":"")+"' aria-label='Leading Hand' onclick='teamToggleLh("+i+")'&gt;LH&lt;/button&gt;&lt;button type='button' class='tm-st"+(st?" on":"")+"' aria-label='ST Driver' onclick='teamToggleSt("+i+")'&gt;ST&lt;/button&gt;&lt;button type='button' class='tm-x' aria-label='Retirer' onclick='teamDelName("+i+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;";
+      var st=teamHas(W.st,W.names[i])&gt;=0, lh=teamHas(W.lh,W.names[i])&gt;=0, fmo=teamHas(W.fm,W.names[i])&gt;=0;
+      h+="&lt;div class='tm-row'&gt;&lt;span class='tm-n'&gt;"+escP(W.names[i])+"&lt;/span&gt;&lt;button type='button' class='tm-st"+(lh?" on":"")+"' aria-label='Leading Hand' onclick='teamToggleLh("+i+")'&gt;LH&lt;/button&gt;&lt;button type='button' class='tm-st"+(fmo?" on":"")+"' aria-label='Forman' onclick='teamToggleFm("+i+")'&gt;FM&lt;/button&gt;&lt;button type='button' class='tm-st"+(st?" on":"")+"' aria-label='ST Driver' onclick='teamToggleSt("+i+")'&gt;ST&lt;/button&gt;&lt;button type='button' class='tm-x' aria-label='Retirer' onclick='teamDelName("+i+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/div&gt;";
     }
     if(!W.names.length) h+="&lt;div class='tm-hint'&gt;Aucun nom pour l instant.&lt;/div&gt;";
     h+="&lt;/div&gt;";
@@ -3410,7 +3416,7 @@ function teamAddName(){
 function teamDelName(i){
   var n=TEAM.w.names[i]; if(n==null) return;
   if(!confirm("Retirer "+n+" de la liste ?")) return;
-  TEAM.w.names.splice(i,1); var j=teamHas(TEAM.w.st,n); if(j&gt;=0) TEAM.w.st.splice(j,1); var j2=teamHas(TEAM.w.lh,n); if(j2&gt;=0) TEAM.w.lh.splice(j2,1);
+  TEAM.w.names.splice(i,1); var j=teamHas(TEAM.w.st,n); if(j&gt;=0) TEAM.w.st.splice(j,1); var j2=teamHas(TEAM.w.lh,n); if(j2&gt;=0) TEAM.w.lh.splice(j2,1); var j3=teamHas(TEAM.w.fm,n); if(j3&gt;=0) TEAM.w.fm.splice(j3,1);
   TEAM.dirty=true; teamRender();
 }
 function teamToggleSt(i){
@@ -3424,6 +3430,24 @@ function teamToggleLh(i){
   var j=teamHas(TEAM.w.lh,n);
   if(j&gt;=0) TEAM.w.lh.splice(j,1); else TEAM.w.lh=teamSorted(TEAM.w.lh.concat([n]));
   TEAM.dirty=true; teamRender();
+}
+function teamToggleFm(i){
+  var n=TEAM.w.names[i]; if(n==null) return;
+  var j=teamHas(TEAM.w.fm,n);
+  if(j&gt;=0) TEAM.w.fm.splice(j,1); else TEAM.w.fm=teamSorted(TEAM.w.fm.concat([n]));
+  TEAM.dirty=true; teamRender();
+}
+// Nom tape dans "+ Autre nom..." (Supervisor, rapport Huile) : ajoute a la liste equipe comme Forman
+function teamAddSup(name){
+  name=teamClean(name); if(!name||name==="-") return;
+  var T=teamGet(); if(!T) return; // pas de liste equipe : l app retient juste le dernier nom
+  if(teamHas(T.names,name)&gt;=0||teamHas(T.lh,name)&gt;=0||teamHas(T.fm,name)&gt;=0) return; // deja connu : on ne touche a rien
+  T.names=teamSorted(T.names.concat([name]));
+  T.fm=teamSorted(T.fm.concat([name]));
+  try{ teamSave(T); }catch(e){ return; }
+  if(teamHas(OIL_SUPS,name)&lt;0) OIL_SUPS.push(name);
+  try{ teamDatalist(); }catch(e){}
+  toast(name+" ajoute a la liste (Forman)");
 }
 function teamAddMach(){
   var inp=document.getElementById("tm-new-m"), v=teamClean(inp&amp;&amp;inp.value).toUpperCase();
@@ -3457,7 +3481,7 @@ function teamReload(msg){
 function teamCommit(){
   var W=TEAM.w;
   if(!W.names.length&amp;&amp;!W.machines.length&amp;&amp;!W.trucks.length){ teamReset(); return; }
-  try{ teamSave({names:teamSorted(W.names), st:teamSorted(W.st), lh:teamSorted(W.lh), machines:teamSorted(W.machines), trucks:teamSorted(W.trucks)}); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
+  try{ teamSave({names:teamSorted(W.names), st:teamSorted(W.st), lh:teamSorted(W.lh), fm:teamSorted(W.fm), machines:teamSorted(W.machines), trucks:teamSorted(W.trucks)}); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
   TEAM.dirty=false; teamClose(true); teamReload("Liste enregistree");
 }
 function teamReset(){
@@ -3474,7 +3498,7 @@ function teamPaste(){
 function teamImport(){
   var ta=document.getElementById("tm-paste"), raw=ta?ta.value:"", T=teamParse(raw);
   if(!T){ TEAM.msg="Ce texte n est pas une liste GMAO-EQUIPE. Copie le message en entier, de GMAO-EQUIPE jusqu a FIN."; teamRender(); var t2=document.getElementById("tm-paste"); if(t2) t2.value=raw; return; }
-  if(!confirm("Remplacer la liste de ce telephone par celle-ci ?\n"+T.names.length+" noms (dont "+T.st.length+" ST Driver, "+T.lh.length+" Leading Hand), "+T.machines.length+" machines, "+T.trucks.length+" trucks")) return;
+  if(!confirm("Remplacer la liste de ce telephone par celle-ci ?\n"+T.names.length+" noms (dont "+T.st.length+" ST Driver, "+T.lh.length+" Leading Hand, "+T.fm.length+" Forman), "+T.machines.length+" machines, "+T.trucks.length+" trucks")) return;
   try{ teamSave(T); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
   teamClose(true); teamReload("Liste importee : "+T.names.length+" noms, "+T.machines.length+" machines");
 }
@@ -6774,6 +6798,7 @@ function genOil(){
   meta.ref=reportRef("Oil",meta.date,meta.shift,meta.st&amp;&amp;meta.st!=="-"?meta.st:"");
   lastOil={rows:rows,meta:meta};
   savePref("oilop",meta.op); savePref("oilsup",meta.sup);
+  try{ teamAddSup(meta.sup); }catch(e){}
   clearOilDraft();
   var replO=pushReport({type:"Oil",key:"Oil|"+meta.date+"|"+meta.shift+"|"+meta.st,ref:meta.ref,date:meta.date,shift:meta.shift,count:rows.length,rows:rows,meta:meta,ts:Date.now()});
   saveDB();
