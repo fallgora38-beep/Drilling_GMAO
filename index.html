@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.7 (suivi downtime + huiles + correcteur anglais + QR + reglages + termes foreuse + liste equipe) -->
+<!-- GMAO DRILLING - FICHIER UNIQUE - VERSION 8.8 (suivi downtime + huiles + correcteur anglais + QR + reglages + termes foreuse + liste equipe) -->
 <html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
@@ -323,7 +323,7 @@ setTimeout(function(){ if(!window.__gmaoReady){ var e=document.getElementById("b
     <div class="card">
       <div class="card-head"><div class="card-title">Informations</div></div>
       <div class="card-body">
-        <div class="field"><label>ST (Service Truck)</label><select id="oil-st"><option>ST210</option><option>ST209</option></select></div>
+        <div class="field"><label>ST (Service Truck)</label><select id="oil-st"><option>ST1</option><option>ST2</option></select></div>
         <div class="field"><label>Date</label><input type="date" id="oil-date"></div>
         <div class="field"><label>Shift</label><select id="oil-shift"><option>Night</option><option>Day</option></select></div>
         <div class="field"><label>Truck Operator</label><div id="oil-op-wrap"></div></div>
@@ -719,10 +719,22 @@ function sendItems(){
       if(!best||entryWhen(e)&gt;entryWhen(best)) best=e;
     }
     if(!best) continue;
-    var age=now-entryWhen(best);
-    if(age&gt;72*SEND_HOUR) continue;
-    var ref=entryRef(best);
-    out.push({st:st, e:best, ref:ref, when:entryWhen(best), checked:age&lt;=24*SEND_HOUR, fname:st.file+"_"+ref+".pdf"});
+    // Huile : un rapport par ST dans le meme shift -&gt; on les propose tous
+    var group=[best];
+    if(st.type==="Oil"){
+      for(var g=0;g&lt;DB.length;g++){
+        var o=DB[g];
+        if(o&amp;&amp;o!==best&amp;&amp;o.type==="Oil"&amp;&amp;o.date===best.date&amp;&amp;o.shift===best.shift&amp;&amp;o.key!==best.key) group.push(o);
+      }
+      group.sort(function(a,b){ return entryRef(a)&lt;entryRef(b)?-1:1; });
+    }
+    for(var gi=0;gi&lt;group.length;gi++){
+      var e2=group[gi], age=now-entryWhen(e2);
+      if(age&gt;72*SEND_HOUR) continue;
+      var ref=entryRef(e2);
+      var stn=(st.type==="Oil"&amp;&amp;e2.meta&amp;&amp;e2.meta.st&amp;&amp;e2.meta.st!=="-")?" "+e2.meta.st:"";
+      out.push({st:st, e:e2, id:e2.key||st.type, label:st.label+stn, ref:ref, when:entryWhen(e2), checked:age&lt;=24*SEND_HOUR, fname:st.file+"_"+ref+".pdf"});
+    }
   }
   return out;
 }
@@ -741,8 +753,8 @@ function itemFile(it){
 }
 function checkedItems(){
   var items=sendItems(), boxes=document.querySelectorAll(".send-chk"), on={}, out=[];
-  for(var i=0;i&lt;boxes.length;i++){ if(boxes[i].checked) on[boxes[i].getAttribute("data-type")]=1; }
-  for(var j=0;j&lt;items.length;j++){ if(on[items[j].st.type]) out.push(items[j]); }
+  for(var i=0;i&lt;boxes.length;i++){ if(boxes[i].checked) on[boxes[i].getAttribute("data-id")]=1; }
+  for(var j=0;j&lt;items.length;j++){ if(on[j]) out.push(items[j]); }
   return out;
 }
 function downloadFiles(files){
@@ -777,10 +789,9 @@ function shareAllReports(){
   }
 }
 // Un seul rapport (secours)
-function shareOneType(type){
+function shareOneType(idx){
   if(!pdfReady()) return;
-  var items=sendItems(), it=null;
-  for(var i=0;i&lt;items.length;i++){ if(items[i].st.type===type) it=items[i]; }
+  var items=sendItems(), it=items[idx]||null;
   if(!it){ toast("Rapport introuvable"); return; }
   var file;
   try{ file=itemFile(it); }catch(err){ toast("Erreur PDF : "+(err&amp;&amp;err.message?err.message:err)); return; }
@@ -822,10 +833,10 @@ function renderSendList(){
     var it=items[i];
     h+='&lt;div class="send-row" style="display:flex;gap:10px;align-items:center;padding:10px 10px 10px 12px;border:1px solid var(--border2);border-radius:11px;margin-bottom:8px;background:var(--surface2);"&gt;'+
        '&lt;label style="display:flex;gap:11px;align-items:center;flex:1;min-width:0;cursor:pointer;"&gt;'+
-       '&lt;input type="checkbox" class="send-chk" data-type="'+it.st.type+'"'+(it.checked?' checked':'')+' onchange="updateSendBtn()" style="width:22px;height:22px;flex:0 0 auto;accent-color:#25D366;"&gt;'+
-       '&lt;span style="min-width:0;"&gt;&lt;span style="display:block;font-weight:700;font-size:14.5px;"&gt;'+it.st.label+'&lt;/span&gt;'+
+       '&lt;input type="checkbox" class="send-chk" data-type="'+it.st.type+'" data-id="'+i+'"'+(it.checked?' checked':'')+' onchange="updateSendBtn()" style="width:22px;height:22px;flex:0 0 auto;accent-color:#25D366;"&gt;'+
+       '&lt;span style="min-width:0;"&gt;&lt;span style="display:block;font-weight:700;font-size:14.5px;"&gt;'+it.label+'&lt;/span&gt;'+
        '&lt;span style="display:block;font-size:11.5px;color:var(--text3);"&gt;'+it.ref+' &amp;middot; '+agoTxt(it.when)+'&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;'+
-       '&lt;button type="button" onclick="shareOneType(\''+it.st.type+'\')" style="flex:0 0 auto;background:transparent;border:1px solid var(--wa);color:var(--wa);border-radius:8px;padding:7px 12px;min-height:44px;min-width:58px;font-size:13px;font-weight:700;font-family:inherit;"&gt;Seul&lt;/button&gt;'+
+       '&lt;button type="button" onclick="shareOneType('+i+')" style="flex:0 0 auto;background:transparent;border:1px solid var(--wa);color:var(--wa);border-radius:8px;padding:7px 12px;min-height:44px;min-width:58px;font-size:13px;font-weight:700;font-family:inherit;"&gt;Seul&lt;/button&gt;'+
        '&lt;/div&gt;';
   }
   h+='&lt;button id="send-all-btn" class="btn btn-wa" style="margin-top:4px;" onclick="shareAllReports()"&gt;Envoyer&lt;/button&gt;';
@@ -3249,7 +3260,7 @@ var TEAM={w:null, dirty:false, view:"edit", msg:""};
 function teamGet(){
   try{
     var o=JSON.parse(localStorage.getItem(TEAM_KEY)||"null");
-    if(o&amp;&amp;Array.isArray(o.names)&amp;&amp;Array.isArray(o.machines)){ if(!Array.isArray(o.st)) o.st=[]; if(!Array.isArray(o.lh)) o.lh=[]; return o; }
+    if(o&amp;&amp;Array.isArray(o.names)&amp;&amp;Array.isArray(o.machines)){ if(!Array.isArray(o.st)) o.st=[]; if(!Array.isArray(o.lh)) o.lh=[]; if(!Array.isArray(o.trucks)) o.trucks=[]; return o; }
   }catch(e){}
   return null;
 }
@@ -3270,6 +3281,11 @@ function teamApplyLists(){
   function fill(arr,vals){ arr.length=0; for(var i=0;i&lt;vals.length;i++) arr.push(vals[i]); }
   if(T.machines.length){ fill(RIGS,T.machines); fill(OIL_RIGS,T.machines); }
   if(T.names.length){ fill(TECHS,T.names); fill(OIL_SUPS,T.names); fill(OIL_NAMES,T.st.length?T.st:T.names); }
+  // service trucks du rapport Huile : vrais numeros gardes dans le telephone seulement
+  if(T.trucks.length){
+    var os=document.getElementById("oil-st");
+    if(os){ os.innerHTML=""; for(var ti=0;ti&lt;T.trucks.length;ti++){ var op=document.createElement("option"); op.textContent=T.trucks[ti]; os.appendChild(op); } }
+  }
   return true;
 }
 // suggestions de noms dans les cases Leading Hand, Supervisor...
@@ -3288,12 +3304,12 @@ function teamDatalist(){
 function teamSummary(T){
   T=T||teamGet();
   if(!T) return "Pas encore de liste : l app affiche Technicien 1, Machine 1...";
-  return "Effectif : &lt;b&gt;"+T.names.length+"&lt;/b&gt; technicien"+(T.names.length&gt;1?"s":"")+" (dont "+T.st.length+" ST Driver, "+(T.lh||[]).length+" Leading Hand) &amp;middot; "+T.machines.length+" machine"+(T.machines.length&gt;1?"s":"");
+  return "Effectif : &lt;b&gt;"+T.names.length+"&lt;/b&gt; technicien"+(T.names.length&gt;1?"s":"")+" (dont "+T.st.length+" ST Driver, "+(T.lh||[]).length+" Leading Hand) &amp;middot; "+T.machines.length+" machine"+(T.machines.length&gt;1?"s":"")+" &amp;middot; "+(T.trucks||[]).length+" service truck"+((T.trucks||[]).length&gt;1?"s":"");
 }
 // ---------- message a partager ----------
 function teamText(T){
   var lh=T.lh||[];
-  var L=["GMAO-EQUIPE","Machines ("+T.machines.length+") : "+T.machines.join(", "),"ST Driver ("+T.st.length+") : "+T.st.join(" ; "),"Leading Hand ("+lh.length+") : "+lh.join(" ; "),"Noms ("+T.names.length+") :"];
+  var L=["GMAO-EQUIPE","Trucks ("+(T.trucks||[]).length+") : "+(T.trucks||[]).join(", "),"Machines ("+T.machines.length+") : "+T.machines.join(", "),"ST Driver ("+T.st.length+") : "+T.st.join(" ; "),"Leading Hand ("+lh.length+") : "+lh.join(" ; "),"Noms ("+T.names.length+") :"];
   return L.concat(T.names).concat(["FIN"]).join("\n");
 }
 function teamParse(txt){
@@ -3302,16 +3318,18 @@ function teamParse(txt){
   s=s.slice(i+11);
   var end=s.search(/(^|\n)\s*FIN\s*(\n|$)/); if(end&gt;=0) s=s.slice(0,end);
   function sec(re){ var m=s.match(re); return m?m[1]:""; }
-  var H="(?=Machines[^:\\n]*:|ST\\s*Driver[^:\\n]*:|Leading\\s*Hand[^:\\n]*:|Noms[^:\\n]*:|$)";
+  var H="(?=Machines[^:\\n]*:|ST\\s*Driver[^:\\n]*:|Leading\\s*Hand[^:\\n]*:|Trucks[^:\\n]*:|Noms[^:\\n]*:|$)";
   var mach=sec(new RegExp("Machines[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var st=sec(new RegExp("ST\\s*Driver[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var lhT=sec(new RegExp("Leading\\s*Hand[^:\\n]*:([\\s\\S]*?)"+H,"i"));
   var nm=sec(new RegExp("Noms[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var trT=sec(new RegExp("Trucks[^:\\n]*:([\\s\\S]*?)"+H,"i"));
+  var trucks=teamSorted(trT.split(/[,;\n]+/).map(function(x){ return String(x).toUpperCase(); }));
   var machines=teamSorted(mach.split(/[,;\n]+/)), sts=teamSorted(st.split(/[;\n]+/)), lhs=teamSorted(lhT.split(/[;\n]+/));
   var names=teamSorted(nm.split(/[;\n]+/).concat(sts,lhs));
-  if(!names.length&amp;&amp;!machines.length) return null;
-  if(names.length&gt;400||machines.length&gt;200) return null;
-  return {v:1, names:names, st:sts, lh:lhs, machines:machines};
+  if(!names.length&amp;&amp;!machines.length&amp;&amp;!trucks.length) return null;
+  if(names.length&gt;400||machines.length&gt;200||trucks.length&gt;50) return null;
+  return {v:1, names:names, st:sts, lh:lhs, machines:machines, trucks:trucks};
 }
 // ---------- fenetre ----------
 function teamModal(){
@@ -3322,7 +3340,7 @@ function teamModal(){
 }
 function teamOpen(view){
   var T=teamGet();
-  TEAM.w=T?JSON.parse(JSON.stringify(T)):{v:1,names:[],st:[],lh:[],machines:[]};
+  TEAM.w=T?JSON.parse(JSON.stringify(T)):{v:1,names:[],st:[],lh:[],machines:[],trucks:[]};
   TEAM.dirty=false; TEAM.view=view||"edit"; TEAM.msg="";
   if(TEAM.view==="share"&amp;&amp;!T){ toast("Pas encore de liste a partager"); return; }
   try{ lookClose(); }catch(e){}
@@ -3354,6 +3372,12 @@ function teamRender(){
     h+="&lt;div class='tm-add'&gt;&lt;input type='text' id='tm-new-m' placeholder='Machine (ex : DR232)' autocomplete='off' autocapitalize='characters'&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamAddMach()'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
     h+="&lt;div class='tm-chips'&gt;";
     for(var k=0;k&lt;W.machines.length;k++) h+="&lt;span class='tm-chip'&gt;"+escP(W.machines[k])+"&lt;button type='button' aria-label='Retirer' onclick='teamDelMach("+k+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/span&gt;";
+    h+="&lt;/div&gt;";
+    h+="&lt;div class='lk-t'&gt;Service trucks - rapport Huile ("+W.trucks.length+")&lt;/div&gt;";
+    h+="&lt;div class='tm-add'&gt;&lt;input type='text' id='tm-new-t' placeholder='Truck (ex : ST1)' autocomplete='off' autocapitalize='characters'&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamAddTruck()'&gt;Ajouter&lt;/button&gt;&lt;/div&gt;";
+    if(!W.trucks.length) h+="&lt;div class='tm-hint'&gt;Aucun truck : le rapport Huile propose ST1 et ST2.&lt;/div&gt;";
+    h+="&lt;div class='tm-chips'&gt;";
+    for(var q=0;q&lt;W.trucks.length;q++) h+="&lt;span class='tm-chip'&gt;"+escP(W.trucks[q])+"&lt;button type='button' aria-label='Retirer' onclick='teamDelTruck("+q+")'&gt;&amp;#10005;&lt;/button&gt;&lt;/span&gt;";
     h+="&lt;/div&gt;";
     h+="&lt;div class='gm-row'&gt;&lt;button type='button' class='btn btn-ghost btn-sm' onclick='teamClose()'&gt;Annuler&lt;/button&gt;&lt;button type='button' class='btn btn-green btn-sm' onclick='teamCommit()'&gt;Enregistrer&lt;/button&gt;&lt;/div&gt;";
     if(teamGet()) h+="&lt;button type='button' class='tm-reset' onclick='teamReset()'&gt;Revenir aux noms generiques (Technicien 1, Machine 1...)&lt;/button&gt;";
@@ -3413,6 +3437,18 @@ function teamDelMach(i){
   if(!confirm("Retirer la machine "+n+" de la liste ?")) return;
   TEAM.w.machines.splice(i,1); TEAM.dirty=true; teamRender();
 }
+function teamAddTruck(){
+  var inp=document.getElementById("tm-new-t"), v=teamClean(inp&amp;&amp;inp.value).toUpperCase();
+  if(!v){ toast("Tape un truck"); return; }
+  if(teamHas(TEAM.w.trucks,v)&gt;=0){ toast("Deja dans la liste"); return; }
+  TEAM.w.trucks=teamSorted(TEAM.w.trucks.concat([v])); TEAM.dirty=true; teamRender();
+  var n=document.getElementById("tm-new-t"); if(n) n.focus();
+}
+function teamDelTruck(i){
+  var n=TEAM.w.trucks[i]; if(n==null) return;
+  if(!confirm("Retirer le truck "+n+" de la liste ?")) return;
+  TEAM.w.trucks.splice(i,1); TEAM.dirty=true; teamRender();
+}
 function teamReload(msg){
   try{ saveDraft(); }catch(e){}
   toast(msg);
@@ -3420,8 +3456,8 @@ function teamReload(msg){
 }
 function teamCommit(){
   var W=TEAM.w;
-  if(!W.names.length&amp;&amp;!W.machines.length){ teamReset(); return; }
-  try{ teamSave({names:teamSorted(W.names), st:teamSorted(W.st), lh:teamSorted(W.lh), machines:teamSorted(W.machines)}); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
+  if(!W.names.length&amp;&amp;!W.machines.length&amp;&amp;!W.trucks.length){ teamReset(); return; }
+  try{ teamSave({names:teamSorted(W.names), st:teamSorted(W.st), lh:teamSorted(W.lh), machines:teamSorted(W.machines), trucks:teamSorted(W.trucks)}); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
   TEAM.dirty=false; teamClose(true); teamReload("Liste enregistree");
 }
 function teamReset(){
@@ -3438,7 +3474,7 @@ function teamPaste(){
 function teamImport(){
   var ta=document.getElementById("tm-paste"), raw=ta?ta.value:"", T=teamParse(raw);
   if(!T){ TEAM.msg="Ce texte n est pas une liste GMAO-EQUIPE. Copie le message en entier, de GMAO-EQUIPE jusqu a FIN."; teamRender(); var t2=document.getElementById("tm-paste"); if(t2) t2.value=raw; return; }
-  if(!confirm("Remplacer la liste de ce telephone par celle-ci ?\n"+T.names.length+" noms (dont "+T.st.length+" ST Driver, "+T.lh.length+" Leading Hand), "+T.machines.length+" machines")) return;
+  if(!confirm("Remplacer la liste de ce telephone par celle-ci ?\n"+T.names.length+" noms (dont "+T.st.length+" ST Driver, "+T.lh.length+" Leading Hand), "+T.machines.length+" machines, "+T.trucks.length+" trucks")) return;
   try{ teamSave(T); }catch(e){ toast("Memoire pleine : liste non enregistree"); return; }
   teamClose(true); teamReload("Liste importee : "+T.names.length+" noms, "+T.machines.length+" machines");
 }
@@ -5490,7 +5526,6 @@ function initLock(){
   if(inp){ inp.focus(); inp.addEventListener("keydown",function(e){ if(e.key==="Enter") tryUnlock(); }); }
 }
 
-var WA_NUMBER = "221779515790";
 var RIGS = ["Machine 1","Machine 2","Machine 3","Machine 4","Machine 5","Machine 6","Machine 7","Machine 8","Machine 9","Machine 10","Machine 11","Machine 12","Machine 13","Machine 14"];
 var OIL_RIGS = ["Machine 1","Machine 2","Machine 3","Machine 4","Machine 5","Machine 6","Machine 7","Machine 8","Machine 9","Machine 10","Machine 11","Machine 12","Machine 13","Machine 14","Machine 15"];
 var OIL_FLUIDS = ["15w40","T 320","Om 46-220","Oil 68","Coolant","COR 54 68","Om-54 320"];
@@ -5612,12 +5647,14 @@ function restoreMDSDraft(){
   if(d.mds.date&amp;&amp;mdsFull) sv("mds-date",d.mds.date);
   sv("mds-comment",d.mds.comment);
   var vals=d.mds.vals||[];
-  var mn=document.querySelectorAll(".mds-num"), mo=document.querySelectorAll(".mds-ok");
+  var mn=document.querySelectorAll(".mds-num"), mo=document.querySelectorAll(".mds-ok"), used=[];
+  // deux cases ont le meme nom (Prestart compliance) : chaque valeur va dans la premiere case LIBRE de ce nom
   for(var i=0;i&lt;vals.length;i++){
     var v=vals[i];
     var pool=v.t==="num"?mn:mo;
     for(var j=0;j&lt;pool.length;j++){
-      if(pool[j].getAttribute("data-label")===v.l &amp;&amp; v.v){ pool[j].value=v.v; break; }
+      if(used.indexOf(pool[j])&gt;=0) continue;
+      if(pool[j].getAttribute("data-label")===v.l){ used.push(pool[j]); if(v.v) pool[j].value=v.v; break; }
     }
   }
 }
@@ -5628,7 +5665,10 @@ function restoreOilDraft(){
   if(!d||!d.oil) return;
   var oilFull=false; for(var ov0=0;ov0&lt;(d.oil.rows||[]).length;ov0++){ if(d.oil.rows[ov0]&amp;&amp;d.oil.rows[ov0].rig) oilFull=true; }
   if(d.oil.date&amp;&amp;oilFull) sv("oil-date",d.oil.date);
-  sv("oil-st",d.oil.st); sv("oil-comment",d.oil.comment);
+  var ost=document.getElementById("oil-st"), okSt=false;
+  if(ost&amp;&amp;d.oil.st){ for(var so=0;so&lt;ost.options.length;so++){ if(ost.options[so].value===d.oil.st) okSt=true; } }
+  if(okSt) sv("oil-st",d.oil.st);
+  sv("oil-comment",d.oil.comment);
   var rows=d.oil.rows||[];
   var hasContent=false;
   for(var r0=0;r0&lt;rows.length;r0++){ if(rows[r0].rig) hasContent=true; }
